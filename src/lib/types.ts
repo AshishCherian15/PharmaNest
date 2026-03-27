@@ -15,6 +15,9 @@ export type Sale = {
 export type Medicine = {
   id: string;
   name: string;
+  description: string;
+  category: string;
+  price: number;
   quantity: number;
   expiryDate: string;
 };
