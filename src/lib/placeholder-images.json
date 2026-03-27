@@ -1,3 +1,40 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "user-avatar-1",
+      "description": "User avatar of a woman with curly hair",
+      "imageUrl": "https://picsum.photos/seed/user1/40/40",
+      "imageHint": "woman portrait"
+    },
+    {
+      "id": "user-avatar-2",
+      "description": "User avatar of a man with glasses",
+      "imageUrl": "https://picsum.photos/seed/user2/40/40",
+      "imageHint": "man glasses"
+    },
+    {
+      "id": "user-avatar-3",
+      "description": "User avatar of a person with short hair",
+      "imageUrl": "https://picsum.photos/seed/user3/40/40",
+      "imageHint": "person short-hair"
+    },
+    {
+      "id": "user-avatar-4",
+      "description": "User avatar of a woman with long hair",
+      "imageUrl": "https://picsum.photos/seed/user4/40/40",
+      "imageHint": "woman long-hair"
+    },
+    {
+      "id": "user-avatar-5",
+      "description": "User avatar of a man smiling",
+      "imageUrl": "https://picsum.photos/seed/user5/40/40",
+      "imageHint": "man smiling"
+    },
+    {
+      "id": "user-avatar-6",
+      "description": "User avatar of a person in a hat",
+      "imageUrl": "https://picsum.photos/seed/user6/40/40",
+      "imageHint": "person hat"
+    }
+  ]
 }
