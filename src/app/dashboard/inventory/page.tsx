@@ -9,20 +9,18 @@ import type { Medicine } from "@/lib/types"
 import { AddMedicineDialog } from "./_components/add-medicine-dialog";
 import { PlusCircle } from "lucide-react";
 
-// Since we are not using a real DB, we can't really fetch new data.
-async function getData(): Promise<Medicine[]> {
-  // Fetch data from your API here.
-  // For now, we'll use mock data.
-  return mockMedicines
-}
-
 export default function InventoryPage() {
   const [data, setData] = React.useState<Medicine[]>([]);
   const [isAddDialogOpen, setAddDialogOpen] = React.useState(false);
 
   React.useEffect(() => {
-    getData().then(setData);
+    // In a real app, you would fetch this data.
+    setData(mockMedicines);
   }, []);
+
+  const handleMedicineAdded = (newMedicine: Medicine) => {
+    setData(currentData => [newMedicine, ...currentData]);
+  };
 
   return (
     <>
@@ -38,7 +36,11 @@ export default function InventoryPage() {
         </div>
         <DataTable columns={columns} data={data} />
       </div>
-      <AddMedicineDialog open={isAddDialogOpen} onOpenChange={setAddDialogOpen} />
+      <AddMedicineDialog 
+        open={isAddDialogOpen} 
+        onOpenChange={setAddDialogOpen}
+        onMedicineAdded={handleMedicineAdded}
+      />
     </>
   );
 }

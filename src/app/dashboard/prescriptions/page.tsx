@@ -7,20 +7,26 @@ import { DataTable } from "@/app/dashboard/users/_components/data-table"
 import { mockPrescriptions } from "@/lib/data"
 import type { Prescription } from "@/lib/types"
 
-async function getData(): Promise<Prescription[]> {
-  return mockPrescriptions;
-}
-
 export default function PrescriptionsPage() {
   const [data, setData] = React.useState<Prescription[]>([]);
 
   React.useEffect(() => {
-    getData().then(setData);
+    setData(mockPrescriptions);
   }, []);
+
+  const handleUpdateStatus = (id: string, status: Prescription['status']) => {
+    setData(currentData =>
+      currentData.map(p => (p.id === id ? { ...p, status } : p))
+    );
+  };
 
   const pendingPrescriptions = data.filter(p => p.status === 'pending');
   const verifiedPrescriptions = data.filter(p => p.status === 'verified');
   const rejectedPrescriptions = data.filter(p => p.status === 'rejected');
+
+  const tableMeta = {
+    updateStatus: handleUpdateStatus
+  };
 
   return (
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
@@ -39,6 +45,7 @@ export default function PrescriptionsPage() {
                 data={pendingPrescriptions}
                 filterColumn="patientName"
                 filterPlaceholder="Filter by patient..."
+                meta={tableMeta}
             />
         </TabsContent>
         <TabsContent value="verified" className="space-y-4">
@@ -47,6 +54,7 @@ export default function PrescriptionsPage() {
                 data={verifiedPrescriptions}
                 filterColumn="patientName"
                 filterPlaceholder="Filter by patient..."
+                meta={tableMeta}
             />
         </TabsContent>
         <TabsContent value="rejected" className="space-y-4">
@@ -55,6 +63,7 @@ export default function PrescriptionsPage() {
                 data={rejectedPrescriptions}
                 filterColumn="patientName"
                 filterPlaceholder="Filter by patient..."
+                meta={tableMeta}
             />
         </TabsContent>
       </Tabs>

@@ -7,26 +7,18 @@ import { DataTable } from "./_components/data-table"
 import { mockCustomers } from "@/lib/data"
 import type { Customer } from "@/lib/types"
 import { PlusCircle } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-
-async function getData(): Promise<Customer[]> {
-  return mockCustomers
-}
+import { AddCustomerDialog } from "./_components/add-customer-dialog";
 
 export default function CustomersPage() {
-  const { toast } = useToast();
   const [data, setData] = React.useState<Customer[]>([]);
+  const [isAddDialogOpen, setAddDialogOpen] = React.useState(false);
 
   React.useEffect(() => {
-    getData().then(setData);
+    setData(mockCustomers);
   }, []);
 
-  const handleAddCustomer = () => {
-    // In a real app, this would open a dialog to add a new customer
-    toast({
-        title: "Feature Coming Soon",
-        description: "The ability to add new customers will be implemented soon.",
-    });
+  const handleCustomerAdded = (newCustomer: Customer) => {
+    setData(currentData => [newCustomer, ...currentData]);
   }
 
   return (
@@ -35,7 +27,7 @@ export default function CustomersPage() {
         <div className="flex items-center justify-between space-y-2">
           <h2 className="text-3xl font-bold tracking-tight">Customer Management</h2>
           <div className="flex items-center space-x-2">
-            <Button onClick={handleAddCustomer}>
+            <Button onClick={() => setAddDialogOpen(true)}>
               <PlusCircle className="mr-2 h-4 w-4" />
               Add Customer
             </Button>
@@ -43,6 +35,11 @@ export default function CustomersPage() {
         </div>
         <DataTable columns={columns} data={data} filterColumn="name" filterPlaceholder="Filter customers..." />
       </div>
+      <AddCustomerDialog 
+        open={isAddDialogOpen}
+        onOpenChange={setAddDialogOpen}
+        onCustomerAdded={handleCustomerAdded}
+      />
     </>
   );
 }

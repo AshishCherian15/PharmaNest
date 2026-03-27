@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/card';
 import { mockMedicines } from '@/lib/data';
 import { AlertTriangle, Archive, ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 
 export function AlertsCard() {
     const lowStockItems = mockMedicines.filter(m => m.quantity < 10);
@@ -24,7 +25,11 @@ export function AlertsCard() {
             <AlertTitle>Expiring Soon</AlertTitle>
             <AlertDescription className="flex items-center justify-between">
                 <span>{expiringItems.length} items are expiring within 60 days.</span>
-                <Button variant="link" size="sm" className="h-auto p-0">View Items <ArrowRight className="ml-2 h-4 w-4" /></Button>
+                <Button asChild variant="link" size="sm" className="h-auto p-0">
+                  <Link href="/dashboard/inventory">
+                    View Items <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
             </AlertDescription>
         </Alert>
         <Alert>
@@ -32,7 +37,11 @@ export function AlertsCard() {
             <AlertTitle>Low Stock</AlertTitle>
             <AlertDescription className="flex items-center justify-between">
                 <span>{lowStockItems.length} items are running low on stock.</span>
-                <Button variant="link" size="sm" className="h-auto p-0">View Items <ArrowRight className="ml-2 h-4 w-4" /></Button>
+                <Button asChild variant="link" size="sm" className="h-auto p-0">
+                  <Link href="/dashboard/inventory">
+                    View Items <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
             </AlertDescription>
         </Alert>
       </CardContent>

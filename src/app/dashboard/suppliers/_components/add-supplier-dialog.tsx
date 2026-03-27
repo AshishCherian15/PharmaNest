@@ -14,13 +14,15 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
+import type { Supplier } from '@/lib/types';
 
 interface AddSupplierDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onSupplierAdded: (supplier: Supplier) => void;
 }
 
-export function AddSupplierDialog({ open, onOpenChange }: AddSupplierDialogProps) {
+export function AddSupplierDialog({ open, onOpenChange, onSupplierAdded }: AddSupplierDialogProps) {
   const { toast } = useToast();
   const [isSaving, setIsSaving] = useState(false);
   const formRef = React.useRef<HTMLFormElement>(null);
@@ -30,17 +32,27 @@ export function AddSupplierDialog({ open, onOpenChange }: AddSupplierDialogProps
     setIsSaving(true);
     const formData = new FormData(e.currentTarget);
     const data = Object.fromEntries(formData.entries());
-    console.log('New Supplier Data:', data);
+    
+    const newSupplier: Supplier = {
+        id: `SUP${Date.now()}`,
+        name: data.name as string,
+        contactPerson: data.contactPerson as string,
+        email: data.email as string,
+        phone: data.phone as string,
+    };
+    
+    console.log('New Supplier Data:', newSupplier);
 
     // Simulate API call
     setTimeout(() => {
+      onSupplierAdded(newSupplier);
       setIsSaving(false);
       onOpenChange(false);
       toast({
         title: 'Supplier Added',
         description: `${data.name} has been successfully added.`,
       });
-    }, 1500);
+    }, 1000);
   };
 
   const handleOpenChange = (isOpen: boolean) => {

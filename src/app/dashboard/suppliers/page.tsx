@@ -9,17 +9,17 @@ import type { Supplier } from "@/lib/types"
 import { AddSupplierDialog } from "./_components/add-supplier-dialog";
 import { PlusCircle } from "lucide-react";
 
-async function getData(): Promise<Supplier[]> {
-  return mockSuppliers
-}
-
 export default function SuppliersPage() {
   const [data, setData] = React.useState<Supplier[]>([]);
   const [isAddDialogOpen, setAddDialogOpen] = React.useState(false);
 
   React.useEffect(() => {
-    getData().then(setData);
+    setData(mockSuppliers);
   }, []);
+
+  const handleSupplierAdded = (newSupplier: Supplier) => {
+    setData(currentData => [newSupplier, ...currentData]);
+  };
 
   return (
     <>
@@ -35,7 +35,11 @@ export default function SuppliersPage() {
         </div>
         <DataTable columns={columns} data={data} />
       </div>
-      <AddSupplierDialog open={isAddDialogOpen} onOpenChange={setAddDialogOpen} />
+      <AddSupplierDialog 
+        open={isAddDialogOpen} 
+        onOpenChange={setAddDialogOpen}
+        onSupplierAdded={handleSupplierAdded}
+      />
     </>
   );
 }

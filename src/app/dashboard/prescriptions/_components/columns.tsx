@@ -96,8 +96,9 @@ export const columns: ColumnDef<Prescription>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => {
+    cell: ({ row, table }) => {
       const prescription = row.original
+      const { updateStatus } = table.options.meta as { updateStatus: (id: string, status: 'verified' | 'rejected') => void };
 
       return (
         <DropdownMenu>
@@ -113,8 +114,18 @@ export const columns: ColumnDef<Prescription>[] = [
             {prescription.status === 'pending' && (
               <>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-green-600 focus:text-green-600">Verify</DropdownMenuItem>
-                <DropdownMenuItem className="text-destructive focus:text-destructive">Reject</DropdownMenuItem>
+                <DropdownMenuItem 
+                  className="text-green-600 focus:text-green-600"
+                  onSelect={() => updateStatus(prescription.id, 'verified')}
+                >
+                  Verify
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  className="text-destructive focus:text-destructive"
+                  onSelect={() => updateStatus(prescription.id, 'rejected')}
+                >
+                  Reject
+                </DropdownMenuItem>
               </>
             )}
           </DropdownMenuContent>

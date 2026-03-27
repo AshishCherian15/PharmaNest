@@ -60,10 +60,12 @@ export function UserNav({ user }: UserNavProps) {
               <UserIcon />
               Profile
             </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Settings />
-              Settings
-            </DropdownMenuItem>
+            <Link href="/dashboard/settings" passHref legacyBehavior>
+                <DropdownMenuItem>
+                <Settings />
+                Settings
+                </DropdownMenuItem>
+            </Link>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <Link href="/login" passHref legacyBehavior>

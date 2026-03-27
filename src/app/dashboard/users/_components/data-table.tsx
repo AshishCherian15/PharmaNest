@@ -12,6 +12,7 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
+  TableMeta
 } from "@tanstack/react-table"
 
 import {
@@ -36,14 +37,16 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[],
   filterColumn: string,
-  filterPlaceholder: string
+  filterPlaceholder: string,
+  meta?: TableMeta<TData>
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   filterColumn,
-  filterPlaceholder
+  filterPlaceholder,
+  meta
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
@@ -53,6 +56,7 @@ export function DataTable<TData, TValue>({
   const table = useReactTable({
     data,
     columns,
+    meta,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),

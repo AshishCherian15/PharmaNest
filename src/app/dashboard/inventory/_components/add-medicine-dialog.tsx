@@ -19,13 +19,16 @@ import { CalendarIcon, Camera, Loader2 } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
+import type { Medicine } from '@/lib/types';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 interface AddMedicineDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onMedicineAdded: (medicine: Medicine) => void;
 }
 
-export function AddMedicineDialog({ open, onOpenChange }: AddMedicineDialogProps) {
+export function AddMedicineDialog({ open, onOpenChange, onMedicineAdded }: AddMedicineDialogProps) {
   const { toast } = useToast();
   const [isSaving, setIsSaving] = useState(false);
   const [expiryDate, setExpiryDate] = useState<Date | undefined>();
@@ -57,18 +60,32 @@ export function AddMedicineDialog({ open, onOpenChange }: AddMedicineDialogProps
     setIsSaving(true);
     const formData = new FormData(e.currentTarget);
     const data = Object.fromEntries(formData.entries());
-    console.log('New Medicine Data:', { ...data, expiryDate: format(expiryDate, 'yyyy-MM-dd'), image: imagePreview ? 'uploaded' : 'none' });
+    
+    // Simulate creating a new medicine object
+    const randomImage = PlaceHolderImages[Math.floor(Math.random() * PlaceHolderImages.length)];
+    const newMedicine: Medicine = {
+      id: `MED${Date.now()}`,
+      name: data.name as string,
+      description: data.description as string,
+      category: data.category as string,
+      price: parseFloat(data.price as string) * 100, // Store in cents
+      quantity: parseInt(data.quantity as string, 10),
+      expiryDate: format(expiryDate, 'yyyy-MM-dd'),
+      imageId: randomImage.id,
+    };
+
+    console.log('New Medicine Data:', newMedicine);
 
     // Simulate API call
     setTimeout(() => {
+      onMedicineAdded(newMedicine);
       setIsSaving(false);
       onOpenChange(false);
       toast({
         title: 'Medicine Added',
         description: `${data.name} has been successfully added to the inventory.`,
       });
-      // In a real app, you would invalidate the query for inventory data to refetch it.
-    }, 1500);
+    }, 1000);
   };
 
   const handleOpenChange = (isOpen: boolean) => {
