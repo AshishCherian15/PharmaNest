@@ -21,9 +21,11 @@ import { useToast } from '@/hooks/use-toast';
 import { mockUser } from '@/lib/data';
 import { EditProfileDialog } from '@/components/edit-profile-dialog';
 import { Switch } from '@/components/ui/switch';
+import { useTheme } from 'next-themes';
 
 export default function SettingsPage() {
   const { toast } = useToast();
+  const { theme, setTheme } = useTheme();
   const [isProfileDialogOpen, setProfileDialogOpen] = React.useState(false);
 
   const handleStoreInfoSave = (e: React.FormEvent) => {
@@ -119,9 +121,8 @@ export default function SettingsPage() {
                         </p>
                     </div>
                     <Switch
-                        // Note: Theme switching logic is not implemented yet.
-                        // This would require a ThemeProvider context.
-                        onCheckedChange={() => toast({ title: "Theme switching coming soon!" })}
+                        checked={theme === 'dark'}
+                        onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
                     />
                 </div>
               </CardContent>
