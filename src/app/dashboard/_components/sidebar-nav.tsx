@@ -15,6 +15,7 @@ import {
   BarChart3,
   Users,
   Settings,
+  ClipboardText,
 } from 'lucide-react';
 
 const navItems = [
@@ -22,6 +23,7 @@ const navItems = [
   { href: '/dashboard/inventory', label: 'Inventory', icon: Boxes },
   { href: '/dashboard/suppliers', label: 'Suppliers', icon: Truck },
   { href: '/dashboard/sales', label: 'Sales', icon: ShoppingCart },
+  { href: '/dashboard/prescriptions', label: 'Prescriptions', icon: ClipboardText },
   { href: '/dashboard/reports', label: 'Reports', icon: BarChart3 },
   { href: '/dashboard/users', label: 'Customers', icon: Users },
   { href: '/dashboard/settings', label: 'Settings', icon: Settings },

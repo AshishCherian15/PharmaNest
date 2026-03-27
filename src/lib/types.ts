@@ -47,3 +47,19 @@ export type Customer = {
   totalSpent: number;
   avatarId: string;
 };
+
+export type PrescriptionMedicine = {
+  name: string;
+  dosage: string;
+  quantity: number;
+};
+
+export type Prescription = {
+  id: string;
+  patientName: string;
+  doctorName: string;
+  date: string;
+  status: 'pending' | 'verified' | 'rejected';
+  medicines: PrescriptionMedicine[];
+  patientId: string;
+};

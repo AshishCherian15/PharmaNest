@@ -1,4 +1,4 @@
-import type { User, Sale, Medicine, Supplier, Customer } from './types';
+import type { User, Sale, Medicine, Supplier, Customer, Prescription } from './types';
 
 export const mockUser: User = {
   name: 'Sofia Davis',
@@ -98,4 +98,63 @@ export const salesByCategory = [
     { category: 'Antihistamine', sales: 1500, percent: 0.15 },
     { category: 'Vitamins', sales: 1000, percent: 0.10 },
     { category: 'Other', sales: 500, percent: 0.05 },
+];
+
+export const mockPrescriptions: Prescription[] = [
+  {
+    id: 'PRES001',
+    patientName: 'Olivia Martin',
+    patientId: 'CUS001',
+    doctorName: 'Dr. Evelyn Reed',
+    date: '2024-07-25',
+    status: 'pending',
+    medicines: [
+      { name: 'Amoxicillin 250mg', dosage: '1 tablet twice a day', quantity: 14 },
+      { name: 'Ibuprofen 200mg', dosage: 'As needed for pain', quantity: 20 },
+    ]
+  },
+  {
+    id: 'PRES002',
+    patientName: 'Jackson Lee',
+    patientId: 'CUS002',
+    doctorName: 'Dr. Alan Grant',
+    date: '2024-07-24',
+    status: 'verified',
+    medicines: [
+      { name: 'Metformin 500mg', dosage: '1 tablet daily', quantity: 30 },
+    ]
+  },
+  {
+    id: 'PRES003',
+    patientName: 'William Kim',
+    patientId: 'CUS004',
+    doctorName: 'Dr. Evelyn Reed',
+    date: '2024-07-23',
+    status: 'pending',
+    medicines: [
+      { name: 'Salbutamol Inhaler', dosage: '2 puffs as needed', quantity: 1 },
+    ]
+  },
+    {
+    id: 'PRES004',
+    patientName: 'Sofia Davis',
+    patientId: 'CUS005',
+    doctorName: 'Dr. Ellie Sattler',
+    date: '2024-07-22',
+    status: 'rejected',
+    medicines: [
+      { name: 'Aspirin 81mg', dosage: '1 tablet daily', quantity: 30 },
+    ]
+  },
+  {
+    id: 'PRES005',
+    patientName: 'Isabella Nguyen',
+    patientId: 'CUS003',
+    doctorName: 'Dr. Alan Grant',
+    date: '2024-07-21',
+    status: 'verified',
+    medicines: [
+        { name: 'Loratadine 10mg', dosage: '1 tablet daily for 7 days', quantity: 7 },
+    ]
+  },
 ];
