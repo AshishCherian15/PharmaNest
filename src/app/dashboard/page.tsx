@@ -1,6 +1,6 @@
 import { StatCard } from './_components/stat-card';
 import { SalesChart } from './_components/sales-chart';
-import { TodaysTopSales } from './_components/todays-top-sales';
+import { TodaysTopSales } from './_components/recent-sales';
 import {
   Package,
   Truck,
