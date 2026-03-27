@@ -20,4 +20,5 @@ export type Medicine = {
   price: number;
   quantity: number;
   expiryDate: string;
+  imageId: string;
 };

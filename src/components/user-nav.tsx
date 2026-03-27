@@ -1,3 +1,7 @@
+'use client'; // Need to make this a client component to use state
+
+import { useState } from 'react';
+import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -12,12 +16,14 @@ import {
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import type { User } from '@/lib/types';
 import { LogOut, Settings, User as UserIcon } from 'lucide-react';
+import { EditProfileDialog } from './edit-profile-dialog';
 
 type UserNavProps = {
   user: User;
 };
 
 export function UserNav({ user }: UserNavProps) {
+  const [isProfileDialogOpen, setProfileDialogOpen] = useState(false);
   const userAvatar = PlaceHolderImages.find((img) => img.id === user.avatarId);
   const userInitials = user.name
     .split(' ')
@@ -25,45 +31,50 @@ export function UserNav({ user }: UserNavProps) {
     .join('');
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-          <Avatar className="h-10 w-10">
-            <AvatarImage
-              src={userAvatar?.imageUrl}
-              alt={user.name}
-              data-ai-hint={userAvatar?.imageHint}
-            />
-            <AvatarFallback>{userInitials}</AvatarFallback>
-          </Avatar>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56" align="end" forceMount>
-        <DropdownMenuLabel className="font-normal">
-          <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">{user.name}</p>
-            <p className="text-xs leading-none text-muted-foreground">
-              {user.email}
-            </p>
-          </div>
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          <DropdownMenuItem>
-            <UserIcon />
-            Profile
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Settings />
-            Settings
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <LogOut />
-          Log out
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+            <Avatar className="h-10 w-10">
+              <AvatarImage
+                src={userAvatar?.imageUrl}
+                alt={user.name}
+                data-ai-hint={userAvatar?.imageHint}
+              />
+              <AvatarFallback>{userInitials}</AvatarFallback>
+            </Avatar>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="w-56" align="end" forceMount>
+          <DropdownMenuLabel className="font-normal">
+            <div className="flex flex-col space-y-1">
+              <p className="text-sm font-medium leading-none">{user.name}</p>
+              <p className="text-xs leading-none text-muted-foreground">
+                {user.email}
+              </p>
+            </div>
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            <DropdownMenuItem onSelect={() => setProfileDialogOpen(true)}>
+              <UserIcon />
+              Profile
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Settings />
+              Settings
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
+          <Link href="/login" passHref legacyBehavior>
+            <DropdownMenuItem>
+              <LogOut />
+              Log out
+            </DropdownMenuItem>
+          </Link>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <EditProfileDialog user={user} open={isProfileDialogOpen} onOpenChange={setProfileDialogOpen} />
+    </>
   );
 }

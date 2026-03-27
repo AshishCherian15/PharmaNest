@@ -35,6 +35,66 @@
       "description": "User avatar of a person in a hat",
       "imageUrl": "https://picsum.photos/seed/user6/40/40",
       "imageHint": "person hat"
+    },
+    {
+      "id": "med-image-1",
+      "description": "Image of Paracetamol pills",
+      "imageUrl": "https://picsum.photos/seed/med1/40/40",
+      "imageHint": "pills medication"
+    },
+    {
+      "id": "med-image-2",
+      "description": "Image of Amoxicillin capsules",
+      "imageUrl": "https://picsum.photos/seed/med2/40/40",
+      "imageHint": "capsules antibiotic"
+    },
+    {
+      "id": "med-image-3",
+      "description": "Image of Ibuprofen tablets",
+      "imageUrl": "https://picsum.photos/seed/med3/40/40",
+      "imageHint": "tablets painkiller"
+    },
+    {
+      "id": "med-image-4",
+      "description": "Image of Loratadine pills",
+      "imageUrl": "https://picsum.photos/seed/med4/40/40",
+      "imageHint": "pills allergy"
+    },
+    {
+      "id": "med-image-5",
+      "description": "Image of Aspirin tablets",
+      "imageUrl": "https://picsum.photos/seed/med5/40/40",
+      "imageHint": "tablets heart"
+    },
+    {
+      "id": "med-image-6",
+      "description": "Image of Omeprazole capsules",
+      "imageUrl": "https://picsum.photos/seed/med6/40/40",
+      "imageHint": "capsules stomach"
+    },
+    {
+      "id": "med-image-7",
+      "description": "Image of Metformin pills",
+      "imageUrl": "https://picsum.photos/seed/med7/40/40",
+      "imageHint": "pills diabetes"
+    },
+    {
+      "id": "med-image-8",
+      "description": "Image of a Salbutamol Inhaler",
+      "imageUrl": "https://picsum.photos/seed/med8/40/40",
+      "imageHint": "inhaler asthma"
+    },
+    {
+      "id": "med-image-9",
+      "description": "Image of Cetirizine tablets",
+      "imageUrl": "https://picsum.photos/seed/med9/40/40",
+      "imageHint": "tablets allergy"
+    },
+    {
+      "id": "med-image-10",
+      "description": "Image of Vitamin D3 softgels",
+      "imageUrl": "https://picsum.photos/seed/med10/40/40",
+      "imageHint": "vitamins supplement"
     }
   ]
 }

@@ -46,7 +46,11 @@ export function RecentSales() {
                   </p>
                 </div>
                 <div className="ml-auto font-medium">
-                  +${(sale.amount / 100).toFixed(2)}
+                  +
+                  {(sale.amount / 100).toLocaleString('en-IN', {
+                    style: 'currency',
+                    currency: 'INR',
+                  })}
                 </div>
               </div>
             );

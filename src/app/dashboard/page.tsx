@@ -13,7 +13,7 @@ import { AlertsCard } from './_components/alerts-card';
 export default function DashboardPage() {
   const totalMedicines = 1250;
   const totalSuppliers = 28;
-  const totalSales = 45231.89;
+  const totalSales = 3754246.87;
   const expiringSoon = mockMedicines.filter(
     (m) => new Date(m.expiryDate) < new Date(Date.now() + 60 * 24 * 60 * 60 * 1000)
   ).length;
@@ -39,7 +39,7 @@ export default function DashboardPage() {
           />
           <StatCard
             title="Total Sales (Month)"
-            value={`$${totalSales.toLocaleString('en-US', {
+            value={`₹${totalSales.toLocaleString('en-IN', {
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
             })}`}

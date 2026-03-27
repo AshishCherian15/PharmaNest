@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import { ColumnDef } from "@tanstack/react-table"
 import { MoreHorizontal, ArrowUpDown } from "lucide-react"
 
@@ -13,7 +14,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { Badge } from "@/components/ui/badge"
 import { Medicine } from "@/lib/types"
+import { PlaceHolderImages } from "@/lib/placeholder-images"
 
 export const columns: ColumnDef<Medicine>[] = [
   {
@@ -39,6 +42,20 @@ export const columns: ColumnDef<Medicine>[] = [
     enableHiding: false,
   },
   {
+    id: "image",
+    header: "Image",
+    cell: ({ row }) => {
+        const medicine = row.original;
+        const image = PlaceHolderImages.find(img => img.id === medicine.imageId);
+        return (
+            <div className="w-10 h-10 relative">
+                {image && <Image src={image.imageUrl} alt={medicine.name} width={40} height={40} className="rounded-md object-cover" data-ai-hint={image.imageHint} />}
+            </div>
+        )
+    },
+    enableSorting: false,
+  },
+  {
     accessorKey: "name",
     header: ({ column }) => {
       return (
@@ -62,9 +79,9 @@ export const columns: ColumnDef<Medicine>[] = [
     header: () => <div className="text-right">Price</div>,
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue("price"))
-      const formatted = new Intl.NumberFormat("en-US", {
+      const formatted = new Intl.NumberFormat("en-IN", {
         style: "currency",
-        currency: "USD",
+        currency: "INR",
       }).format(amount)
 
       return <div className="text-right font-medium">{formatted}</div>
@@ -90,6 +107,31 @@ export const columns: ColumnDef<Medicine>[] = [
       });
       return <div>{formattedDate}</div>
     }
+  },
+  {
+    accessorKey: "status",
+    header: "Status",
+    cell: ({ row }) => {
+      const quantity = row.original.quantity;
+      const expiryDate = new Date(row.original.expiryDate);
+      const now = new Date();
+      const sixtyDaysFromNow = new Date();
+      sixtyDaysFromNow.setDate(now.getDate() + 60);
+
+      if (expiryDate < now) {
+        return <Badge variant="destructive">Expired</Badge>;
+      }
+      if (quantity === 0) {
+        return <Badge variant="destructive">Out of Stock</Badge>;
+      }
+      if (quantity < 10) {
+        return <Badge className="bg-yellow-500 hover:bg-yellow-500/80 text-secondary-foreground">Low Stock</Badge>;
+      }
+      if (expiryDate < sixtyDaysFromNow) {
+        return <Badge className="bg-orange-500 hover:bg-orange-500/80 text-secondary-foreground">Expires Soon</Badge>;
+      }
+      return <Badge className="bg-green-500 hover:bg-green-500/80 text-secondary-foreground">In Stock</Badge>;
+    },
   },
   {
     id: "actions",
