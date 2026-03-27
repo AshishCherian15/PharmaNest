@@ -1,4 +1,4 @@
-import type { User, Sale, Medicine, Supplier } from './types';
+import type { User, Sale, Medicine, Supplier, Customer } from './types';
 
 export const mockUser: User = {
   name: 'Sofia Davis',
@@ -73,4 +73,29 @@ export const mockSuppliers: Supplier[] = [
     { id: 'SUP003', name: 'Wellness Distributors', contactPerson: 'David Chen', email: 'david.chen@wellnessdist.com', phone: '+65-6321-4567' },
     { id: 'SUP004', name: 'HealthCare Logistics', contactPerson: 'Maria Garcia', email: 'maria.garcia@hclogistics.net', phone: '+34-91-123-4567' },
     { id: 'SUP005', name: 'Asia-Pacific Meds', contactPerson: 'Li Wei', email: 'li.wei@apmeds.com', phone: '+86-10-1234-5678' },
+];
+
+export const mockCustomers: Customer[] = [
+    { id: 'CUS001', name: 'Olivia Martin', email: 'olivia.martin@email.com', phone: '+1-202-555-0111', totalSpent: 1659.17, avatarId: 'user-avatar-1' },
+    { id: 'CUS002', name: 'Jackson Lee', email: 'jackson.lee@email.com', phone: '+1-202-555-0122', totalSpent: 3237.00, avatarId: 'user-avatar-2' },
+    { id: 'CUS003', name: 'Isabella Nguyen', email: 'isabella.nguyen@email.com', phone: '+1-202-555-0133', totalSpent: 2481.70, avatarId: 'user-avatar-3' },
+    { id: 'CUS004', name: 'William Kim', email: 'will@email.com', phone: '+1-202-555-0144', totalSpent: 8217.00, avatarId: 'user-avatar-4' },
+    { id: 'CUS005', name: 'Sofia Davis', email: 'sofia.davis@email.com', phone: '+1-202-555-0155', totalSpent: 3237.00, avatarId: 'user-avatar-5' },
+];
+
+export const monthlySalesData = [
+  { month: 'Jan', sales: 245000 },
+  { month: 'Feb', sales: 289000 },
+  { month: 'Mar', sales: 312000 },
+  { month: 'Apr', sales: 278000 },
+  { month: 'May', sales: 345000 },
+  { month: 'Jun', sales: 375424 },
+];
+
+export const salesByCategory = [
+    { category: 'Painkiller', sales: 4000, percent: 0.40 },
+    { category: 'Antibiotic', sales: 3000, percent: 0.30 },
+    { category: 'Antihistamine', sales: 1500, percent: 0.15 },
+    { category: 'Vitamins', sales: 1000, percent: 0.10 },
+    { category: 'Other', sales: 500, percent: 0.05 },
 ];

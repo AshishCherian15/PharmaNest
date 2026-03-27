@@ -38,3 +38,12 @@ export type CartItem = {
     quantity: number;
     stock: number;
 };
+
+export type Customer = {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  totalSpent: number;
+  avatarId: string;
+};

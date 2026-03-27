@@ -23,7 +23,7 @@ const navItems = [
   { href: '/dashboard/suppliers', label: 'Suppliers', icon: Truck },
   { href: '/dashboard/sales', label: 'Sales', icon: ShoppingCart },
   { href: '/dashboard/reports', label: 'Reports', icon: BarChart3 },
-  { href: '/dashboard/users', label: 'Users', icon: Users },
+  { href: '/dashboard/users', label: 'Customers', icon: Users },
   { href: '/dashboard/settings', label: 'Settings', icon: Settings },
 ];
 
@@ -36,7 +36,7 @@ export function SidebarNav() {
         <SidebarMenuItem key={item.href}>
           <Link href={item.href} passHref legacyBehavior>
             <SidebarMenuButton
-              isActive={pathname === item.href}
+              isActive={pathname.startsWith(item.href) && (item.href === '/dashboard' ? pathname === item.href : true)}
               tooltip={{ children: item.label }}
             >
               <item.icon />
