@@ -14,12 +14,12 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import type { User } from '@/lib/types';
+import type { Profile } from '@/lib/types';
 import { LogOut, Settings, User as UserIcon } from 'lucide-react';
 import { EditProfileDialog } from './edit-profile-dialog';
 
 type UserNavProps = {
-  user: User;
+  user: Profile;
 };
 
 export function UserNav({ user }: UserNavProps) {

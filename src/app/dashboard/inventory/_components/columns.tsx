@@ -70,6 +70,10 @@ export const columns: ColumnDef<Medicine>[] = [
     },
     cell: ({ row }) => <div className="font-medium">{row.getValue("name")}</div>,
   },
+    {
+    accessorKey: "genericName",
+    header: "Generic Name",
+  },
   {
     accessorKey: "category",
     header: "Category",
@@ -82,7 +86,7 @@ export const columns: ColumnDef<Medicine>[] = [
       const formatted = new Intl.NumberFormat("en-IN", {
         style: "currency",
         currency: "INR",
-      }).format(amount)
+      }).format(amount / 100)
 
       return <div className="text-right font-medium">{formatted}</div>
     },
@@ -135,8 +139,9 @@ export const columns: ColumnDef<Medicine>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => {
+    cell: ({ row, table }) => {
       const medicine = row.original
+      const { onEdit } = table.options.meta as { onEdit: (medicine: Medicine) => void };
 
       return (
         <DropdownMenu>
@@ -155,7 +160,7 @@ export const columns: ColumnDef<Medicine>[] = [
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>View details</DropdownMenuItem>
-            <DropdownMenuItem>Edit</DropdownMenuItem>
+            <DropdownMenuItem onSelect={() => onEdit(medicine)}>Edit</DropdownMenuItem>
             <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

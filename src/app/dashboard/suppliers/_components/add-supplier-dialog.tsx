@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -16,87 +16,81 @@ import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
 import type { Supplier } from '@/lib/types';
 
-interface AddSupplierDialogProps {
+interface SupplierFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSupplierAdded: (supplier: Supplier) => void;
+  onSave: (supplier: Supplier) => void;
+  supplier?: Supplier;
 }
 
-export function AddSupplierDialog({ open, onOpenChange, onSupplierAdded }: AddSupplierDialogProps) {
+export function SupplierFormDialog({ open, onOpenChange, onSave, supplier }: SupplierFormDialogProps) {
   const { toast } = useToast();
   const [isSaving, setIsSaving] = useState(false);
-  const formRef = React.useRef<HTMLFormElement>(null);
 
-  const handleSave = (e: React.FormEvent<HTMLFormElement>) => {
+  const isEditing = !!supplier;
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSaving(true);
     const formData = new FormData(e.currentTarget);
     const data = Object.fromEntries(formData.entries());
     
-    const newSupplier: Supplier = {
-        id: `SUP${Date.now()}`,
+    const savedSupplier: Supplier = {
+        id: isEditing ? supplier.id : `SUP${Date.now()}`,
         name: data.name as string,
         contactPerson: data.contactPerson as string,
         email: data.email as string,
         phone: data.phone as string,
     };
     
-    console.log('New Supplier Data:', newSupplier);
+    console.log('Saved Supplier Data:', savedSupplier);
 
-    // Simulate API call
     setTimeout(() => {
-      onSupplierAdded(newSupplier);
+      onSave(savedSupplier);
       setIsSaving(false);
       onOpenChange(false);
       toast({
-        title: 'Supplier Added',
-        description: `${data.name} has been successfully added.`,
+        title: isEditing ? 'Supplier Updated' : 'Supplier Added',
+        description: `${data.name} has been successfully saved.`,
       });
     }, 1000);
   };
 
-  const handleOpenChange = (isOpen: boolean) => {
-    if (!isOpen) {
-      formRef.current?.reset();
-    }
-    onOpenChange(isOpen);
-  };
-
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Add New Supplier</DialogTitle>
+          <DialogTitle>{isEditing ? 'Edit Supplier' : 'Add New Supplier'}</DialogTitle>
           <DialogDescription>
-            Fill in the details below to add a new supplier.
+            Fill in the details below.
           </DialogDescription>
         </DialogHeader>
-        <form ref={formRef} id="add-supplier-form" onSubmit={handleSave}>
+        <form id="supplier-form" onSubmit={handleSubmit}>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="name" className="text-right">Name</Label>
-              <Input id="name" name="name" placeholder="e.g., Global Pharma Inc." required className="col-span-3" />
+              <Input id="name" name="name" defaultValue={supplier?.name} placeholder="e.g., Global Pharma Inc." required className="col-span-3" />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="contactPerson" className="text-right">Contact Person</Label>
-              <Input id="contactPerson" name="contactPerson" placeholder="e.g., John Doe" required className="col-span-3" />
+              <Input id="contactPerson" name="contactPerson" defaultValue={supplier?.contactPerson} placeholder="e.g., John Doe" required className="col-span-3" />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="email" className="text-right">Email</Label>
-              <Input id="email" name="email" type="email" placeholder="e.g., contact@globalpharma.com" required className="col-span-3" />
+              <Input id="email" name="email" type="email" defaultValue={supplier?.email} placeholder="e.g., contact@globalpharma.com" required className="col-span-3" />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="phone" className="text-right">Phone</Label>
-              <Input id="phone" name="phone" placeholder="e.g., +1-202-555-0173" required className="col-span-3" />
+              <Input id="phone" name="phone" defaultValue={supplier?.phone} placeholder="e.g., +1-202-555-0173" required className="col-span-3" />
             </div>
           </div>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => handleOpenChange(false)} disabled={isSaving}>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isSaving}>
                 Cancel
             </Button>
-            <Button type="submit" disabled={isSaving}>
+            <Button type="submit" form="supplier-form" disabled={isSaving}>
                 {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Save Supplier
+                Save
             </Button>
           </DialogFooter>
         </form>

@@ -1,9 +1,9 @@
 import { SidebarTrigger } from '@/components/ui/sidebar';
-import type { User } from '@/lib/types';
+import type { Profile } from '@/lib/types';
 import { UserNav } from '@/components/user-nav';
 
 type HeaderProps = {
-  user: User;
+  user: Profile;
 };
 
 export function Header({ user }: HeaderProps) {

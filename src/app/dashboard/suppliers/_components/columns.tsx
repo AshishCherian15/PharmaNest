@@ -67,8 +67,9 @@ export const columns: ColumnDef<Supplier>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => {
+    cell: ({ row, table }) => {
       const supplier = row.original
+      const { onEdit } = table.options.meta as { onEdit: (supplier: Supplier) => void };
 
       return (
         <DropdownMenu>
@@ -87,7 +88,7 @@ export const columns: ColumnDef<Supplier>[] = [
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>View details</DropdownMenuItem>
-            <DropdownMenuItem>Edit</DropdownMenuItem>
+            <DropdownMenuItem onSelect={() => onEdit(supplier)}>Edit</DropdownMenuItem>
             <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

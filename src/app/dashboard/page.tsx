@@ -1,6 +1,6 @@
 import { StatCard } from './_components/stat-card';
 import { SalesChart } from './_components/sales-chart';
-import { RecentSales } from './_components/recent-sales';
+import { TodaysTopSales } from './_components/todays-top-sales';
 import {
   Package,
   Truck,
@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { mockMedicines } from '@/lib/data';
 import { AlertsCard } from './_components/alerts-card';
+import { LatestMedicines } from './_components/latest-medicines';
 
 export default function DashboardPage() {
   const totalMedicines = 1250;
@@ -56,9 +57,12 @@ export default function DashboardPage() {
         </div>
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-7">
             <SalesChart />
-            <RecentSales />
+            <TodaysTopSales />
         </div>
-        <AlertsCard />
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <AlertsCard />
+          <LatestMedicines />
+        </div>
       </div>
     </div>
   );

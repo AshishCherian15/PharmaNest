@@ -1,4 +1,4 @@
-export type User = {
+export type Profile = {
   name: string;
   email: string;
   avatarId: string;
@@ -15,6 +15,7 @@ export type Sale = {
 export type Medicine = {
   id: string;
   name: string;
+  genericName: string;
   description: string;
   category: string;
   price: number;
@@ -39,11 +40,12 @@ export type CartItem = {
     stock: number;
 };
 
-export type Customer = {
+export type User = {
   id: string;
   name: string;
   email: string;
   phone: string;
+  role: 'Admin' | 'Pharmacist' | 'Staff';
   totalSpent: number;
   avatarId: string;
 };
@@ -62,4 +64,13 @@ export type Prescription = {
   status: 'pending' | 'verified' | 'rejected';
   medicines: PrescriptionMedicine[];
   patientId: string;
+};
+
+export type PurchaseOrder = {
+  id: string;
+  supplierName: string;
+  orderDate: string;
+  expectedDate: string;
+  status: 'Pending' | 'Shipped' | 'Received' | 'Cancelled';
+  total: number;
 };

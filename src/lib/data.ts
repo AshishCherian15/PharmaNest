@@ -1,6 +1,6 @@
-import type { User, Sale, Medicine, Supplier, Customer, Prescription } from './types';
+import type { Profile, Sale, Medicine, Supplier, User, Prescription, PurchaseOrder } from './types';
 
-export const mockUser: User = {
+export const mockUser: Profile = {
   name: 'Sofia Davis',
   email: 'sofia.davis@pharmanest.com',
   avatarId: 'user-avatar-1',
@@ -45,16 +45,16 @@ export const mockSales: Sale[] = [
 ];
 
 export const mockMedicines: Medicine[] = [
-    { id: 'MED001', name: 'Paracetamol 500mg', description: 'For fever and pain relief.', category: 'Painkiller', price: 497, quantity: 150, expiryDate: '2025-12-31', imageId: 'med-image-1' },
-    { id: 'MED002', name: 'Amoxicillin 250mg', description: 'Antibiotic for bacterial infections.', category: 'Antibiotic', price: 1037, quantity: 8, expiryDate: '2025-01-15', imageId: 'med-image-2' },
-    { id: 'MED003', name: 'Ibuprofen 200mg', description: 'Nonsteroidal anti-inflammatory drug.', category: 'Painkiller', price: 664, quantity: 0, expiryDate: '2024-08-01', imageId: 'med-image-3' },
-    { id: 'MED004', name: 'Loratadine 10mg', description: 'Antihistamine for allergies.', category: 'Antihistamine', price: 601, quantity: 2, expiryDate: '2024-07-20', imageId: 'med-image-4' },
-    { id: 'MED005', name: 'Aspirin 81mg', description: 'Low-dose for cardiovascular health.', category: 'Cardiovascular', price: 373, quantity: 200, expiryDate: '2026-05-30', imageId: 'med-image-5' },
-    { id: 'MED006', name: 'Omeprazole 20mg', description: 'For acid reflux and heartburn.', category: 'Gastrointestinal', price: 1245, quantity: 75, expiryDate: '2023-09-01', imageId: 'med-image-6' },
-    { id: 'MED007', name: 'Metformin 500mg', description: 'For type 2 diabetes.', category: 'Diabetes', price: 838, quantity: 120, expiryDate: '2025-11-20', imageId: 'med-image-7' },
-    { id: 'MED008', name: 'Salbutamol Inhaler', description: 'For asthma and COPD.', category: 'Respiratory', price: 2075, quantity: 40, expiryDate: '2024-10-10', imageId: 'med-image-8' },
-    { id: 'MED009', name: 'Cetirizine 10mg', description: 'Antihistamine for allergies.', category: 'Antihistamine', price: 560, quantity: 90, expiryDate: '2026-01-15', imageId: 'med-image-9' },
-    { id: 'MED010', name: 'Vitamin D3 1000 IU', description: 'Dietary supplement.', category: 'Vitamins', price: 829, quantity: 300, expiryDate: '2026-08-01', imageId: 'med-image-10' },
+    { id: 'MED001', name: 'Paracetamol 500mg', genericName: 'Paracetamol', description: 'For fever and pain relief.', category: 'Painkiller', price: 497, quantity: 150, expiryDate: '2025-12-31', imageId: 'med-image-1' },
+    { id: 'MED002', name: 'Amoxicillin 250mg', genericName: 'Amoxicillin', description: 'Antibiotic for bacterial infections.', category: 'Antibiotic', price: 1037, quantity: 8, expiryDate: '2025-01-15', imageId: 'med-image-2' },
+    { id: 'MED003', name: 'Ibuprofen 200mg', genericName: 'Ibuprofen', description: 'Nonsteroidal anti-inflammatory drug.', category: 'Painkiller', price: 664, quantity: 0, expiryDate: '2024-08-01', imageId: 'med-image-3' },
+    { id: 'MED004', name: 'Loratadine 10mg', genericName: 'Loratadine', description: 'Antihistamine for allergies.', category: 'Antihistamine', price: 601, quantity: 2, expiryDate: '2024-07-20', imageId: 'med-image-4' },
+    { id: 'MED005', name: 'Aspirin 81mg', genericName: 'Aspirin', description: 'Low-dose for cardiovascular health.', category: 'Cardiovascular', price: 373, quantity: 200, expiryDate: '2026-05-30', imageId: 'med-image-5' },
+    { id: 'MED006', name: 'Omeprazole 20mg', genericName: 'Omeprazole', description: 'For acid reflux and heartburn.', category: 'Gastrointestinal', price: 1245, quantity: 75, expiryDate: '2023-09-01', imageId: 'med-image-6' },
+    { id: 'MED007', name: 'Metformin 500mg', genericName: 'Metformin', description: 'For type 2 diabetes.', category: 'Diabetes', price: 838, quantity: 120, expiryDate: '2025-11-20', imageId: 'med-image-7' },
+    { id: 'MED008', name: 'Salbutamol Inhaler', genericName: 'Salbutamol', description: 'For asthma and COPD.', category: 'Respiratory', price: 2075, quantity: 40, expiryDate: '2024-10-10', imageId: 'med-image-8' },
+    { id: 'MED009', name: 'Cetirizine 10mg', genericName: 'Cetirizine', description: 'Antihistamine for allergies.', category: 'Antihistamine', price: 560, quantity: 90, expiryDate: '2026-01-15', imageId: 'med-image-9' },
+    { id: 'MED010', name: 'Vitamin D3 1000 IU', genericName: 'Cholecalciferol', description: 'Dietary supplement.', category: 'Vitamins', price: 829, quantity: 300, expiryDate: '2026-08-01', imageId: 'med-image-10' },
 ];
 
 export const weeklySalesData = [
@@ -75,12 +75,12 @@ export const mockSuppliers: Supplier[] = [
     { id: 'SUP005', name: 'Asia-Pacific Meds', contactPerson: 'Li Wei', email: 'li.wei@apmeds.com', phone: '+86-10-1234-5678' },
 ];
 
-export const mockCustomers: Customer[] = [
-    { id: 'CUS001', name: 'Olivia Martin', email: 'olivia.martin@email.com', phone: '+1-202-555-0111', totalSpent: 1659.17, avatarId: 'user-avatar-1' },
-    { id: 'CUS002', name: 'Jackson Lee', email: 'jackson.lee@email.com', phone: '+1-202-555-0122', totalSpent: 3237.00, avatarId: 'user-avatar-2' },
-    { id: 'CUS003', name: 'Isabella Nguyen', email: 'isabella.nguyen@email.com', phone: '+1-202-555-0133', totalSpent: 2481.70, avatarId: 'user-avatar-3' },
-    { id: 'CUS004', name: 'William Kim', email: 'will@email.com', phone: '+1-202-555-0144', totalSpent: 8217.00, avatarId: 'user-avatar-4' },
-    { id: 'CUS005', name: 'Sofia Davis', email: 'sofia.davis@email.com', phone: '+1-202-555-0155', totalSpent: 3237.00, avatarId: 'user-avatar-5' },
+export const mockUsers: User[] = [
+    { id: 'CUS001', name: 'Olivia Martin', email: 'olivia.martin@email.com', phone: '+1-202-555-0111', role: 'Pharmacist', totalSpent: 1659.17, avatarId: 'user-avatar-1' },
+    { id: 'CUS002', name: 'Jackson Lee', email: 'jackson.lee@email.com', phone: '+1-202-555-0122', role: 'Staff', totalSpent: 3237.00, avatarId: 'user-avatar-2' },
+    { id: 'CUS003', name: 'Isabella Nguyen', email: 'isabella.nguyen@email.com', phone: '+1-202-555-0133', role: 'Staff', totalSpent: 2481.70, avatarId: 'user-avatar-3' },
+    { id: 'CUS004', name: 'William Kim', email: 'will@email.com', phone: '+1-202-555-0144', role: 'Admin', totalSpent: 8217.00, avatarId: 'user-avatar-4' },
+    { id: 'CUS005', name: 'Sofia Davis', email: 'sofia.davis@email.com', phone: '+1-202-555-0155', role: 'Pharmacist', totalSpent: 3237.00, avatarId: 'user-avatar-5' },
 ];
 
 export const monthlySalesData = [
@@ -157,4 +157,11 @@ export const mockPrescriptions: Prescription[] = [
         { name: 'Loratadine 10mg', dosage: '1 tablet daily for 7 days', quantity: 7 },
     ]
   },
+];
+
+export const mockOrders: PurchaseOrder[] = [
+    { id: 'PO-001', supplierName: 'Global Pharma Inc.', orderDate: '2024-07-20', expectedDate: '2024-07-27', status: 'Shipped', total: 150000 },
+    { id: 'PO-002', supplierName: 'MedLife Supplies', orderDate: '2024-07-18', expectedDate: '2024-07-25', status: 'Received', total: 75000 },
+    { id: 'PO-003', supplierName: 'Wellness Distributors', orderDate: '2024-07-22', expectedDate: '2024-07-29', status: 'Pending', total: 210000 },
+    { id: 'PO-004', supplierName: 'HealthCare Logistics', orderDate: '2024-07-15', expectedDate: '2024-07-22', status: 'Cancelled', total: 50000 },
 ];

@@ -13,12 +13,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { User } from "@/lib/types"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { PlaceHolderImages } from "@/lib/placeholder-images"
 import { Badge } from "@/components/ui/badge"
+import { PurchaseOrder } from "@/lib/types"
 
-export const columns: ColumnDef<User>[] = [
+export const columns: ColumnDef<PurchaseOrder>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -42,68 +40,73 @@ export const columns: ColumnDef<User>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "name",
+    accessorKey: "id",
+    header: "Order ID",
+  },
+  {
+    accessorKey: "supplierName",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          User
+          Supplier
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
     },
-    cell: ({ row }) => {
-        const user = row.original;
-        const avatar = PlaceHolderImages.find(p => p.id === user.avatarId);
-        const initials = user.name.split(' ').map(n => n[0]).join('');
-        return (
-            <div className="flex items-center gap-3">
-                <Avatar>
-                    <AvatarImage src={avatar?.imageUrl} alt={user.name} data-ai-hint={avatar?.imageHint} />
-                    <AvatarFallback>{initials}</AvatarFallback>
-                </Avatar>
-                <div className="font-medium">{user.name}</div>
-            </div>
-        )
+    cell: ({ row }) => <div className="font-medium">{row.getValue("supplierName")}</div>,
+  },
+  {
+    accessorKey: "orderDate",
+    header: "Order Date",
+     cell: ({ row }) => {
+      const date = new Date(row.getValue("orderDate"))
+      const formattedDate = date.toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric' });
+      return <div>{formattedDate}</div>
+    }
+  },
+    {
+    accessorKey: "expectedDate",
+    header: "Expected Date",
+     cell: ({ row }) => {
+      const date = new Date(row.getValue("expectedDate"))
+      const formattedDate = date.toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric' });
+      return <div>{formattedDate}</div>
     }
   },
   {
-    accessorKey: "email",
-    header: "Email",
-  },
-  {
-    accessorKey: "role",
-    header: "Role",
+    accessorKey: "status",
+    header: "Status",
     cell: ({ row }) => {
-        const role = row.getValue("role") as string;
-        const variant = role === 'Admin' ? 'destructive' : role === 'Pharmacist' ? 'default' : 'secondary';
-        return <Badge variant={variant as any}>{role}</Badge>
-    }
+      const status = row.original.status;
+      
+      let variant: "default" | "secondary" | "destructive" | "outline" = "secondary";
+      if (status === 'Received') variant = 'default';
+      if (status === 'Shipped') variant = 'outline';
+      if (status === 'Cancelled') variant = 'destructive';
+
+      return <Badge variant={variant}>{status}</Badge>;
+    },
   },
   {
-    accessorKey: "phone",
-    header: "Phone",
-  },
-  {
-    accessorKey: "totalSpent",
-    header: () => <div className="text-right">Total Spent</div>,
+    accessorKey: "total",
+    header: () => <div className="text-right">Total</div>,
     cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("totalSpent"))
+      const amount = parseFloat(row.getValue("total"))
       const formatted = new Intl.NumberFormat("en-IN", {
         style: "currency",
         currency: "INR",
-      }).format(amount)
+      }).format(amount/100)
 
       return <div className="text-right font-medium">{formatted}</div>
     },
   },
   {
     id: "actions",
-    cell: ({ row, table }) => {
-      const user = row.original
-      const { onEdit } = table.options.meta as { onEdit: (user: User) => void };
+    cell: ({ row }) => {
+      const order = row.original
 
       return (
         <DropdownMenu>
@@ -115,15 +118,9 @@ export const columns: ColumnDef<User>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(user.id)}
-            >
-              Copy user ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View details</DropdownMenuItem>
-            <DropdownMenuItem onSelect={() => onEdit(user)}>Edit</DropdownMenuItem>
-            <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
+            <DropdownMenuItem>View Details</DropdownMenuItem>
+            <DropdownMenuItem>Mark as Received</DropdownMenuItem>
+            <DropdownMenuItem className="text-destructive">Cancel Order</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )

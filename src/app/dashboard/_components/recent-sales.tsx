@@ -9,12 +9,12 @@ import {
 import { mockSales } from '@/lib/data';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
-export function RecentSales() {
+export function TodaysTopSales() {
   return (
     <Card className="lg:col-span-3">
       <CardHeader>
-        <CardTitle>Recent Sales</CardTitle>
-        <CardDescription>You made {mockSales.length} sales this month.</CardDescription>
+        <CardTitle>Today's Top Sales</CardTitle>
+        <CardDescription>You made {mockSales.length} sales today.</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-8">

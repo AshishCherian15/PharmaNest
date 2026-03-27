@@ -12,13 +12,13 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { User } from '@/lib/types';
+import { Profile } from '@/lib/types';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Camera } from 'lucide-react';
 
 interface EditProfileDialogProps {
-  user: User;
+  user: Profile;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }

@@ -47,6 +47,9 @@ export default function SettingsPage() {
             <TabsTrigger value="profile">Profile</TabsTrigger>
             <TabsTrigger value="store">Store</TabsTrigger>
             <TabsTrigger value="appearance">Appearance</TabsTrigger>
+            <TabsTrigger value="categories">Categories</TabsTrigger>
+            <TabsTrigger value="generics">Generics</TabsTrigger>
+            <TabsTrigger value="payment">Payment Methods</TabsTrigger>
           </TabsList>
 
           {/* Profile Tab */}
@@ -127,6 +130,47 @@ export default function SettingsPage() {
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+          
+          {/* Other Tabs */}
+          <TabsContent value="categories">
+             <Card>
+                <CardHeader>
+                    <CardTitle>Category Management</CardTitle>
+                    <CardDescription>Add, edit, or remove medicine categories.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div className="flex h-[200px] items-center justify-center rounded-md border-2 border-dashed">
+                        <p className="text-muted-foreground">Category management UI coming soon.</p>
+                    </div>
+                </CardContent>
+             </Card>
+          </TabsContent>
+          <TabsContent value="generics">
+             <Card>
+                <CardHeader>
+                    <CardTitle>Generic Name Management</CardTitle>
+                    <CardDescription>Manage generic names for medicines.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div className="flex h-[200px] items-center justify-center rounded-md border-2 border-dashed">
+                        <p className="text-muted-foreground">Generic name management UI coming soon.</p>
+                    </div>
+                </CardContent>
+             </Card>
+          </TabsContent>
+          <TabsContent value="payment">
+            <Card>
+                <CardHeader>
+                    <CardTitle>Payment Methods</CardTitle>
+                    <CardDescription>Configure accepted payment methods for the POS.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div className="flex h-[200px] items-center justify-center rounded-md border-2 border-dashed">
+                        <p className="text-muted-foreground">Payment method configuration coming soon.</p>
+                    </div>
+                </CardContent>
+             </Card>
           </TabsContent>
         </Tabs>
       </div>

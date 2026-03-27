@@ -16,16 +16,18 @@ import {
   Users,
   Settings,
   ClipboardType,
+  ClipboardList,
 } from 'lucide-react';
 
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/dashboard/inventory', label: 'Inventory', icon: Boxes },
-  { href: '/dashboard/suppliers', label: 'Suppliers', icon: Truck },
   { href: '/dashboard/sales', label: 'Sales', icon: ShoppingCart },
+  { href: '/dashboard/orders', label: 'Orders', icon: ClipboardList },
   { href: '/dashboard/prescriptions', label: 'Prescriptions', icon: ClipboardType },
+  { href: '/dashboard/suppliers', label: 'Suppliers', icon: Truck },
   { href: '/dashboard/reports', label: 'Reports', icon: BarChart3 },
-  { href: '/dashboard/users', label: 'Customers', icon: Users },
+  { href: '/dashboard/users', label: 'Users', icon: Users },
   { href: '/dashboard/settings', label: 'Settings', icon: Settings },
 ];
 
