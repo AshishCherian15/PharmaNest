@@ -1,4 +1,4 @@
-import type { User, Sale, Medicine } from './types';
+import type { User, Sale, Medicine, Supplier } from './types';
 
 export const mockUser: User = {
   name: 'Sofia Davis',
@@ -65,4 +65,12 @@ export const weeklySalesData = [
   { name: 'Fri', sales: Math.floor(Math.random() * 200000) + 100000 },
   { name: 'Sat', sales: Math.floor(Math.random() * 200000) + 100000 },
   { name: 'Sun', sales: Math.floor(Math.random() * 200000) + 100000 },
+];
+
+export const mockSuppliers: Supplier[] = [
+    { id: 'SUP001', name: 'Global Pharma Inc.', contactPerson: 'John Doe', email: 'john.doe@globalpharma.com', phone: '+1-202-555-0173' },
+    { id: 'SUP002', name: 'MedLife Supplies', contactPerson: 'Jane Smith', email: 'jane.smith@medlifesupplies.com', phone: '+44-20-7946-0958' },
+    { id: 'SUP003', name: 'Wellness Distributors', contactPerson: 'David Chen', email: 'david.chen@wellnessdist.com', phone: '+65-6321-4567' },
+    { id: 'SUP004', name: 'HealthCare Logistics', contactPerson: 'Maria Garcia', email: 'maria.garcia@hclogistics.net', phone: '+34-91-123-4567' },
+    { id: 'SUP005', name: 'Asia-Pacific Meds', contactPerson: 'Li Wei', email: 'li.wei@apmeds.com', phone: '+86-10-1234-5678' },
 ];
