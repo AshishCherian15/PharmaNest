@@ -30,3 +30,11 @@ export type Supplier = {
   email: string;
   phone: string;
 };
+
+export type CartItem = {
+    medicineId: string;
+    name: string;
+    price: number;
+    quantity: number;
+    stock: number;
+};
