@@ -3,16 +3,21 @@
 import * as React from "react";
 import { Button } from "@/components/ui/button"
 import { columns } from "./_components/columns"
-import { DataTable } from "./_components/data-table"
+import { DataTable } from "@/app/dashboard/_components/data-table"
 import { mockSuppliers } from "@/lib/data"
 import type { Supplier } from "@/lib/types"
-import { SupplierFormDialog } from "./_components/supplier-form-dialog";
+import { SupplierFormDialog } from "./_components/add-supplier-dialog";
 import { PlusCircle } from "lucide-react";
+import { DeleteConfirmationDialog } from "@/components/delete-confirmation-dialog";
+import { useToast } from "@/hooks/use-toast";
 
 export default function SuppliersPage() {
+  const { toast } = useToast();
   const [data, setData] = React.useState<Supplier[]>([]);
   const [isFormDialogOpen, setFormDialogOpen] = React.useState(false);
+  const [isDeleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
   const [editingSupplier, setEditingSupplier] = React.useState<Supplier | undefined>(undefined);
+  const [selectedSupplierId, setSelectedSupplierId] = React.useState<string | null>(null);
 
 
   React.useEffect(() => {
@@ -25,6 +30,7 @@ export default function SuppliersPage() {
     } else {
       setData(currentData => [{...supplier, id: `SUP${Date.now()}`}, ...currentData]);
     }
+    setEditingSupplier(undefined);
   };
 
   const handleEdit = (supplier: Supplier) => {
@@ -35,6 +41,23 @@ export default function SuppliersPage() {
   const handleAdd = () => {
     setEditingSupplier(undefined);
     setFormDialogOpen(true);
+  }
+
+  const handleDelete = (supplierId: string) => {
+    setSelectedSupplierId(supplierId);
+    setDeleteDialogOpen(true);
+  }
+
+  const handleConfirmDelete = () => {
+    if (selectedSupplierId) {
+      setData(currentData => currentData.filter(s => s.id !== selectedSupplierId));
+       toast({
+        title: "Supplier Deleted",
+        description: "The supplier has been successfully removed.",
+      });
+    }
+    setDeleteDialogOpen(false);
+    setSelectedSupplierId(null);
   }
 
   return (
@@ -49,7 +72,13 @@ export default function SuppliersPage() {
             </Button>
           </div>
         </div>
-        <DataTable columns={columns} data={data} meta={{ onEdit: handleEdit }} />
+        <DataTable 
+          columns={columns} 
+          data={data}
+          filterColumn="name"
+          filterPlaceholder="Filter suppliers..."
+          meta={{ onEdit: handleEdit, onDelete: handleDelete }} 
+        />
       </div>
       <SupplierFormDialog 
         key={editingSupplier?.id}
@@ -57,6 +86,13 @@ export default function SuppliersPage() {
         onOpenChange={setFormDialogOpen}
         onSave={handleSupplierSaved}
         supplier={editingSupplier}
+      />
+      <DeleteConfirmationDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        onConfirm={handleConfirmDelete}
+        title="Are you sure you want to delete this supplier?"
+        description="This action cannot be undone. This will permanently delete the supplier and any associated data."
       />
     </>
   );

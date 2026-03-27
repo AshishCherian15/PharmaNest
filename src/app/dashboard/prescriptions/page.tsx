@@ -3,7 +3,7 @@
 import * as React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { columns } from "./_components/columns"
-import { DataTable } from "@/app/dashboard/users/_components/data-table" 
+import { DataTable } from "@/app/dashboard/_components/data-table" 
 import { mockPrescriptions } from "@/lib/data"
 import type { Prescription } from "@/lib/types"
 

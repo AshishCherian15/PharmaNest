@@ -18,6 +18,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { PlaceHolderImages } from "@/lib/placeholder-images"
 import { Badge } from "@/components/ui/badge"
 
+type TableMeta = {
+  onEdit: (user: User) => void;
+  onDelete: (userId: string) => void;
+};
+
+
 export const columns: ColumnDef<User>[] = [
   {
     id: "select",
@@ -103,7 +109,7 @@ export const columns: ColumnDef<User>[] = [
     id: "actions",
     cell: ({ row, table }) => {
       const user = row.original
-      const { onEdit } = table.options.meta as { onEdit: (user: User) => void };
+      const { onEdit, onDelete } = table.options.meta as TableMeta;
 
       return (
         <DropdownMenu>
@@ -122,8 +128,8 @@ export const columns: ColumnDef<User>[] = [
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>View details</DropdownMenuItem>
-            <DropdownMenuItem onSelect={() => onEdit(user)}>Edit</DropdownMenuItem>
-            <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => onEdit(user)}>Edit</DropdownMenuItem>
+            <DropdownMenuItem className="text-destructive" onClick={() => onDelete(user.id)}>Delete</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )

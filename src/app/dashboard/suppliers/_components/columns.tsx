@@ -15,6 +15,11 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Supplier } from "@/lib/types"
 
+type TableMeta = {
+  onEdit: (supplier: Supplier) => void;
+  onDelete: (supplierId: string) => void;
+};
+
 export const columns: ColumnDef<Supplier>[] = [
   {
     id: "select",
@@ -69,7 +74,7 @@ export const columns: ColumnDef<Supplier>[] = [
     id: "actions",
     cell: ({ row, table }) => {
       const supplier = row.original
-      const { onEdit } = table.options.meta as { onEdit: (supplier: Supplier) => void };
+      const { onEdit, onDelete } = table.options.meta as TableMeta;
 
       return (
         <DropdownMenu>
@@ -88,8 +93,8 @@ export const columns: ColumnDef<Supplier>[] = [
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>View details</DropdownMenuItem>
-            <DropdownMenuItem onSelect={() => onEdit(supplier)}>Edit</DropdownMenuItem>
-            <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => onEdit(supplier)}>Edit</DropdownMenuItem>
+            <DropdownMenuItem className="text-destructive" onClick={() => onDelete(supplier.id)}>Delete</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )

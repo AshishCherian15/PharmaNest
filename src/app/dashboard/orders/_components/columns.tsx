@@ -16,6 +16,10 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { PurchaseOrder } from "@/lib/types"
 
+type TableMeta = {
+  updateStatus: (id: string, status: PurchaseOrder['status']) => void;
+}
+
 export const columns: ColumnDef<PurchaseOrder>[] = [
   {
     id: "select",
@@ -87,7 +91,7 @@ export const columns: ColumnDef<PurchaseOrder>[] = [
       if (status === 'Shipped') variant = 'outline';
       if (status === 'Cancelled') variant = 'destructive';
 
-      return <Badge variant={variant}>{status}</Badge>;
+      return <Badge variant={variant} className="capitalize">{status}</Badge>;
     },
   },
   {
@@ -105,8 +109,9 @@ export const columns: ColumnDef<PurchaseOrder>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => {
+    cell: ({ row, table }) => {
       const order = row.original
+      const { updateStatus } = table.options.meta as TableMeta;
 
       return (
         <DropdownMenu>
@@ -119,8 +124,16 @@ export const columns: ColumnDef<PurchaseOrder>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem>View Details</DropdownMenuItem>
-            <DropdownMenuItem>Mark as Received</DropdownMenuItem>
-            <DropdownMenuItem className="text-destructive">Cancel Order</DropdownMenuItem>
+             <DropdownMenuSeparator />
+            {order.status === 'Pending' && (
+                <DropdownMenuItem onSelect={() => updateStatus(order.id, 'Shipped')}>Mark as Shipped</DropdownMenuItem>
+            )}
+            {order.status === 'Shipped' && (
+                <DropdownMenuItem onSelect={() => updateStatus(order.id, 'Received')}>Mark as Received</DropdownMenuItem>
+            )}
+            {order.status !== 'Received' && order.status !== 'Cancelled' && (
+                <DropdownMenuItem className="text-destructive" onSelect={() => updateStatus(order.id, 'Cancelled')}>Cancel Order</DropdownMenuItem>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       )

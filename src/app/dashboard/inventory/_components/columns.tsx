@@ -18,6 +18,11 @@ import { Badge } from "@/components/ui/badge"
 import { Medicine } from "@/lib/types"
 import { PlaceHolderImages } from "@/lib/placeholder-images"
 
+type TableMeta = {
+  onEdit: (medicine: Medicine) => void;
+  onDelete: (medicineId: string) => void;
+}
+
 export const columns: ColumnDef<Medicine>[] = [
   {
     id: "select",
@@ -141,7 +146,7 @@ export const columns: ColumnDef<Medicine>[] = [
     id: "actions",
     cell: ({ row, table }) => {
       const medicine = row.original
-      const { onEdit } = table.options.meta as { onEdit: (medicine: Medicine) => void };
+      const { onEdit, onDelete } = table.options.meta as TableMeta;
 
       return (
         <DropdownMenu>
@@ -160,8 +165,8 @@ export const columns: ColumnDef<Medicine>[] = [
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>View details</DropdownMenuItem>
-            <DropdownMenuItem onSelect={() => onEdit(medicine)}>Edit</DropdownMenuItem>
-            <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => onEdit(medicine)}>Edit</DropdownMenuItem>
+            <DropdownMenuItem className="text-destructive" onClick={() => onDelete(medicine.id)}>Delete</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )
