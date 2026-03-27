@@ -1,4 +1,4 @@
-import type { Profile, Sale, Medicine, Supplier, User, Prescription, PurchaseOrder } from './types';
+import type { Profile, Sale, Medicine, Supplier, User, Prescription, PurchaseOrder, LandingCategory } from './types';
 
 export const mockUser: Profile = {
   name: 'Sofia Davis',
@@ -164,4 +164,28 @@ export const mockOrders: PurchaseOrder[] = [
     { id: 'PO-002', supplierName: 'MedLife Supplies', orderDate: '2024-07-18', expectedDate: '2024-07-25', status: 'Received', total: 75000 },
     { id: 'PO-003', supplierName: 'Wellness Distributors', orderDate: '2024-07-22', expectedDate: '2024-07-29', status: 'Pending', total: 210000 },
     { id: 'PO-004', supplierName: 'HealthCare Logistics', orderDate: '2024-07-15', expectedDate: '2024-07-22', status: 'Cancelled', total: 50000 },
+];
+
+export const landingCategories: LandingCategory[] = [
+    { id: 'cat-1', name: 'Personal Care', imageId: 'cat-image-1', imageHint: 'skincare products' },
+    { id: 'cat-2', name: 'Vitamins', imageId: 'cat-image-2', imageHint: 'vitamin bottles' },
+    { id: 'cat-3', name: 'Baby Care', imageId: 'cat-image-3', imageHint: 'baby products' },
+    { id: 'cat-4', name: 'Medical Devices', imageId: 'cat-image-4', imageHint: 'medical equipment' },
+    { id: 'cat-5', name: 'Pain Relief', imageId: 'cat-image-5', imageHint: 'painkiller pills' },
+    { id: 'cat-6', name: 'Health Foods', imageId: 'cat-image-6', imageHint: 'healthy food' },
+];
+
+export const landingProducts: Medicine[] = [
+    { id: 'LPROD001', name: 'Multivitamin Gummies', genericName: 'Multivitamin', description: 'Tasty and chewy multivitamin gummies for adults.', category: 'Vitamins', price: 1299, quantity: 100, expiryDate: '2026-01-01', imageId: 'lprod-image-1', rating: 5, reviews: 120, previousPrice: 1599, isNew: true },
+    { id: 'LPROD002', name: 'Gentle Skin Cleanser', genericName: 'Cetyl Alcohol', description: 'A mild, non-irritating cleanser for all skin types.', category: 'Personal Care', price: 850, quantity: 80, expiryDate: '2025-11-01', imageId: 'lprod-image-2', rating: 4, reviews: 98, isNew: true },
+    { id: 'LPROD003', name: 'Organic Baby Shampoo', genericName: 'Organic Shampoo', description: 'Tear-free and gentle shampoo for babies.', category: 'Baby Care', price: 650, quantity: 120, expiryDate: '2025-09-01', imageId: 'lprod-image-3', rating: 5, reviews: 75, isNew: true },
+    { id: 'LPROD004', name: 'Digital Thermometer', genericName: 'Thermometer', description: 'Fast and accurate digital thermometer.', category: 'Medical Devices', price: 499, quantity: 200, expiryDate: '2030-01-01', imageId: 'lprod-image-4', rating: 4, reviews: 210, previousPrice: 699 },
+    { id: 'LPROD005', name: 'Vitamin C Effervescent Tablets', genericName: 'Ascorbic Acid', description: 'Boost your immunity with Vitamin C.', category: 'Vitamins', price: 349, quantity: 300, expiryDate: '2025-08-01', imageId: 'lprod-image-5', rating: 5, reviews: 150, previousPrice: 499, isNew: true },
+    { id: 'LPROD006', name: 'Pain Relief Spray', genericName: 'Diclofenac', description: 'Instant relief from muscle and joint pain.', category: 'Pain Relief', price: 250, quantity: 150, expiryDate: '2025-06-01', imageId: 'lprod-image-6', rating: 4, reviews: 88, isNew: false },
+    { id: 'LPROD007', name: 'Protein Bar - Chocolate', genericName: 'Protein Supplement', description: 'Healthy and delicious protein bar.', category: 'Health Foods', price: 150, quantity: 400, expiryDate: '2025-05-01', imageId: 'lprod-image-7', rating: 5, reviews: 180, isNew: false },
+    { id: 'LPROD008', name: 'Sunscreen SPF 50', genericName: 'Sunscreen', description: 'Broad-spectrum protection against UVA and UVB rays.', category: 'Personal Care', price: 799, quantity: 90, expiryDate: '2026-03-01', imageId: 'lprod-image-8', rating: 4, reviews: 112, previousPrice: 999 },
+    { id: 'LPROD009', name: 'Baby Diaper Pants (Medium)', genericName: 'Diapers', description: 'Soft and absorbent diaper pants for babies.', category: 'Baby Care', price: 999, quantity: 250, expiryDate: '2026-10-01', imageId: 'lprod-image-9', rating: 5, reviews: 250, isNew: true },
+    { id: 'LPROD010', name: 'Omega-3 Fish Oil Capsules', genericName: 'Fish Oil', description: 'Supports heart and brain health.', category: 'Vitamins', price: 1100, quantity: 130, expiryDate: '2026-02-01', imageId: 'lprod-image-10', rating: 5, reviews: 190 },
+    { id: 'LPROD011', name: 'Knee Pain Relief Patch', genericName: 'Herbal Patch', description: 'Herbal patch for effective knee pain relief.', category: 'Pain Relief', price: 450, quantity: 180, expiryDate: '2025-07-01', imageId: 'lprod-image-11', rating: 4, reviews: 65, previousPrice: 550 },
+    { id: 'LPROD012', name: 'Blood Pressure Monitor', genericName: 'BP Monitor', description: 'Automatic digital blood pressure monitor.', category: 'Medical Devices', price: 2500, quantity: 60, expiryDate: '2032-01-01', imageId: 'lprod-image-12', rating: 5, reviews: 132 },
 ];

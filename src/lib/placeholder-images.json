@@ -39,62 +39,176 @@
     {
       "id": "med-image-1",
       "description": "Image of Paracetamol pills",
-      "imageUrl": "https://picsum.photos/seed/med1/40/40",
+      "imageUrl": "https://picsum.photos/seed/med1/250/250",
       "imageHint": "pills medication"
     },
     {
       "id": "med-image-2",
       "description": "Image of Amoxicillin capsules",
-      "imageUrl": "https://picsum.photos/seed/med2/40/40",
+      "imageUrl": "https://picsum.photos/seed/med2/250/250",
       "imageHint": "capsules antibiotic"
     },
     {
       "id": "med-image-3",
       "description": "Image of Ibuprofen tablets",
-      "imageUrl": "https://picsum.photos/seed/med3/40/40",
+      "imageUrl": "https://picsum.photos/seed/med3/250/250",
       "imageHint": "tablets painkiller"
     },
     {
       "id": "med-image-4",
       "description": "Image of Loratadine pills",
-      "imageUrl": "https://picsum.photos/seed/med4/40/40",
+      "imageUrl": "https://picsum.photos/seed/med4/250/250",
       "imageHint": "pills allergy"
     },
     {
       "id": "med-image-5",
       "description": "Image of Aspirin tablets",
-      "imageUrl": "https://picsum.photos/seed/med5/40/40",
+      "imageUrl": "https://picsum.photos/seed/med5/250/250",
       "imageHint": "tablets heart"
     },
     {
       "id": "med-image-6",
       "description": "Image of Omeprazole capsules",
-      "imageUrl": "https://picsum.photos/seed/med6/40/40",
+      "imageUrl": "https://picsum.photos/seed/med6/250/250",
       "imageHint": "capsules stomach"
     },
     {
       "id": "med-image-7",
       "description": "Image of Metformin pills",
-      "imageUrl": "https://picsum.photos/seed/med7/40/40",
+      "imageUrl": "https://picsum.photos/seed/med7/250/250",
       "imageHint": "pills diabetes"
     },
     {
       "id": "med-image-8",
       "description": "Image of a Salbutamol Inhaler",
-      "imageUrl": "https://picsum.photos/seed/med8/40/40",
+      "imageUrl": "https://picsum.photos/seed/med8/250/250",
       "imageHint": "inhaler asthma"
     },
     {
       "id": "med-image-9",
       "description": "Image of Cetirizine tablets",
-      "imageUrl": "https://picsum.photos/seed/med9/40/40",
+      "imageUrl": "https://picsum.photos/seed/med9/250/250",
       "imageHint": "tablets allergy"
     },
     {
       "id": "med-image-10",
       "description": "Image of Vitamin D3 softgels",
-      "imageUrl": "https://picsum.photos/seed/med10/40/40",
+      "imageUrl": "https://picsum.photos/seed/med10/250/250",
       "imageHint": "vitamins supplement"
+    },
+    {
+      "id": "hero-1",
+      "description": "Hero banner with medicine products",
+      "imageUrl": "https://picsum.photos/seed/hero1/1200/400",
+      "imageHint": "medicine products"
+    },
+    {
+      "id": "cat-image-1",
+      "description": "Personal care products",
+      "imageUrl": "https://picsum.photos/seed/cat1/150/150",
+      "imageHint": "skincare products"
+    },
+    {
+      "id": "cat-image-2",
+      "description": "Vitamin bottles",
+      "imageUrl": "https://picsum.photos/seed/cat2/150/150",
+      "imageHint": "vitamin bottles"
+    },
+    {
+      "id": "cat-image-3",
+      "description": "Baby care products",
+      "imageUrl": "https://picsum.photos/seed/cat3/150/150",
+      "imageHint": "baby products"
+    },
+    {
+      "id": "cat-image-4",
+      "description": "Medical devices",
+      "imageUrl": "https://picsum.photos/seed/cat4/150/150",
+      "imageHint": "medical equipment"
+    },
+    {
+      "id": "cat-image-5",
+      "description": "Pain relief pills",
+      "imageUrl": "https://picsum.photos/seed/cat5/150/150",
+      "imageHint": "painkiller pills"
+    },
+    {
+      "id": "cat-image-6",
+      "description": "Health food items",
+      "imageUrl": "https://picsum.photos/seed/cat6/150/150",
+      "imageHint": "healthy food"
+    },
+    {
+      "id": "lprod-image-1",
+      "description": "Multivitamin Gummies",
+      "imageUrl": "https://picsum.photos/seed/lprod1/250/250",
+      "imageHint": "gummy vitamins"
+    },
+    {
+      "id": "lprod-image-2",
+      "description": "Gentle Skin Cleanser",
+      "imageUrl": "https://picsum.photos/seed/lprod2/250/250",
+      "imageHint": "skin cleanser"
+    },
+    {
+      "id": "lprod-image-3",
+      "description": "Organic Baby Shampoo",
+      "imageUrl": "https://picsum.photos/seed/lprod3/250/250",
+      "imageHint": "baby shampoo"
+    },
+    {
+      "id": "lprod-image-4",
+      "description": "Digital Thermometer",
+      "imageUrl": "https://picsum.photos/seed/lprod4/250/250",
+      "imageHint": "digital thermometer"
+    },
+    {
+      "id": "lprod-image-5",
+      "description": "Vitamin C Tablets",
+      "imageUrl": "https://picsum.photos/seed/lprod5/250/250",
+      "imageHint": "vitamin c"
+    },
+    {
+      "id": "lprod-image-6",
+      "description": "Pain Relief Spray",
+      "imageUrl": "https://picsum.photos/seed/lprod6/250/250",
+      "imageHint": "pain spray"
+    },
+    {
+      "id": "lprod-image-7",
+      "description": "Protein Bar",
+      "imageUrl": "https://picsum.photos/seed/lprod7/250/250",
+      "imageHint": "protein bar"
+    },
+    {
+      "id": "lprod-image-8",
+      "description": "Sunscreen SPF 50",
+      "imageUrl": "https://picsum.photos/seed/lprod8/250/250",
+      "imageHint": "sunscreen bottle"
+    },
+    {
+      "id": "lprod-image-9",
+      "description": "Baby Diaper Pants",
+      "imageUrl": "https://picsum.photos/seed/lprod9/250/250",
+      "imageHint": "baby diapers"
+    },
+    {
+      "id": "lprod-image-10",
+      "description": "Omega-3 Capsules",
+      "imageUrl": "https://picsum.photos/seed/lprod10/250/250",
+      "imageHint": "fish oil"
+    },
+    {
+      "id": "lprod-image-11",
+      "description": "Knee Pain Patch",
+      "imageUrl": "https://picsum.photos/seed/lprod11/250/250",
+      "imageHint": "pain patch"
+    },
+    {
+      "id": "lprod-image-12",
+      "description": "BP Monitor",
+      "imageUrl": "https://picsum.photos/seed/lprod12/250/250",
+      "imageHint": "pressure monitor"
     }
   ]
 }

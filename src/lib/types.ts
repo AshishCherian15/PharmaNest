@@ -22,6 +22,10 @@ export type Medicine = {
   quantity: number;
   expiryDate: string;
   imageId: string;
+  rating?: number;
+  reviews?: number;
+  isNew?: boolean;
+  previousPrice?: number;
 };
 
 export type Supplier = {
@@ -73,4 +77,11 @@ export type PurchaseOrder = {
   expectedDate: string;
   status: 'Pending' | 'Shipped' | 'Received' | 'Cancelled';
   total: number;
+};
+
+export type LandingCategory = {
+  id: string;
+  name: string;
+  imageId: string;
+  imageHint: string;
 };
