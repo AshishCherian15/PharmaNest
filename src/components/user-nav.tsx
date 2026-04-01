@@ -60,20 +60,20 @@ export function UserNav({ user }: UserNavProps) {
               <UserIcon />
               Profile
             </DropdownMenuItem>
-            <Link href="/dashboard/settings" passHref legacyBehavior>
-                <DropdownMenuItem>
+            <DropdownMenuItem asChild>
+                <Link href="/dashboard/settings">
                 <Settings />
                 Settings
-                </DropdownMenuItem>
-            </Link>
+                </Link>
+            </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <Link href="/login" passHref legacyBehavior>
-            <DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href="/login">
               <LogOut />
               Log out
-            </DropdownMenuItem>
-          </Link>
+            </Link>
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
       <EditProfileDialog user={user} open={isProfileDialogOpen} onOpenChange={setProfileDialogOpen} />

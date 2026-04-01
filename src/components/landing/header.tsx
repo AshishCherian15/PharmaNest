@@ -84,12 +84,12 @@ export function LandingHeader() {
             <ShoppingCart className="h-5 w-5" />
             <span className="sr-only">Cart</span>
           </Button>
-          <Link href="/login" passHref legacyBehavior>
-            <Button variant="ghost" size="icon">
+          <Button asChild variant="ghost" size="icon">
+            <Link href="/login">
                 <User className="h-5 w-5" />
                 <span className="sr-only">Login</span>
-            </Button>
-          </Link>
+            </Link>
+          </Button>
         </div>
       </div>
     </header>
