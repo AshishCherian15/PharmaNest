@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -45,7 +47,7 @@ export function LandingHeader() {
                         </Link>
                         <nav className="flex flex-col gap-3">
                             {navLinks.map(link => (
-                                <Link key={link.href} href={link.href} className="text-muted-foreground hover:text-foreground">
+                                <Link key={link.label} href={link.href} className="text-muted-foreground hover:text-foreground">
                                     {link.label}
                                 </Link>
                             ))}
@@ -58,7 +60,7 @@ export function LandingHeader() {
         <div className="hidden md:flex flex-1 items-center justify-center">
           <nav className="flex items-center gap-6 text-sm">
             {navLinks.map(link => (
-                <Link key={link.href} href={link.href} className="text-muted-foreground transition-colors hover:text-foreground">
+                <Link key={link.label} href={link.href} className="text-muted-foreground transition-colors hover:text-foreground">
                     {link.label}
                 </Link>
             ))}
