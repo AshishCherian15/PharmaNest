@@ -1,16 +1,19 @@
 'use client';
 
 import * as React from "react";
+import { useMemo } from 'react';
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import { columns } from "./_components/columns"
 import { DataTable } from "@/app/dashboard/_components/data-table"
 import { mockSuppliers } from "@/lib/data"
 import type { Supplier } from "@/lib/types"
 import { SupplierFormDialog } from "./_components/add-supplier-dialog";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, Download, Building2, Phone, Mail } from "lucide-react";
 import { DeleteConfirmationDialog } from "@/components/delete-confirmation-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { PageHeader } from "@/components/dashboard/page-header";
+import { StatCard } from "../_components/stat-card";
 
 export default function SuppliersPage() {
   const { toast } = useToast();
@@ -24,6 +27,37 @@ export default function SuppliersPage() {
   React.useEffect(() => {
     setData(mockSuppliers);
   }, []);
+
+  const metrics = useMemo(() => {
+    return {
+      total: data.length,
+      withEmail: data.filter(s => s.email).length,
+      withPhone: data.filter(s => s.phone).length,
+    };
+  }, [data]);
+
+  const handleExportSuppliers = () => {
+    const rows = [
+      ['ID', 'Name', 'Contact Person', 'Email', 'Phone'],
+      ...data.map(supplier => [
+        supplier.id,
+        supplier.name,
+        supplier.contactPerson,
+        supplier.email,
+        supplier.phone,
+      ]),
+    ];
+    const csv = rows.map(row => row.map(value => `"${value}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'pharma-nest-suppliers.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
 
   const handleSupplierSaved = (supplier: Supplier) => {
     if (editingSupplier) {
@@ -68,12 +102,44 @@ export default function SuppliersPage() {
           title="Suppliers"
           description="Manage your supplier partnerships."
           action={
-            <Button onClick={handleAdd}>
-              <PlusCircle className="mr-2 h-4 w-4" />
-              Add Supplier
-            </Button>
+            <>
+              <Button variant="outline" onClick={handleExportSuppliers}>
+                <Download className="mr-2 h-4 w-4" />
+                Export CSV
+              </Button>
+              <Button onClick={handleAdd}>
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Add Supplier
+              </Button>
+            </>
           }
         />
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <StatCard
+            title="Total Suppliers"
+            value={metrics.total.toString()}
+            description="Active supplier partnerships"
+            icon={Building2}
+          />
+          <StatCard
+            title="Email Contacts"
+            value={metrics.withEmail.toString()}
+            description="Suppliers with email addresses"
+            icon={Mail}
+          />
+          <StatCard
+            title="Phone Contacts"
+            value={metrics.withPhone.toString()}
+            description="Suppliers with phone numbers"
+            icon={Phone}
+          />
+          <StatCard
+            title="Contact Coverage"
+            value={`${data.length > 0 ? Math.round((metrics.withEmail + metrics.withPhone) / (data.length * 2) * 100) : 0}%`}
+            description="Communication method availability"
+            icon={Building2}
+          />
+        </div>
         <DataTable 
           columns={columns} 
           data={data}

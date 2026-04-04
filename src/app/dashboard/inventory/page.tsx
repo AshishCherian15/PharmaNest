@@ -1,13 +1,15 @@
 'use client';
 
 import * as React from 'react';
+import { useMemo } from 'react';
 import { mockMedicines } from '@/lib/data';
 import type { Medicine } from '@/lib/types';
 import { MedicineFormDialog } from './_components/add-medicine-dialog';
 import { DeleteConfirmationDialog } from '@/components/delete-confirmation-dialog';
 import { Pagination } from '@/components/ui/pagination';
 import { useToast } from '@/hooks/use-toast';
-import { PlusCircle, Download, Search, Filter } from 'lucide-react';
+import { PlusCircle, Download, Search, Filter, AlertTriangle, Package, TrendingUp } from 'lucide-react';
+import { StatCard } from '../_components/stat-card';
 
 export default function InventoryPage() {
   const { toast } = useToast();
@@ -23,6 +25,15 @@ export default function InventoryPage() {
   const [deletingId, setDeletingId]       = React.useState<string | null>(null);
 
   React.useEffect(() => { setData(mockMedicines); }, []);
+
+  const inventory = useMemo(() => {
+    return {
+      totalMedicines: data.length,
+      lowStockItems: data.filter(m => m.quantity > 0 && m.quantity <= 10).length,
+      expiredItems: data.filter(m => new Date(m.expiryDate) < new Date()).length,
+      totalValue: data.reduce((sum, m) => sum + (m.price * m.quantity), 0),
+    };
+  }, [data]);
 
   const categories = ['all', ...Array.from(new Set(data.map((m) => m.category)))];
 
@@ -100,6 +111,39 @@ export default function InventoryPage() {
               <PlusCircle className="h-4 w-4" /> Add Medicine
             </button>
           </div>
+        </div>
+
+        {/* ── KPI Cards ── */}
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <StatCard
+            title="Total Medicines"
+            value={inventory.totalMedicines.toString()}
+            description="Complete medicine catalog"
+            icon={Package}
+          />
+          <StatCard
+            title="Low Stock Items"
+            value={inventory.lowStockItems.toString()}
+            description="Requiring reorder"
+            icon={AlertTriangle}
+            variant={inventory.lowStockItems > 0 ? "destructive" : undefined}
+          />
+          <StatCard
+            title="Expired Medicines"
+            value={inventory.expiredItems.toString()}
+            description="Action required"
+            icon={AlertTriangle}
+            variant={inventory.expiredItems > 0 ? "destructive" : undefined}
+          />
+          <StatCard
+            title="Inventory Value"
+            value={(inventory.totalValue / 100).toLocaleString('en-IN', {
+              style: 'currency',
+              currency: 'INR',
+            })}
+            description="Total stock worth"
+            icon={TrendingUp}
+          />
         </div>
 
         {/* ── Filters ── */}
