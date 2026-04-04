@@ -2,12 +2,13 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { Star, ShoppingCart } from 'lucide-react';
-
-import { Button } from '@/components/ui/button';
+import { ShoppingCart, Check } from 'lucide-react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import type { Medicine } from '@/lib/types';
 import { cn } from '@/lib/utils';
+import { useState } from 'react';
+import { useStoreCart } from '@/hooks/use-store-cart';
+import { useToast } from '@/hooks/use-toast';
 
 interface ProductCardProps {
   product: Medicine;
@@ -15,81 +16,140 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, className }: ProductCardProps) {
-  const image = PlaceHolderImages.find((img) => img.id === product.imageId);
+  const image   = PlaceHolderImages.find((img) => img.id === product.imageId);
+  const [added, setAdded] = useState(false);
+  const { addItem } = useStoreCart();
+  const { toast }   = useToast();
 
-  const renderStars = () => {
-    const stars = [];
-    const rating = product.rating || 0;
-    for (let i = 1; i <= 5; i++) {
-      stars.push(
-        <Star
-          key={i}
-          className={cn(
-            'h-4 w-4',
-            i <= rating ? 'fill-yellow-400 text-yellow-400' : 'fill-muted stroke-muted-foreground'
-          )}
-        />
-      );
+  const discount = product.previousPrice
+    ? Math.round(((product.previousPrice - product.price) / product.previousPrice) * 100)
+    : null;
+
+  const isOutOfStock = product.quantity === 0;
+  const isLowStock   = product.quantity > 0 && product.quantity < 10;
+
+  const handleAdd = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isOutOfStock) {
+      toast({ variant: 'destructive', title: 'Out of stock', description: `${product.name} is currently unavailable.` });
+      return;
     }
-    return stars;
+    addItem(product);
+    setAdded(true);
+    toast({ title: '✓ Added to cart', description: product.name });
+    setTimeout(() => setAdded(false), 1500);
   };
 
   return (
-    <div className={cn('group relative', className)}>
-      <div className="overflow-hidden rounded-lg border bg-card transition-shadow hover:shadow-md">
-        <Link href="#" className="block">
-          <div className="aspect-square w-full">
-            {image && (
-              <Image
-                src={image.imageUrl}
-                alt={product.name}
-                width={250}
-                height={250}
-                className="h-full w-full object-cover"
-                data-ai-hint={image.imageHint}
-              />
+    <Link href={`/products/${product.id}`} className={cn('group block', className)}>
+      <div className="stitch-product-card border border-outline-variant/20 shadow-sm h-full flex flex-col">
+
+        {/* ── Image ── */}
+        <div className="relative aspect-[4/3] overflow-hidden bg-surface-container-low">
+          {image ? (
+            <Image
+              src={image.imageUrl}
+              alt={product.name}
+              fill
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+              className="object-cover transition-transform duration-500 group-hover:scale-110"
+              data-ai-hint={image.imageHint}
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center text-5xl">💊</div>
+          )}
+
+          {/* Badges */}
+          <div className="absolute left-2 top-2 flex flex-col gap-1">
+            {discount && (
+              <span className="rounded-full bg-amber-500 px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">
+                -{discount}%
+              </span>
             )}
-             {product.previousPrice && (
-              <div className="absolute top-2 left-2 rounded-full bg-destructive px-2 py-1 text-xs font-medium text-destructive-foreground">
-                Sale
-              </div>
+            {product.isNew && !discount && (
+              <span className="rounded-full bg-stitch-primary px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">
+                NEW
+              </span>
+            )}
+            {isLowStock && (
+              <span className="rounded-full bg-amber-500 px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">
+                Low stock
+              </span>
             )}
           </div>
-        </Link>
-        <div className="p-4">
-          <h3 className="mb-1 h-10 overflow-hidden text-sm font-medium">
-            <Link href="#" className="hover:underline">
+
+          {product.requiresPrescription && (
+            <span className="absolute right-2 top-2 rounded-full bg-stitch-primary/90 px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">
+              Rx
+            </span>
+          )}
+
+          {isOutOfStock && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-[1px]">
+              <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-bold text-on-surface">Out of Stock</span>
+            </div>
+          )}
+
+          {/* BESTSELLER badge */}
+          {!isOutOfStock && !product.isNew && !discount && product.reviews && product.reviews > 100 && (
+            <span className="absolute right-2 top-2 rounded-full bg-white/90 px-2 py-0.5 text-[10px] font-bold text-stitch-primary shadow-sm backdrop-blur-sm">
+              BESTSELLER
+            </span>
+          )}
+        </div>
+
+        {/* ── Body ── */}
+        <div className="flex flex-1 flex-col p-4 space-y-2">
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-stitch-secondary">{product.category}</p>
+            <h3 className="mt-0.5 line-clamp-2 text-[13px] font-bold leading-snug text-on-surface group-hover:text-stitch-primary transition-colors">
               {product.name}
-            </Link>
-          </h3>
-          <p className="mb-2 text-xs text-muted-foreground">{product.category}</p>
-          <div className="mb-3 flex items-center gap-1">{renderStars()}
-            <span className="text-xs text-muted-foreground">({product.reviews || 0})</span>
+            </h3>
           </div>
-          <div className="flex items-baseline justify-between">
-            <div className='flex items-baseline gap-2'>
-              <p className="text-lg font-bold">
-                {(product.price / 100).toLocaleString('en-IN', {
-                  style: 'currency',
-                  currency: 'INR',
-                })}
-              </p>
-              {product.previousPrice && (
-                  <p className="text-sm text-muted-foreground line-through">
-                  {(product.previousPrice / 100).toLocaleString('en-IN', {
-                      style: 'currency',
-                      currency: 'INR',
-                  })}
-                  </p>
+
+          {/* Rating */}
+          {product.rating && (
+            <div className="flex items-center gap-1">
+              <div className="flex">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <span key={i} className={`text-[10px] ${i < Math.floor(product.rating!) ? 'text-amber-400' : 'text-outline/30'}`}>★</span>
+                ))}
+              </div>
+              {product.reviews && (
+                <span className="text-[10px] text-outline">({product.reviews})</span>
               )}
             </div>
-            <Button size="icon" variant="outline" className="h-8 w-8">
-              <ShoppingCart className="h-4 w-4" />
-              <span className="sr-only">Add to Cart</span>
-            </Button>
+          )}
+
+          {/* Price + cart */}
+          <div className="mt-auto flex items-end justify-between gap-2 pt-1">
+            <div>
+              <p className="text-[15px] font-extrabold text-stitch-primary">
+                {(product.price / 100).toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}
+              </p>
+              {product.previousPrice && (
+                <p className="text-[11px] text-outline line-through">
+                  {(product.previousPrice / 100).toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}
+                </p>
+              )}
+            </div>
+            <button
+              onClick={handleAdd}
+              disabled={isOutOfStock}
+              className={cn(
+                'flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl text-white transition-all active:scale-90 disabled:opacity-40',
+                added
+                  ? 'bg-green-500 scale-95'
+                  : 'bg-stitch-primary hover:bg-stitch-primary-container'
+              )}
+              title={isOutOfStock ? 'Out of stock' : 'Add to cart'}
+            >
+              {added ? <Check className="h-4 w-4" /> : <ShoppingCart className="h-4 w-4" />}
+            </button>
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }

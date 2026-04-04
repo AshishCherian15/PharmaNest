@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -24,11 +25,28 @@ type UserNavProps = {
 
 export function UserNav({ user }: UserNavProps) {
   const [isProfileDialogOpen, setProfileDialogOpen] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
+  const pathname = usePathname();
+  const router = useRouter();
   const userAvatar = PlaceHolderImages.find((img) => img.id === user.avatarId);
   const userInitials = user.name
     .split(' ')
     .map((n) => n[0])
     .join('');
+
+  const inCustomerModule = pathname.startsWith('/customer');
+  const profilePath = inCustomerModule ? '/customer/profile' : '/dashboard/settings';
+
+  const handleLogout = async () => {
+    setLoggingOut(true);
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+      router.push('/login');
+      router.refresh();
+    } finally {
+      setLoggingOut(false);
+    }
+  };
 
   return (
     <>
@@ -61,18 +79,16 @@ export function UserNav({ user }: UserNavProps) {
               Profile
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-                <Link href="/dashboard/settings">
+                <Link href={profilePath}>
                 <Settings />
                 Settings
                 </Link>
             </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <DropdownMenuItem asChild>
-            <Link href="/login">
+          <DropdownMenuItem onSelect={handleLogout} disabled={loggingOut}>
               <LogOut />
-              Log out
-            </Link>
+              {loggingOut ? 'Logging out...' : 'Log out'}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

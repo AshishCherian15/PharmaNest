@@ -10,6 +10,7 @@ import { SupplierFormDialog } from "./_components/add-supplier-dialog";
 import { PlusCircle } from "lucide-react";
 import { DeleteConfirmationDialog } from "@/components/delete-confirmation-dialog";
 import { useToast } from "@/hooks/use-toast";
+import { PageHeader } from "@/components/dashboard/page-header";
 
 export default function SuppliersPage() {
   const { toast } = useToast();
@@ -63,15 +64,16 @@ export default function SuppliersPage() {
   return (
     <>
       <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
-        <div className="flex items-center justify-between space-y-2">
-          <h2 className="text-3xl font-bold tracking-tight">Suppliers</h2>
-          <div className="flex items-center space-x-2">
+        <PageHeader
+          title="Suppliers"
+          description="Manage your supplier partnerships."
+          action={
             <Button onClick={handleAdd}>
               <PlusCircle className="mr-2 h-4 w-4" />
               Add Supplier
             </Button>
-          </div>
-        </div>
+          }
+        />
         <DataTable 
           columns={columns} 
           data={data}

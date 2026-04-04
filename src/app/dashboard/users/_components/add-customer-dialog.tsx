@@ -61,8 +61,6 @@ export function UserFormDialog({ open, onOpenChange, onSave, user }: UserFormDia
         totalSpent: user?.totalSpent || 0,
         avatarId: user?.avatarId || randomAvatar.id,
     };
-    
-    console.log('New User Data:', savedUser);
 
     setTimeout(() => {
       onSave(savedUser);

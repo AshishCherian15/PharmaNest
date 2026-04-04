@@ -18,6 +18,7 @@ export type Medicine = {
   genericName: string;
   description: string;
   category: string;
+  requiresPrescription?: boolean;
   price: number;
   quantity: number;
   expiryDate: string;
@@ -84,4 +85,33 @@ export type LandingCategory = {
   name: string;
   imageId: string;
   imageHint: string;
+};
+
+export type CustomerOrderItem = {
+  medicineId: string;
+  name: string;
+  genericName: string;
+  unitPrice: number;
+  quantity: number;
+};
+
+export type CustomerOrderStatus =
+  | 'Placed'
+  | 'Processing'
+  | 'Shipped'
+  | 'Delivered'
+  | 'Cancelled';
+
+export type CustomerOrder = {
+  id: string;
+  customerId: string;
+  customerName: string;
+  customerEmail: string;
+  address: string;
+  items: CustomerOrderItem[];
+  subtotal: number;
+  deliveryFee: number;
+  total: number;
+  status: CustomerOrderStatus;
+  createdAt: string;
 };

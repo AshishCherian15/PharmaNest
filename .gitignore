@@ -43,3 +43,6 @@ next-env.d.ts
 # firebase
 firebase-debug.log
 firestore-debug.log
+
+# generated design artifact dumps
+stitch_pharma_nest_platform/

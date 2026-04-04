@@ -1,0 +1,77 @@
+import Link from 'next/link';
+import { cookies } from 'next/headers';
+import { AUTH_COOKIE, parseSessionToken } from '@/lib/auth';
+import { CustomerNav } from '@/components/customer/customer-nav';
+import { BackButton } from '@/components/navigation/back-button';
+import { Logo } from '@/components/logo';
+import { UserNav } from '@/components/user-nav';
+import { mockUser } from '@/lib/data';
+
+const navItems = [
+  { href: '/customer',               label: 'Overview'       },
+  { href: '/catalog',                label: 'Shop'           },
+  { href: '/customer/cart',          label: 'Cart'           },
+  { href: '/customer/orders',        label: 'My Orders'      },
+  { href: '/customer/prescriptions', label: 'Prescriptions'  },
+  { href: '/customer/profile',       label: 'Profile'        },
+];
+
+const mobileNav = [
+  { href: '/customer',               icon: '🏠', label: 'Home'    },
+  { href: '/catalog',                icon: '💊', label: 'Shop'    },
+  { href: '/customer/cart',          icon: '🛒', label: 'Cart'    },
+  { href: '/customer/orders',        icon: '📦', label: 'Orders'  },
+  { href: '/customer/profile',       icon: '👤', label: 'Profile' },
+];
+
+export default async function CustomerLayout({ children }: { children: React.ReactNode }) {
+  const token = (await cookies()).get(AUTH_COOKIE)?.value;
+  const session = parseSessionToken(token);
+  const profile = session
+    ? { name: session.name, email: session.email, avatarId: mockUser.avatarId }
+    : mockUser;
+
+  return (
+    <div className="min-h-screen bg-surface">
+      {/* ── Sticky header ── */}
+      <header className="glass-nav sticky top-0 z-40 border-b border-outline-variant/20 shadow-sm">
+        <div className="mx-auto flex h-16 w-full max-w-7xl items-center gap-3 px-4 sm:px-6 lg:px-8">
+          {/* Back button */}
+          <BackButton fallbackHref="/" className="flex-shrink-0" />
+
+          {/* Logo */}
+          <Logo href="/" imageSize={36} className="flex-shrink-0" />
+
+          {/* Desktop nav */}
+          <CustomerNav items={navItems} />
+
+          {/* User avatar */}
+          <div className="ml-auto flex-shrink-0">
+            <UserNav user={profile} />
+          </div>
+        </div>
+      </header>
+
+      {/* ── Page content ── */}
+      <main className="mx-auto w-full max-w-7xl px-4 py-6 pb-24 sm:px-6 lg:px-8 md:pb-6">
+        {children}
+      </main>
+
+      {/* ── Mobile bottom nav ── */}
+      <nav className="fixed bottom-0 left-0 z-50 w-full border-t border-outline-variant/20 bg-surface-container-lowest/95 backdrop-blur-lg md:hidden">
+        <div className="flex h-16 items-center justify-around px-2">
+          {mobileNav.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="flex flex-col items-center gap-0.5 rounded-xl px-3 py-2 text-on-surface-variant transition hover:text-stitch-primary"
+            >
+              <span className="text-xl leading-none">{item.icon}</span>
+              <span className="text-[10px] font-bold uppercase tracking-wider">{item.label}</span>
+            </Link>
+          ))}
+        </div>
+      </nav>
+    </div>
+  );
+}

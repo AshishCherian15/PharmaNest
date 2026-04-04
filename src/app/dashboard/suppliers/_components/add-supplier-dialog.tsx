@@ -42,8 +42,6 @@ export function SupplierFormDialog({ open, onOpenChange, onSave, supplier }: Sup
         email: data.email as string,
         phone: data.phone as string,
     };
-    
-    console.log('Saved Supplier Data:', savedSupplier);
 
     setTimeout(() => {
       onSave(savedSupplier);

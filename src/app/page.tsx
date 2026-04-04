@@ -1,150 +1,72 @@
-import Image from 'next/image';
 import Link from 'next/link';
-import {
-  ArrowRight,
-  Heart,
-  Search,
-  ShoppingCart,
-  Star,
-  User,
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { landingProducts, landingCategories } from '@/lib/data';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { ProductCard } from '@/components/landing/product-card';
-import { LandingHeader } from '@/components/landing/header';
-import { LandingFooter } from '@/components/landing/footer';
+import { cookies } from 'next/headers';
+import { AUTH_COOKIE, parseSessionToken } from '@/lib/auth';
 
-export default function LandingPage() {
-  const heroImage = PlaceHolderImages.find((img) => img.id === 'hero-1');
+export default async function SplashPage() {
+  const token = (await cookies()).get(AUTH_COOKIE)?.value;
+  const session = parseSessionToken(token);
+  const destination = session ? (session.role === 'admin' ? '/dashboard' : '/customer') : null;
 
   return (
-    <div className="flex min-h-screen flex-col bg-background">
-      <LandingHeader />
-      <main className="flex-1">
-        {/* Hero Section */}
-        <section className="relative h-[300px] w-full md:h-[400px]">
-          {heroImage && (
-            <Image
-              src={heroImage.imageUrl}
-              alt="Hero banner"
-              fill
-              className="object-cover"
-              data-ai-hint={heroImage.imageHint}
-            />
-          )}
-          <div className="absolute inset-0 bg-primary/20" />
-          <div className="container relative z-10 flex h-full flex-col items-start justify-center gap-4 text-left">
-            <h1 className="text-3xl font-bold tracking-tight text-primary-foreground md:text-5xl">
-              Special Medicine <br /> Discounts Just for You!
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-surface px-4 py-16">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -left-20 top-8 h-72 w-72 rounded-full bg-stitch-primary-fixed/20 blur-3xl" />
+        <div className="absolute -right-20 bottom-8 h-72 w-72 rounded-full bg-stitch-secondary-fixed/20 blur-3xl" />
+        <div className="dot-pattern absolute inset-0 opacity-60" />
+      </div>
+
+      <main className="relative z-10 w-full max-w-5xl overflow-hidden rounded-3xl border border-outline-variant/20 bg-surface-container-lowest shadow-2xl">
+        <div className="grid grid-cols-1 lg:grid-cols-2">
+          <section className="mg-gradient p-8 text-white sm:p-10">
+            <p className="text-xs font-bold uppercase tracking-[0.28em] text-stitch-primary-fixed/75">Pharma Nest</p>
+            <h1 className="font-headline mt-4 text-4xl font-extrabold leading-tight sm:text-5xl">
+              Clinical-grade pharmacy platform.
             </h1>
-            <p className="max-w-md text-lg text-primary-foreground/90">
-              Get the best deals on healthcare products.
+            <p className="mt-4 max-w-md text-sm leading-relaxed text-stitch-primary-fixed/90">
+              A professional healthcare commerce experience with secure access, role-based dashboards,
+              inventory workflows, prescriptions, and customer operations.
             </p>
-            <Button asChild size="lg">
-              <Link href="#">Shop Now</Link>
-            </Button>
-          </div>
-        </section>
+            <div className="mt-8 grid grid-cols-2 gap-3 text-xs">
+              <div className="rounded-xl border border-white/20 bg-white/10 p-3">Secure Auth</div>
+              <div className="rounded-xl border border-white/20 bg-white/10 p-3">Role Dashboards</div>
+              <div className="rounded-xl border border-white/20 bg-white/10 p-3">Live Inventory</div>
+              <div className="rounded-xl border border-white/20 bg-white/10 p-3">Prescription Flow</div>
+            </div>
+          </section>
 
-        {/* Popular Categories */}
-        <section className="py-12 md:py-16">
-          <div className="container">
-            <div className="mb-8 flex items-center justify-between">
-              <h2 className="text-2xl font-bold tracking-tight md:text-3xl">
-                Popular Categories
-              </h2>
-              <Button variant="link" className="group" asChild>
-                <Link href="#">
-                  View All
-                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                </Link>
-              </Button>
-            </div>
-            <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
-              {landingCategories.map((category) => {
-                const categoryImage = PlaceHolderImages.find(
-                  (img) => img.id === category.imageId
-                );
-                return (
-                  <Link
-                    href="#"
-                    key={category.id}
-                    className="group flex flex-col items-center gap-3 rounded-lg border bg-card p-4 text-center transition-colors hover:border-primary"
-                  >
-                    <div className="relative h-20 w-20">
-                      {categoryImage && (
-                        <Image
-                          src={categoryImage.imageUrl}
-                          alt={category.name}
-                          fill
-                          className="object-contain"
-                          data-ai-hint={categoryImage.imageHint}
-                        />
-                      )}
-                    </div>
-                    <span className="font-medium text-card-foreground">
-                      {category.name}
-                    </span>
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-        </section>
+          <section className="flex flex-col justify-center p-8 sm:p-10">
+            <p className="text-xs font-bold uppercase tracking-[0.28em] text-stitch-secondary">Start Session</p>
+            <h2 className="font-headline mt-3 text-3xl font-extrabold text-on-surface">Welcome</h2>
+            <p className="mt-3 text-sm text-on-surface-variant">
+              Please sign in or create an account to continue to the protected application.
+            </p>
 
-        {/* Latest Products */}
-        <section className="bg-muted py-12 md:py-16">
-          <div className="container">
-            <div className="mb-8 flex items-center justify-between">
-              <h2 className="text-2xl font-bold tracking-tight md:text-3xl">
-                Latest Products
-              </h2>
-              <Button variant="link" className="group" asChild>
-                <Link href="#">
-                  View All
-                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+            <div className="mt-8 flex flex-col gap-3">
+              <Link href="/login" className="btn-primary-gradient px-6 py-3 text-center text-sm">
+                Login
+              </Link>
+              <Link
+                href="/register"
+                className="rounded-xl border border-outline-variant/30 px-6 py-3 text-center text-sm font-bold text-on-surface transition hover:bg-surface-container-low"
+              >
+                Register
+              </Link>
+              {destination && (
+                <Link
+                  href={destination}
+                  className="rounded-xl border border-stitch-primary/40 bg-stitch-primary-fixed/20 px-6 py-3 text-center text-sm font-bold text-stitch-primary transition hover:bg-stitch-primary-fixed/30"
+                >
+                  Continue to Dashboard
                 </Link>
-              </Button>
+              )}
             </div>
-            <div className="grid grid-cols-2 gap-x-4 gap-y-8 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-              {landingProducts
-                .filter((p) => p.isNew)
-                .slice(0, 5)
-                .map((product) => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
-            </div>
-          </div>
-        </section>
 
-        {/* Best Deals */}
-        <section className="py-12 md:py-16">
-          <div className="container">
-            <div className="mb-8 flex items-center justify-between">
-              <h2 className="text-2xl font-bold tracking-tight md:text-3xl">
-                Best Deals of the Week
-              </h2>
-              <Button variant="link" className="group" asChild>
-                <Link href="#">
-                  View All
-                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                </Link>
-              </Button>
-            </div>
-            <div className="grid grid-cols-2 gap-x-4 gap-y-8 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-              {landingProducts
-                .filter((p) => p.previousPrice)
-                .slice(0, 10)
-                .map((product) => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
-            </div>
-          </div>
-        </section>
+            <p className="mt-5 text-xs text-outline">
+              Demo access works with your configured auth credentials.
+            </p>
+          </section>
+        </div>
       </main>
-      <LandingFooter />
     </div>
   );
 }

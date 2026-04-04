@@ -46,25 +46,25 @@ export const mockSales: Sale[] = [
 
 export const mockMedicines: Medicine[] = [
     { id: 'MED001', name: 'Paracetamol 500mg', genericName: 'Paracetamol', description: 'For fever and pain relief.', category: 'Painkiller', price: 497, quantity: 150, expiryDate: '2025-12-31', imageId: 'med-image-1' },
-    { id: 'MED002', name: 'Amoxicillin 250mg', genericName: 'Amoxicillin', description: 'Antibiotic for bacterial infections.', category: 'Antibiotic', price: 1037, quantity: 8, expiryDate: '2025-01-15', imageId: 'med-image-2' },
+    { id: 'MED002', name: 'Amoxicillin 250mg', genericName: 'Amoxicillin', description: 'Antibiotic for bacterial infections.', category: 'Antibiotic', requiresPrescription: true, price: 1037, quantity: 8, expiryDate: '2025-01-15', imageId: 'med-image-2' },
     { id: 'MED003', name: 'Ibuprofen 200mg', genericName: 'Ibuprofen', description: 'Nonsteroidal anti-inflammatory drug.', category: 'Painkiller', price: 664, quantity: 0, expiryDate: '2024-08-01', imageId: 'med-image-3' },
     { id: 'MED004', name: 'Loratadine 10mg', genericName: 'Loratadine', description: 'Antihistamine for allergies.', category: 'Antihistamine', price: 601, quantity: 2, expiryDate: '2024-07-20', imageId: 'med-image-4' },
     { id: 'MED005', name: 'Aspirin 81mg', genericName: 'Aspirin', description: 'Low-dose for cardiovascular health.', category: 'Cardiovascular', price: 373, quantity: 200, expiryDate: '2026-05-30', imageId: 'med-image-5' },
     { id: 'MED006', name: 'Omeprazole 20mg', genericName: 'Omeprazole', description: 'For acid reflux and heartburn.', category: 'Gastrointestinal', price: 1245, quantity: 75, expiryDate: '2023-09-01', imageId: 'med-image-6' },
-    { id: 'MED007', name: 'Metformin 500mg', genericName: 'Metformin', description: 'For type 2 diabetes.', category: 'Diabetes', price: 838, quantity: 120, expiryDate: '2025-11-20', imageId: 'med-image-7' },
-    { id: 'MED008', name: 'Salbutamol Inhaler', genericName: 'Salbutamol', description: 'For asthma and COPD.', category: 'Respiratory', price: 2075, quantity: 40, expiryDate: '2024-10-10', imageId: 'med-image-8' },
+    { id: 'MED007', name: 'Metformin 500mg', genericName: 'Metformin', description: 'For type 2 diabetes.', category: 'Diabetes', requiresPrescription: true, price: 838, quantity: 120, expiryDate: '2025-11-20', imageId: 'med-image-7' },
+    { id: 'MED008', name: 'Salbutamol Inhaler', genericName: 'Salbutamol', description: 'For asthma and COPD.', category: 'Respiratory', requiresPrescription: true, price: 2075, quantity: 40, expiryDate: '2024-10-10', imageId: 'med-image-8' },
     { id: 'MED009', name: 'Cetirizine 10mg', genericName: 'Cetirizine', description: 'Antihistamine for allergies.', category: 'Antihistamine', price: 560, quantity: 90, expiryDate: '2026-01-15', imageId: 'med-image-9' },
     { id: 'MED010', name: 'Vitamin D3 1000 IU', genericName: 'Cholecalciferol', description: 'Dietary supplement.', category: 'Vitamins', price: 829, quantity: 300, expiryDate: '2026-08-01', imageId: 'med-image-10' },
 ];
 
 export const weeklySalesData = [
-  { name: 'Mon', sales: Math.floor(Math.random() * 200000) + 100000 },
-  { name: 'Tue', sales: Math.floor(Math.random() * 200000) + 100000 },
-  { name: 'Wed', sales: Math.floor(Math.random() * 200000) + 100000 },
-  { name: 'Thu', sales: Math.floor(Math.random() * 200000) + 100000 },
-  { name: 'Fri', sales: Math.floor(Math.random() * 200000) + 100000 },
-  { name: 'Sat', sales: Math.floor(Math.random() * 200000) + 100000 },
-  { name: 'Sun', sales: Math.floor(Math.random() * 200000) + 100000 },
+  { name: 'Mon', sales: 182000 },
+  { name: 'Tue', sales: 245000 },
+  { name: 'Wed', sales: 198000 },
+  { name: 'Thu', sales: 310000 },
+  { name: 'Fri', sales: 275000 },
+  { name: 'Sat', sales: 220000 },
+  { name: 'Sun', sales: 160000 },
 ];
 
 export const mockSuppliers: Supplier[] = [
@@ -186,6 +186,7 @@ export const landingProducts: Medicine[] = [
     { id: 'LPROD008', name: 'Sunscreen SPF 50', genericName: 'Sunscreen', description: 'Broad-spectrum protection against UVA and UVB rays.', category: 'Personal Care', price: 799, quantity: 90, expiryDate: '2026-03-01', imageId: 'lprod-image-8', rating: 4, reviews: 112, previousPrice: 999 },
     { id: 'LPROD009', name: 'Baby Diaper Pants (Medium)', genericName: 'Diapers', description: 'Soft and absorbent diaper pants for babies.', category: 'Baby Care', price: 999, quantity: 250, expiryDate: '2026-10-01', imageId: 'lprod-image-9', rating: 5, reviews: 250, isNew: true },
     { id: 'LPROD010', name: 'Omega-3 Fish Oil Capsules', genericName: 'Fish Oil', description: 'Supports heart and brain health.', category: 'Vitamins', price: 1100, quantity: 130, expiryDate: '2026-02-01', imageId: 'lprod-image-10', rating: 5, reviews: 190 },
+    { id: 'LPROD013', name: 'Amoxicillin 500mg Capsules', genericName: 'Amoxicillin', description: 'Prescription antibiotic for bacterial infections.', category: 'Antibiotic', requiresPrescription: true, price: 1199, quantity: 70, expiryDate: '2026-01-01', imageId: 'med-image-2', rating: 4, reviews: 54, isNew: true },
     { id: 'LPROD011', name: 'Knee Pain Relief Patch', genericName: 'Herbal Patch', description: 'Herbal patch for effective knee pain relief.', category: 'Pain Relief', price: 450, quantity: 180, expiryDate: '2025-07-01', imageId: 'lprod-image-11', rating: 4, reviews: 65, previousPrice: 550 },
     { id: 'LPROD012', name: 'Blood Pressure Monitor', genericName: 'BP Monitor', description: 'Automatic digital blood pressure monitor.', category: 'Medical Devices', price: 2500, quantity: 60, expiryDate: '2032-01-01', imageId: 'lprod-image-12', rating: 5, reviews: 132 },
 ];

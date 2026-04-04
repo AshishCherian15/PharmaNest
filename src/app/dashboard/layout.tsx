@@ -6,45 +6,81 @@ import {
   SidebarFooter,
   SidebarInset,
 } from '@/components/ui/sidebar';
-import { Icons } from '@/components/icons';
-import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import Image from 'next/image';
 import { SidebarNav } from './_components/sidebar-nav';
 import { Header } from './_components/header';
 import { mockUser } from '@/lib/data';
-import { UserNav } from '@/components/user-nav';
+import { cookies } from 'next/headers';
+import { AUTH_COOKIE, parseSessionToken } from '@/lib/auth';
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const token = (await cookies()).get(AUTH_COOKIE)?.value;
+  const session = parseSessionToken(token);
+  const currentUser = session
+    ? { name: session.name, email: session.email, avatarId: mockUser.avatarId }
+    : mockUser;
+
   return (
     <SidebarProvider>
-      <Sidebar side="left" collapsible="icon" className="bg-sidebar">
-        <SidebarHeader>
-          <Button
-            variant="ghost"
-            className="h-10 w-full justify-start gap-2 px-2 text-lg font-bold"
+      {/* Sidebar — stitch admin_crm_dashboard_pharma_nest_3 style */}
+      <Sidebar side="left" collapsible="icon" className="bg-surface-container-low border-r-0">
+        <SidebarHeader className="border-b border-outline-variant/10 px-4 py-5">
+          <Link
+            href="/dashboard"
+            className="flex items-center gap-3 rounded-xl transition hover:bg-surface-container-high px-2 py-1"
           >
-            <Icons.Logo className="h-6 w-6 text-primary" />
-            <span className="min-w-0 flex-1 truncate">Pharma Nest</span>
-          </Button>
+            <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-stitch-primary">
+              <Image
+                src="/PharmaNest.png"
+                alt="Pharma Nest"
+                width={28}
+                height={28}
+                className="rounded-md object-contain"
+              />
+            </div>
+            <div className="group-data-[collapsible=icon]:hidden">
+              <p className="font-headline text-lg font-extrabold leading-tight">
+                <span className="text-stitch-primary">Pharma</span>
+                <span className="text-stitch-secondary">Nest</span>
+              </p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-outline">
+                Central Management
+              </p>
+            </div>
+          </Link>
         </SidebarHeader>
 
-        <SidebarContent className="p-2">
+        <SidebarContent className="p-3">
           <SidebarNav />
         </SidebarContent>
 
-        <SidebarFooter>
-          <div className="group-data-[collapsible=icon]:hidden">
-             <UserNav user={mockUser} />
+        <SidebarFooter className="border-t border-outline-variant/10 p-3">
+          {/* New Order CTA */}
+          <Link
+            href="/dashboard/sales"
+            className="btn-primary-gradient mb-2 w-full py-2.5 text-sm group-data-[collapsible=icon]:hidden"
+          >
+            + New Order
+          </Link>
+          {/* User info */}
+          <div className="flex items-center gap-3 rounded-xl bg-surface-container-lowest px-3 py-3 group-data-[collapsible=icon]:hidden">
+            <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-stitch-primary-fixed text-sm font-bold text-stitch-primary">
+              {currentUser.name.split(' ').map((n) => n[0]).join('').slice(0, 2)}
+            </div>
+            <div className="min-w-0">
+              <p className="truncate text-xs font-bold text-on-surface">{currentUser.name}</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-outline">
+                Head Pharmacist
+              </p>
+            </div>
           </div>
         </SidebarFooter>
       </Sidebar>
 
       <SidebarInset>
-        <Header user={mockUser} />
-        <main className="flex-1 overflow-y-auto">{children}</main>
+        <Header user={currentUser} />
+        <main className="flex-1 overflow-y-auto dot-pattern">{children}</main>
       </SidebarInset>
     </SidebarProvider>
   );

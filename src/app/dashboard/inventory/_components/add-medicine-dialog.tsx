@@ -90,8 +90,6 @@ export function MedicineFormDialog({ open, onOpenChange, onSave, medicine }: Med
       imageId: medicine?.imageId || randomImage.id,
     };
 
-    console.log('Saved Medicine Data:', savedMedicine);
-
     setTimeout(() => {
       onSave(savedMedicine);
       setIsSaving(false);
