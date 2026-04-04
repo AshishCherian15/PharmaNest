@@ -1,0 +1,387 @@
+{
+  "project": {
+    "name": "PharmaNest",
+    "description": "Full-stack pharmacy management system with customer storefront and admin dashboard",
+    "version": "1.0.0",
+    "repository": "https://github.com/AshishCherian15/PharmaNest",
+    "author": "Ashish Cherian",
+    "license": "MIT"
+  },
+  "technology_stack": {
+    "frontend": {
+      "framework": "Next.js 15.5.9",
+      "react_version": "19.0.0",
+      "language": "TypeScript 5.x",
+      "styling": {
+        "framework": "Tailwind CSS 4.x",
+        "design_system": "Stitch (custom)",
+        "ui_library": "shadcn/ui"
+      },
+      "state_management": "React Context API + React 19 hooks",
+      "forms": "React Hook Form + Custom validation",
+      "charts": "Recharts (integrated)",
+      "theme": "next-themes with system detection"
+    },
+    "backend": {
+      "runtime": "Node.js 18+",
+      "framework": "Next.js API Routes",
+      "language": "TypeScript 5.x",
+      "authentication": "JWT with HMAC-SHA256",
+      "session_store": "HTTP-only cookies",
+      "current_data": "Mock data layer",
+      "future_database": "PostgreSQL with Prisma ORM"
+    },
+    "deployment": {
+      "hosting": "Vercel (recommended) or self-hosted",
+      "container": "Docker ready",
+      "package_manager": "npm or yarn",
+      "build_tool": "Next.js built-in"
+    }
+  },
+  "features": {
+    "authentication": {
+      "login": "Email + password with JWT token",
+      "registration": "Customer self-signup only",
+      "roles": ["Admin", "Pharmacist", "Staff", "Customer"],
+      "session_management": "7-day default expiry",
+      "password_policy": "Min 8 chars, uppercase, lowercase, number"
+    },
+    "admin_dashboard": {
+      "modules": [
+        {
+          "name": "Inventory Management",
+          "description": "Add, edit, delete medicines with expiry tracking",
+          "features": ["Low stock alerts", "Expiry tracking", "Category filtering"]
+        },
+        {
+          "name": "Orders Management",
+          "description": "View and manage customer orders",
+          "features": ["Order status tracking", "Fulfillment workflow", "CSV export"]
+        },
+        {
+          "name": "Prescriptions",
+          "description": "Manage prescription validations",
+          "features": ["Prescription verification", "Status tracking", "Doctor records"]
+        },
+        {
+          "name": "Suppliers",
+          "description": "Manage supplier contacts and purchase orders",
+          "features": ["Supplier CRUD", "Purchase order workflow", "Contact tracking"]
+        },
+        {
+          "name": "Users",
+          "description": "Staff and admin account management",
+          "features": ["Role-based filtering", "Create/edit/delete users", "CSV export"]
+        },
+        {
+          "name": "Reports & Analytics",
+          "description": "Business intelligence and KPIs",
+          "features": ["Period filtering", "Revenue tracking", "Sales charts", "Top medicines", "CSV export"]
+        },
+        {
+          "name": "Settings",
+          "description": "System configuration",
+          "features": ["Theme preferences", "Email templates", "API keys"]
+        }
+      ]
+    },
+    "customer_portal": {
+      "modules": [
+        {
+          "name": "Medicine Catalog",
+          "description": "Browse and search medicines",
+          "features": ["Search/filter", "Price display", "Stock indicators", "Ratings"]
+        },
+        {
+          "name": "Shopping Cart",
+          "description": "Add medicines to cart with live stock sync",
+          "features": ["Add/remove items", "Real-time stock updates", "Quantity validation"]
+        },
+        {
+          "name": "Checkout",
+          "description": "Order placement with prescription validation",
+          "features": ["Address entry", "Prescription linking", "Order confirmation"]
+        },
+        {
+          "name": "Order History",
+          "description": "View past and current orders",
+          "features": ["Status tracking", "Order details", "Reorder functionality"]
+        },
+        {
+          "name": "Prescriptions",
+          "description": "Manage personal prescriptions",
+          "features": ["Upload prescription", "Track validity", "Link to orders"]
+        }
+      ]
+    }
+  },
+  "api_endpoints": {
+    "authentication": {
+      "login": {
+        "method": "POST",
+        "path": "/api/auth/login",
+        "auth_required": false
+      },
+      "register": {
+        "method": "POST",
+        "path": "/api/auth/register",
+        "auth_required": false,
+        "note": "Customer registration only"
+      },
+      "logout": {
+        "method": "POST",
+        "path": "/api/auth/logout",
+        "auth_required": true
+      },
+      "me": {
+        "method": "GET",
+        "path": "/api/auth/me",
+        "auth_required": true
+      }
+    },
+    "catalog": {
+      "stock": {
+        "method": "GET",
+        "path": "/api/catalog/stock",
+        "auth_required": false,
+        "purpose": "Real-time stock snapshot for checkout"
+      }
+    },
+    "customer_orders": {
+      "create": {
+        "method": "POST",
+        "path": "/api/customer/orders",
+        "auth_required": true
+      },
+      "list": {
+        "method": "GET",
+        "path": "/api/customer/orders",
+        "auth_required": true
+      }
+    },
+    "prescriptions": {
+      "eligibility": {
+        "method": "GET",
+        "path": "/api/customer/prescriptions/eligibility",
+        "auth_required": true
+      }
+    },
+    "admin": {
+      "customer_orders": {
+        "method": "GET/PATCH",
+        "path": "/api/admin/customer-orders",
+        "auth_required": true,
+        "roles": ["Admin", "Staff"]
+      },
+      "inventory": {
+        "method": "GET/POST/PUT/DELETE",
+        "path": "/api/admin/inventory",
+        "auth_required": true,
+        "roles": ["Admin", "Pharmacist", "Staff"]
+      },
+      "reports": {
+        "method": "GET",
+        "path": "/api/admin/reports/*",
+        "auth_required": true,
+        "roles": ["Admin"]
+      }
+    }
+  },
+  "file_structure": {
+    "src/": {
+      "app/": "Next.js App Router pages and layouts",
+      "components/": "Reusable React components",
+      "hooks/": "Custom React hooks",
+      "lib/": "Utilities, types, validation, auth helpers",
+      "public/": "Static assets and images"
+    }
+  },
+  "key_files": {
+    "middleware.ts": "Route protection and authentication middleware",
+    "src/lib/auth.ts": "JWT token creation/verification and password utilities",
+    "src/lib/types.ts": "TypeScript type definitions for all data models",
+    "src/lib/data.ts": "Mock data generation for development",
+    "src/lib/validation.ts": "Form validation schemas and rules",
+    "src/lib/logger.ts": "Centralized logging system",
+    "src/components/app-providers.tsx": "Root context providers (Theme, Query Client)"
+  },
+  "data_models": {
+    "User": {
+      "id": "string (unique)",
+      "name": "string",
+      "email": "string (unique)",
+      "password": "string (hashed)",
+      "phone": "string",
+      "role": "enum: Admin | Pharmacist | Staff | Customer",
+      "avatarId": "string (asset reference)",
+      "createdAt": "ISO datetime"
+    },
+    "Medicine": {
+      "id": "string (unique)",
+      "name": "string",
+      "genericName": "string",
+      "category": "string",
+      "description": "string",
+      "price": "number (in paise)",
+      "quantity": "number (current stock)",
+      "expiryDate": "ISO date",
+      "requiresPrescription": "boolean",
+      "rating": "number (1-5)",
+      "isNew": "boolean"
+    },
+    "CustomerOrder": {
+      "id": "string (unique)",
+      "customerId": "string (foreign key to User)",
+      "items": "array of OrderItems",
+      "subtotal": "number",
+      "deliveryFee": "number",
+      "total": "number",
+      "status": "enum: Placed | Processing | Shipped | Delivered | Cancelled",
+      "shippingAddress": "string",
+      "createdAt": "ISO datetime"
+    },
+    "Prescription": {
+      "id": "string (unique)",
+      "patientId": "string (foreign key to User)",
+      "doctorName": "string",
+      "medicines": "array of prescribed medicines",
+      "date": "ISO date",
+      "status": "enum: pending | verified | rejected"
+    }
+  },
+  "security": {
+    "authentication": "JWT with HMAC-SHA256 signing",
+    "session_storage": "HTTP-only cookies (non-XSS vulnerable)",
+    "password_hashing": "PBKDF2 with 100,000 iterations (future: bcrypt)",
+    "cors": "Configured for specified origins",
+    "headers": [
+      "X-Content-Type-Options: nosniff",
+      "X-Frame-Options: DENY",
+      "X-XSS-Protection: 1; mode=block",
+      "Strict-Transport-Security",
+      "Content-Security-Policy"
+    ],
+    "validation": "All inputs validated server-side",
+    "environment_variables": "Sensitive data in .env.local"
+  },
+  "performance": {
+    "code_splitting": "Automatic via Next.js",
+    "optimization": [
+      "Server Components where possible",
+      "CSS minification via Tailwind",
+      "Image optimization via Next.js Image",
+      "Font loading with swap display",
+      "Caching headers on static assets"
+    ],
+    "target_metrics": {
+      "login_response": "< 200ms",
+      "catalog_stock": "< 100ms",
+      "order_creation": "< 500ms",
+      "api_p95": "< 1s"
+    }
+  },
+  "deployment": {
+    "platforms": ["Vercel (recommended)", "Netlify", "Docker", "Self-hosted Node.js"],
+    "prerequisites": {
+      "node_version": ">= 18.0.0",
+      "npm_version": ">= 9.0.0"
+    },
+    "environment_setup": {
+      "AUTH_SECRET": "HMAC signing key (min 32 chars)",
+      "AUTH_DEFAULT_PASSWORD": "Temporary password for new staff",
+      "NODE_ENV": "production",
+      "LOG_LEVEL": "info"
+    },
+    "build_process": [
+      "npm install",
+      "npm run build",
+      "npm start"
+    ],
+    "docker": {
+      "available": true,
+      "file": "Dockerfile (to be created)",
+      "registry": "Docker Hub"
+    }
+  },
+  "development_workflow": {
+    "setup": [
+      "Clone repository",
+      "npm install",
+      "Create .env.local with AUTH_SECRET",
+      "npm run dev"
+    ],
+    "scripts": {
+      "dev": "Next.js development server on port 3000",
+      "build": "Production build compilation",
+      "start": "Start production server",
+      "typecheck": "TypeScript type checking without emit",
+      "lint": "ESLint validation"
+    },
+    "hot_reload": "Automatic on file changes",
+    "error_reporting": "React Error Boundary + Browser DevTools"
+  },
+  "testing": {
+    "unit_tests": "Jest (to be configured)",
+    "integration_tests": "Playwright (to be configured)",
+    "api_testing": "cURL or Postman via collection",
+    "coverage_target": "80% minimum"
+  },
+  "documentation": {
+    "frontend": "ARCHITECTURE_FRONTEND.md",
+    "backend": "ARCHITECTURE_BACKEND.md",
+    "project_summary": "PROJECT_SUMMARY.md",
+    "quick_start": "QUICK_START.md",
+    "deployment": "DEPLOYMENT.md",
+    "improvements": "IMPROVEMENTS.md"
+  },
+  "git_status": {
+    "commits_on_main": 5,
+    "latest_commit": "e54d767 - Initial PharmaNest commit: Full-stack pharmacy management system",
+    "files_changed": 93,
+    "insertions": 9488,
+    "deletions": 1253
+  },
+  "next_steps": {
+    "immediate": [
+      "Push to GitHub once connectivity restored",
+      "Set up CI/CD pipeline",
+      "Configure production environment variables"
+    ],
+    "short_term": [
+      "Database migration (Prisma + PostgreSQL)",
+      "Payment gateway integration (Razorpay/Stripe)",
+      "Email notifications (SendGrid/AWS SES)",
+      "Automated testing suite (Jest + Playwright)"
+    ],
+    "medium_term": [
+      "Real-time updates (WebSocket)",
+      "Advanced search (Elasticsearch)",
+      "Analytics dashboard (Business Intelligence)",
+      "Mobile app (React Native)",
+      "Internationalization (i18n)"
+    ],
+    "long_term": [
+      "Microservices architecture",
+      "GraphQL API",
+      "Machine learning (demand forecasting)",
+      "Mobile-first redesign",
+      "Multi-tenant support"
+    ]
+  },
+  "resources": {
+    "documentation_files": [
+      "ARCHITECTURE_FRONTEND.md - Frontend architecture and components",
+      "ARCHITECTURE_BACKEND.md - Backend API and data models",
+      "PROJECT_SUMMARY.md - Project overview",
+      "QUICK_START.md - Developer setup guide",
+      "DEPLOYMENT.md - Production deployment guide",
+      "IMPROVEMENTS.md - Code improvements and best practices"
+    ],
+    "external_links": {
+      "next_js": "https://nextjs.org/docs",
+      "react": "https://react.dev",
+      "tailwind": "https://tailwindcss.com/docs",
+      "typescript": "https://www.typescriptlang.org/docs"
+    }
+  }
+}
