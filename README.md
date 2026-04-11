@@ -1,6 +1,6 @@
 # PharmaNest
 
-PharmaNest is a Next.js pharmacy platform for customers, pharmacists, and internal staff. It includes a storefront, prescription workflows, order tracking, inventory and supplier management, and an admin dashboard backed by Prisma and a local SQLite database for development.
+PharmaNest is a Next.js pharmacy platform for customers, pharmacists, and internal staff. It includes a storefront, prescription workflows, order tracking, inventory and supplier management, and an admin dashboard backed by Prisma.
 
 ## What It Includes
 
@@ -16,7 +16,7 @@ PharmaNest is a Next.js pharmacy platform for customers, pharmacists, and intern
 - Next.js 15 with React 19
 - TypeScript
 - Tailwind CSS
-- Prisma with SQLite for local development
+- Prisma with SQLite for local development and PostgreSQL for deployment targets like Supabase
 - Vitest for tests
 - Genkit tooling for AI-related development workflows
 
@@ -47,6 +47,8 @@ The local setup expects:
 
 See `.env.example` for the current defaults used in development.
 
+For Vercel + Supabase deployment, set `DATABASE_URL` to the Supabase PostgreSQL connection string and keep `AUTH_SECRET` and `AUTH_DEFAULT_PASSWORD` in the Vercel environment variables.
+
 ## Available Scripts
 
 - `npm run dev` - Start the development server.
@@ -73,3 +75,4 @@ See `.env.example` for the current defaults used in development.
 - The root landing page introduces the platform and links into login and registration.
 - The repository includes local development artifacts such as the SQLite database path under `prisma/`.
 - Some generated or machine-specific files are ignored through `.gitignore`.
+- `vercel.json` is included so the repository is deploy-ready on Vercel.
