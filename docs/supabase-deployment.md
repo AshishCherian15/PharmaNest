@@ -54,3 +54,5 @@ Run environment plus health validation:
 ```bash
 HEALTHCHECK_URL=https://<your-domain>/api/health npm run verify:health
 ```
+
+For final promotion checks, follow [docs/release-checklist.md](docs/release-checklist.md).

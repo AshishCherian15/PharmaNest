@@ -52,6 +52,7 @@ For Vercel + Supabase deployment, set `DATABASE_URL` to the Supabase PostgreSQL 
 Also set `PRISMA_SCHEMA_PATH=prisma/schema.postgres.prisma` in Vercel so Prisma client generation uses the PostgreSQL schema variant.
 
 Deployment details are documented in [docs/supabase-deployment.md](docs/supabase-deployment.md).
+Release gates are documented in [docs/release-checklist.md](docs/release-checklist.md).
 
 ## Available Scripts
 
@@ -86,3 +87,4 @@ Deployment details are documented in [docs/supabase-deployment.md](docs/supabase
 - `vercel.json` is included so the repository is deploy-ready on Vercel.
 - `apphosting.yaml` has been removed because the deployment target is now Vercel.
 - `GET /api/health` checks database connectivity and returns deployment health metadata.
+- GitHub Actions CI runs typecheck and build for pushes and pull requests on `main`.
