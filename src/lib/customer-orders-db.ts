@@ -67,7 +67,7 @@ function buildOrderId(): string {
 export async function createCustomerOrderDb(
   input: OrderInput
 ): Promise<{ ok: true; order: CustomerOrder } | { ok: false; message: string }> {
-  const reservation = reserveStock(
+  const reservation = await reserveStock(
     input.items.map((item) => ({
       medicineId: item.medicineId,
       quantity: item.quantity,
@@ -110,7 +110,7 @@ export async function createCustomerOrderDb(
     return { ok: true, order: mapOrder(created) };
   } catch {
     // Undo reservation if persistence fails.
-    releaseStock(
+    await releaseStock(
       input.items.map((item) => ({
         medicineId: item.medicineId,
         quantity: item.quantity,
@@ -174,7 +174,7 @@ export async function updateCustomerOrderStatusDb(
   }
 
   if (nextStatus === 'Cancelled') {
-    releaseStock(
+    await releaseStock(
       current.items.map((item) => ({
         medicineId: item.medicineId,
         quantity: item.quantity,

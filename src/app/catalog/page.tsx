@@ -42,7 +42,7 @@ export default async function CatalogPage({ searchParams }: { searchParams?: Pro
   const page     = Math.max(1, parseInt(typeof params.page === 'string' ? params.page : '1', 10));
 
   /* ── combine + deduplicate ── */
-  const uniqueProducts = getAllProducts();
+  const uniqueProducts = await getAllProducts();
 
   /* ── filter ── */
   let filtered = uniqueProducts.filter((p) => {

@@ -21,7 +21,7 @@ describe('admin sales route', () => {
   });
 
   it('returns sales history on GET', async () => {
-    vi.mocked(getSalesTransactions).mockReturnValue([
+    vi.mocked(getSalesTransactions).mockResolvedValue([
       {
         id: 'TXN1001',
         amount: 3500,

@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma';
+import { ensureCatalogSeeded } from '@/lib/pharmanest-seed';
 import type { CartItem } from '@/lib/types';
 
 export type SalesTransaction = {
@@ -8,27 +9,27 @@ export type SalesTransaction = {
   timestamp: string;
 };
 
-type GlobalStore = {
-  __pharmanestSalesTransactions?: SalesTransaction[];
-};
-
-function getStore(): SalesTransaction[] {
-  const globalStore = globalThis as unknown as GlobalStore;
-  if (!globalStore.__pharmanestSalesTransactions) {
-    globalStore.__pharmanestSalesTransactions = [];
-  }
-  return globalStore.__pharmanestSalesTransactions;
-}
-
 function buildTransactionId(): string {
   return `TXN${Date.now()}`;
 }
 
-export function getSalesTransactions(): SalesTransaction[] {
-  return [...getStore()];
+export async function getSalesTransactions(): Promise<SalesTransaction[]> {
+  await ensureCatalogSeeded();
+  const sales = await prisma.salesTransaction.findMany({
+    orderBy: { timestamp: 'desc' },
+  });
+
+  return sales.map((sale) => ({
+    id: sale.id,
+    amount: sale.amount,
+    items: sale.items,
+    timestamp: sale.timestamp.toISOString(),
+  }));
 }
 
 export async function completeSale(items: CartItem[]): Promise<SalesTransaction> {
+  await ensureCatalogSeeded();
+
   const txResult = await prisma.$transaction(async (tx) => {
     for (const item of items) {
       const med = await tx.medicine.findUnique({ where: { id: item.medicineId } });
@@ -46,17 +47,27 @@ export async function completeSale(items: CartItem[]): Promise<SalesTransaction>
     }
 
     const amount = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const transaction: SalesTransaction = {
-      id: buildTransactionId(),
-      amount,
-      items: items.length,
-      timestamp: new Date().toISOString(),
-    };
 
-    const store = getStore();
-    store.unshift(transaction);
+    const transaction = await tx.salesTransaction.create({
+      data: {
+        id: buildTransactionId(),
+        amount,
+        items: items.length,
+      },
+    });
 
-    return transaction;
+    await tx.stockState.upsert({
+      where: { id: 'catalog' },
+      update: { version: { increment: 1 } },
+      create: { id: 'catalog', version: 1 },
+    });
+
+    return {
+      id: transaction.id,
+      amount: transaction.amount,
+      items: transaction.items,
+      timestamp: transaction.timestamp.toISOString(),
+    } satisfies SalesTransaction;
   });
 
   return txResult;

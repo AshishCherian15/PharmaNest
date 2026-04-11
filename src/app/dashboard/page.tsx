@@ -1,19 +1,37 @@
 import Link from 'next/link';
-import { mockMedicines, mockOrders, mockPrescriptions, mockSuppliers, weeklySalesData, monthlySalesData } from '@/lib/data';
-import { getAllCustomerOrders } from '@/lib/customer-orders';
+import { getAllCustomerOrdersDb } from '@/lib/customer-orders-db';
+import { getAllProducts } from '@/lib/product-store';
+import { getAllPrescriptions } from '@/lib/prescriptions';
+import { getPurchaseOrders } from '@/lib/purchase-orders';
+import { getSuppliers } from '@/lib/suppliers';
+import { getSalesTransactions } from '@/lib/sales';
+import { getExpiringMedicines, getLowStockMedicines } from '@/lib/medicines';
 import { SalesChart } from './_components/sales-chart';
 import { AlertsCard } from './_components/alerts-card';
 import { TodaysTopSales } from './_components/recent-sales';
 import { LatestMedicines } from './_components/latest-medicines';
 
-export default function DashboardPage() {
-  const totalMedicines   = mockMedicines.length;
-  const totalSales       = weeklySalesData.reduce((s, d) => s + d.sales, 0);
-  const expiringSoon     = mockMedicines.filter((m) => new Date(m.expiryDate) < new Date(Date.now() + 60 * 24 * 60 * 60 * 1000)).length;
-  const pendingOrders    = mockOrders.filter((o) => o.status === 'Pending' || o.status === 'Shipped').length
-                         + getAllCustomerOrders().filter((o) => o.status === 'Placed' || o.status === 'Processing' || o.status === 'Shipped').length;
-  const pendingRx        = mockPrescriptions.filter((p) => p.status === 'pending').length;
-  const stockEfficiency  = Math.round((mockMedicines.filter((m) => m.quantity > 10).length / mockMedicines.length) * 100);
+export default async function DashboardPage() {
+  const [products, prescriptions, purchaseOrders, customerOrders, suppliers, salesTransactions, expiringMedicines, lowStockMedicines] = await Promise.all([
+    getAllProducts(),
+    getAllPrescriptions(),
+    getPurchaseOrders(),
+    getAllCustomerOrdersDb(),
+    getSuppliers(),
+    getSalesTransactions(),
+    getExpiringMedicines(60),
+    getLowStockMedicines(10),
+  ]);
+
+  const totalMedicines = products.length;
+  const totalSales = salesTransactions.reduce((sum, sale) => sum + sale.amount, 0);
+  const expiringSoon = expiringMedicines.length;
+  const pendingOrders = purchaseOrders.filter((order) => order.status === 'Pending' || order.status === 'Shipped').length
+    + customerOrders.filter((order) => order.status === 'Placed' || order.status === 'Processing' || order.status === 'Shipped').length;
+  const pendingRx = prescriptions.filter((prescription) => prescription.status === 'pending').length;
+  const stockEfficiency = totalMedicines > 0
+    ? Math.round(((totalMedicines - lowStockMedicines.length) / totalMedicines) * 100)
+    : 0;
 
   const kpis = [
     {
@@ -63,7 +81,7 @@ export default function DashboardPage() {
     },
     {
       label: 'Suppliers',
-      value: mockSuppliers.length.toString(),
+      value: suppliers.length.toString(),
       trend: 'Active partners',
       trendUp: true,
       icon: '🚚',
@@ -146,7 +164,7 @@ export default function DashboardPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-outline-variant/10">
-                  {mockSuppliers.slice(0, 4).map((s) => (
+                  {suppliers.slice(0, 4).map((s) => (
                     <tr key={s.id} className="transition hover:bg-surface-container-low">
                       <td className="py-3 font-bold text-on-surface">{s.name}</td>
                       <td className="py-3 text-on-surface-variant">{s.contactPerson}</td>

@@ -10,22 +10,22 @@ import { ProductImageGallery } from './product-image-gallery';
 import { getProductGalleryImageIds } from '@/lib/product-image-galleries';
 import { getAllProducts } from '@/lib/product-store';
 
-const allProducts = getAllProducts();
-
 export async function generateStaticParams() {
+  const allProducts = await getAllProducts();
   return allProducts.map((p) => ({ id: p.id }));
 }
 
 export default async function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  const allProducts = await getAllProducts();
   const product = allProducts.find((p) => p.id === id);
   if (!product) notFound();
 
-  const stock   = getAvailableStock(product.id);
+  const stock   = await getAvailableStock(product.id);
   const related = allProducts
     .filter((p) => p.category === product.category && p.id !== product.id)
     .slice(0, 4)
-    .map((p) => ({ ...p, quantity: getAvailableStock(p.id) }));
+    .map((p) => ({ ...p, quantity: 0 }));
 
   const relatedImageIds = allProducts
     .filter((p) => p.category === product.category && p.id !== product.id)

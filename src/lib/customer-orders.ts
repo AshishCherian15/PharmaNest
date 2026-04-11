@@ -32,10 +32,10 @@ function buildOrderId(): string {
   return `ORD-${stamp}-${nonce}`;
 }
 
-export function createCustomerOrder(
+export async function createCustomerOrder(
   input: OrderInput
-): { ok: true; order: CustomerOrder } | { ok: false; message: string } {
-  const reservation = reserveStock(
+): Promise<{ ok: true; order: CustomerOrder } | { ok: false; message: string }> {
+  const reservation = await reserveStock(
     input.items.map((item) => ({
       medicineId: item.medicineId,
       quantity: item.quantity,
@@ -82,10 +82,10 @@ const allowedTransitions: Record<CustomerOrderStatus, CustomerOrderStatus[]> = {
   Cancelled: [],
 };
 
-export function updateCustomerOrderStatus(
+export async function updateCustomerOrderStatus(
   id: string,
   nextStatus: CustomerOrderStatus
-): { ok: true; order: CustomerOrder } | { ok: false; message: string } {
+): Promise<{ ok: true; order: CustomerOrder } | { ok: false; message: string }> {
   const store = getStore();
   const index = store.findIndex((order) => order.id === id);
 
@@ -106,7 +106,7 @@ export function updateCustomerOrderStatus(
   }
 
   if (nextStatus === 'Cancelled') {
-    releaseStock(
+    await releaseStock(
       current.items.map((item) => ({
         medicineId: item.medicineId,
         quantity: item.quantity,

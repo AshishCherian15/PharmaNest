@@ -11,7 +11,7 @@ export async function GET() {
     return ApiErrors.unauthorized();
   }
 
-  const prescriptions = getPrescriptionsForCustomer(session.id);
+  const prescriptions = await getPrescriptionsForCustomer(session.id);
   return apiSuccess({ prescriptions });
 }
 
@@ -35,7 +35,7 @@ export async function POST(req: Request) {
     return ApiErrors.badRequest('Doctor name, date and medicines are required.');
   }
 
-  const created = createPrescription({
+  const created = await createPrescription({
     patientId: session.id,
     patientName: session.name,
     doctorName: body.doctorName,

@@ -1,114 +1,146 @@
-import { landingProducts } from '@/lib/data';
+import { prisma } from '@/lib/prisma';
+import { ensureCatalogSeeded } from '@/lib/pharmanest-seed';
 
-type StockMap = Record<string, number>;
-
-type GlobalStore = {
-  __pharmanestCatalogStock?: StockMap;
-  __pharmanestCatalogStockVersion?: number;
-};
-
-function createInitialStockMap(): StockMap {
-  return landingProducts.reduce<StockMap>((acc, product) => {
-    acc[product.id] = product.quantity;
-    return acc;
-  }, {});
+async function bumpVersion(tx?: Parameters<Parameters<typeof prisma.$transaction>[0]>[0]): Promise<void> {
+  const db = tx ?? prisma;
+  await db.stockState.upsert({
+    where: { id: 'catalog' },
+    update: { version: { increment: 1 } },
+    create: { id: 'catalog', version: 1 },
+  });
 }
 
-function getStockStore(): StockMap {
-  const globalStore = globalThis as unknown as GlobalStore;
-  if (!globalStore.__pharmanestCatalogStock) {
-    globalStore.__pharmanestCatalogStock = createInitialStockMap();
-  }
-  if (!Number.isFinite(globalStore.__pharmanestCatalogStockVersion)) {
-    globalStore.__pharmanestCatalogStockVersion = 1;
-  }
-  return globalStore.__pharmanestCatalogStock;
+export async function getAvailableStock(medicineId: string): Promise<number> {
+  await ensureCatalogSeeded();
+  const medicine = await prisma.medicine.findUnique({
+    where: { id: medicineId },
+    select: { quantity: true },
+  });
+
+  return medicine?.quantity ?? 0;
 }
 
-function getGlobalStore(): GlobalStore {
-  const globalStore = globalThis as unknown as GlobalStore;
-  getStockStore();
-  return globalStore;
+export async function getStockVersion(): Promise<number> {
+  await ensureCatalogSeeded();
+  const state = await prisma.stockState.findUnique({ where: { id: 'catalog' } });
+  return state?.version ?? 1;
 }
 
-export function getAvailableStock(medicineId: string): number {
-  const stock = getStockStore()[medicineId];
-  return Number.isFinite(stock) ? stock : 0;
-}
-
-export function getStockVersion(): number {
-  const globalStore = getGlobalStore();
-  return Number(globalStore.__pharmanestCatalogStockVersion);
-}
-
-export function getStockSnapshot(ids: string[]): {
+export async function getStockSnapshot(ids: string[]): Promise<{
   stock: Record<string, number>;
   version: number;
-} {
+}> {
+  await ensureCatalogSeeded();
+  const medicines = await prisma.medicine.findMany({
+    where: { id: { in: ids } },
+    select: { id: true, quantity: true },
+  });
+  const stockMap = new Map(medicines.map((medicine) => [medicine.id, medicine.quantity]));
   const stock = ids.reduce<Record<string, number>>((acc, id) => {
-    acc[id] = getAvailableStock(id);
+    acc[id] = stockMap.get(id) ?? 0;
     return acc;
   }, {});
 
   return {
     stock,
-    version: getStockVersion(),
+    version: await getStockVersion(),
   };
 }
 
-export function reserveStock(
+export async function reserveStock(
   items: Array<{ medicineId: string; quantity: number }>
-): { ok: true } | { ok: false; message: string } {
+): Promise<{ ok: true } | { ok: false; message: string }> {
+  await ensureCatalogSeeded();
+
   if (!items.length) {
     return { ok: true };
   }
 
-  const store = getStockStore();
+  try {
+    await prisma.$transaction(async (tx) => {
+      for (const item of items) {
+        const medicine = await tx.medicine.findUnique({
+          where: { id: item.medicineId },
+          select: { quantity: true },
+        });
 
-  for (const item of items) {
-    const available = getAvailableStock(item.medicineId);
-    if (item.quantity > available) {
-      return {
-        ok: false,
-        message: `Insufficient stock for ${item.medicineId}. Available: ${available}`,
-      };
-    }
+        if (!medicine || item.quantity > medicine.quantity) {
+          throw new Error(`Insufficient stock for ${item.medicineId}`);
+        }
+      }
+
+      for (const item of items) {
+        const medicine = await tx.medicine.findUnique({
+          where: { id: item.medicineId },
+          select: { quantity: true },
+        });
+
+        if (!medicine) {
+          throw new Error(`Medicine not found: ${item.medicineId}`);
+        }
+
+        await tx.medicine.update({
+          where: { id: item.medicineId },
+          data: { quantity: medicine.quantity - item.quantity },
+        });
+      }
+
+      await bumpVersion(tx);
+    });
+
+    return { ok: true };
+  } catch (error) {
+    return {
+      ok: false,
+      message: error instanceof Error ? error.message : 'Unable to reserve stock',
+    };
   }
-
-  for (const item of items) {
-    store[item.medicineId] = getAvailableStock(item.medicineId) - item.quantity;
-  }
-
-  const globalStore = getGlobalStore();
-  globalStore.__pharmanestCatalogStockVersion = getStockVersion() + 1;
-
-  return { ok: true };
 }
 
-export function releaseStock(items: Array<{ medicineId: string; quantity: number }>): void {
+export async function releaseStock(items: Array<{ medicineId: string; quantity: number }>): Promise<void> {
+  await ensureCatalogSeeded();
+
   if (!items.length) {
     return;
   }
 
-  const store = getStockStore();
-  for (const item of items) {
-    store[item.medicineId] = getAvailableStock(item.medicineId) + item.quantity;
-  }
+  await prisma.$transaction(async (tx) => {
+    for (const item of items) {
+      const medicine = await tx.medicine.findUnique({
+        where: { id: item.medicineId },
+        select: { quantity: true },
+      });
 
-  const globalStore = getGlobalStore();
-  globalStore.__pharmanestCatalogStockVersion = getStockVersion() + 1;
+      if (!medicine) continue;
+
+      await tx.medicine.update({
+        where: { id: item.medicineId },
+        data: { quantity: medicine.quantity + item.quantity },
+      });
+    }
+
+    await bumpVersion(tx);
+  });
 }
 
-export function upsertStockForProduct(medicineId: string, quantity: number): void {
-  const store = getStockStore();
-  store[medicineId] = Math.max(0, Number(quantity) || 0);
-  const globalStore = getGlobalStore();
-  globalStore.__pharmanestCatalogStockVersion = getStockVersion() + 1;
+export async function upsertStockForProduct(medicineId: string, quantity: number): Promise<void> {
+  await ensureCatalogSeeded();
+  await prisma.medicine.update({
+    where: { id: medicineId },
+    data: { quantity: Math.max(0, Number(quantity) || 0) },
+  });
+  await bumpVersion();
 }
 
-export function removeStockForProduct(medicineId: string): void {
-  const store = getStockStore();
-  delete store[medicineId];
-  const globalStore = getGlobalStore();
-  globalStore.__pharmanestCatalogStockVersion = getStockVersion() + 1;
+export async function removeStockForProduct(medicineId: string): Promise<void> {
+  await ensureCatalogSeeded();
+  await prisma.stockState.upsert({
+    where: { id: 'catalog' },
+    update: { version: { increment: 1 } },
+    create: { id: 'catalog', version: 1 },
+  });
+  await prisma.medicine.update({
+    where: { id: medicineId },
+    data: { quantity: 0 },
+  });
 }

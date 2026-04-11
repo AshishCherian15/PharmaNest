@@ -6,15 +6,17 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { mockMedicines } from '@/lib/data';
+import { getExpiringMedicines, getLowStockMedicines, getMedicines } from '@/lib/medicines';
 import { AlertTriangle, Archive, ArrowRight, PackageX } from 'lucide-react';
 import Link from 'next/link';
 
-export function AlertsCard() {
-    const lowStockItems = mockMedicines.filter(m => m.quantity > 0 && m.quantity < 10);
-    const outOfStockItems = mockMedicines.filter(m => m.quantity === 0);
-    const expiringItems = mockMedicines.filter(m => new Date(m.expiryDate) < new Date(Date.now() + 60 * 24 * 60 * 60 * 1000));
-    const expiredItems = mockMedicines.filter(m => new Date(m.expiryDate) < new Date());
+export async function AlertsCard() {
+    const [lowStockItems, outOfStockItems, expiringItems, expiredItems] = await Promise.all([
+      getLowStockMedicines(9),
+      getMedicines(undefined, 0, 1000).then((items) => items.filter((m) => m.quantity === 0)),
+      getExpiringMedicines(60),
+      getMedicines(undefined, 0, 1000).then((items) => items.filter((m) => new Date(m.expiryDate ?? '') < new Date())),
+    ]);
 
   return (
     <Card>

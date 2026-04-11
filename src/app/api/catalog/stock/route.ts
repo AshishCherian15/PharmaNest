@@ -1,4 +1,4 @@
-import { landingProducts } from '@/lib/data';
+import { getAllProducts } from '@/lib/product-store';
 import { getStockSnapshot } from '@/lib/catalog-stock';
 import { apiSuccess, apiError } from '@/lib/api-response';
 import { requestLogger } from '@/lib/api-logger';
@@ -34,10 +34,10 @@ export async function GET(req: Request) {
         return apiError('No valid product IDs provided', 400, 'INVALID_IDS');
       }
     } else {
-      ids = landingProducts.map((product) => product.id);
+      ids = (await getAllProducts()).map((product) => product.id);
     }
 
-    const { stock, version } = getStockSnapshot(ids);
+    const { stock, version } = await getStockSnapshot(ids);
 
     requestLogger.logResponse('GET', '/api/catalog/stock', 200, startTime);
     return apiSuccess({ stock, version });

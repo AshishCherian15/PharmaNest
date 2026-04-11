@@ -6,13 +6,13 @@ import {
   CardTitle,
   CardDescription,
 } from '@/components/ui/card';
-import { mockMedicines } from '@/lib/data';
+import { getAllProducts } from '@/lib/product-store';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 
-export function LatestMedicines() {
-  const latestItems = mockMedicines.slice(0, 5);
+export async function LatestMedicines() {
+  const latestItems = (await getAllProducts()).slice(0, 5);
 
   return (
     <Card>

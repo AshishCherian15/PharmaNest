@@ -11,7 +11,7 @@ export async function GET() {
   const startTime = performance.now();
 
   try {
-    const sales = getSalesTransactions();
+    const sales = await getSalesTransactions();
     requestLogger.logResponse('GET', '/api/admin/sales', 200, startTime);
     return apiSuccess({ sales }, 200);
   } catch (error) {

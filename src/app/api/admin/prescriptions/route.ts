@@ -11,5 +11,5 @@ export async function GET() {
     return ApiErrors.unauthorized();
   }
 
-  return apiSuccess({ prescriptions: getAllPrescriptions() });
+  return apiSuccess({ prescriptions: await getAllPrescriptions() });
 }

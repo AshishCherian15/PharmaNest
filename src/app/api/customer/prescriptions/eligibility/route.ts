@@ -23,7 +23,7 @@ export async function GET() {
     return ApiErrors.unauthorized();
   }
 
-  const eligibility = getPrescriptionEligibility(session.id);
+  const eligibility = await getPrescriptionEligibility(session.id);
   requestLogger.logResponse('GET', '/api/customer/prescriptions/eligibility', 200, startTime, {
     userId: session.id,
   });

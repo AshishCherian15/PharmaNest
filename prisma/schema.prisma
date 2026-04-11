@@ -22,10 +22,8 @@ enum OrderStatus {
 
 enum PrescriptionStatus {
   pending
-  approved
+  verified
   rejected
-  fulfilled
-  expired
 }
 
 model User {
@@ -107,6 +105,11 @@ model Medicine {
   expiryDate    DateTime?
   batchNo       String?
   image         String?
+  requiresPrescription Boolean @default(false)
+  rating        Int?
+  reviews       Int?
+  isNew         Boolean  @default(false)
+  previousPrice Int?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
@@ -155,6 +158,7 @@ model PurchaseOrder {
 model Prescription {
   id           String    @id @default(cuid())
   customerId   String
+  patientName  String
   doctorName   String
   doctorPhone  String?
   prescriptionDate DateTime @default(now())
@@ -182,4 +186,17 @@ model PrescriptionItem {
   medicine     Medicine     @relation(fields: [medicineId], references: [id], onDelete: Restrict)
 
   @@index([prescriptionId])
+}
+
+model SalesTransaction {
+  id        String   @id
+  amount    Int
+  items     Int
+  timestamp DateTime @default(now())
+}
+
+model StockState {
+  id        String   @id @default("catalog")
+  version   Int      @default(1)
+  updatedAt DateTime @updatedAt
 }

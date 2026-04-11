@@ -1,15 +1,15 @@
 import Link from 'next/link';
 import { cookies } from 'next/headers';
 import { AUTH_COOKIE, parseSessionToken } from '@/lib/auth';
-import { getOrdersForCustomer } from '@/lib/customer-orders';
+import { getOrdersForCustomerDb } from '@/lib/customer-orders-db';
 import { getPrescriptionsForCustomer } from '@/lib/prescriptions';
 import { landingProducts } from '@/lib/data';
 
 export default async function CustomerOverviewPage() {
   const token   = (await cookies()).get(AUTH_COOKIE)?.value;
   const session = parseSessionToken(token);
-  const orders  = session ? getOrdersForCustomer(session.id) : [];
-  const rxList  = session ? getPrescriptionsForCustomer(session.id) : [];
+  const orders  = session ? await getOrdersForCustomerDb(session.id) : [];
+  const rxList  = session ? await getPrescriptionsForCustomer(session.id) : [];
   const recentOrder = orders[0] ?? null;
   const pendingRxCount = rxList.filter((r) => r.status === 'pending').length;
   const verifiedRxCount = rxList.filter((r) => r.status === 'verified').length;

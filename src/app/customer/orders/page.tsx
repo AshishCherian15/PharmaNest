@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { cookies } from 'next/headers';
 import { AUTH_COOKIE, parseSessionToken } from '@/lib/auth';
-import { getOrdersForCustomer } from '@/lib/customer-orders';
+import { getOrdersForCustomerDb } from '@/lib/customer-orders-db';
 import type { CustomerOrderStatus } from '@/lib/types';
 
 const statusConfig: Record<CustomerOrderStatus, { label: string; color: string; icon: string }> = {
@@ -15,7 +15,7 @@ const statusConfig: Record<CustomerOrderStatus, { label: string; color: string; 
 export default async function CustomerOrdersPage() {
   const token = (await cookies()).get(AUTH_COOKIE)?.value;
   const session = parseSessionToken(token);
-  const orders = session ? getOrdersForCustomer(session.id) : [];
+  const orders = session ? await getOrdersForCustomerDb(session.id) : [];
 
   return (
     <div className="space-y-6">

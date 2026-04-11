@@ -5,7 +5,7 @@ import {
   getOrdersForCustomerDb,
 } from '@/lib/customer-orders-db';
 import type { CustomerOrderItem } from '@/lib/types';
-import { landingProducts } from '@/lib/data';
+import { getProductById } from '@/lib/product-store';
 import { getAvailableStock, getStockSnapshot, getStockVersion } from '@/lib/catalog-stock';
 import { hasVerifiedPrescription } from '@/lib/prescriptions';
 import { 
@@ -111,7 +111,7 @@ export async function POST(req: Request) {
 
     // Check stock version exists
     if (!Number.isFinite(clientStockVersion) || clientStockVersion <= 0) {
-      const snapshot = getStockSnapshot(itemIds);
+      const snapshot = await getStockSnapshot(itemIds);
       requestLogger.logResponse('POST', '/api/customer/orders', 409, startTime, {
         userId: session.id,
       });
@@ -127,9 +127,9 @@ export async function POST(req: Request) {
     }
 
     // Check for stock conflicts
-    const serverStockVersion = getStockVersion();
+    const serverStockVersion = await getStockVersion();
     if (clientStockVersion !== serverStockVersion) {
-      const snapshot = getStockSnapshot(itemIds);
+      const snapshot = await getStockSnapshot(itemIds);
       requestLogger.logResponse('POST', '/api/customer/orders', 409, startTime, {
         userId: session.id,
       });
@@ -146,36 +146,34 @@ export async function POST(req: Request) {
 
     // Normalize and validate items
     const rxRequiredNames: string[] = [];
-    const normalizedItems = items
-      .map((item) => {
-        const medicineId = String(item.medicineId ?? '').trim();
-        const quantity = Number(item.quantity ?? 0);
-        const catalogProduct = landingProducts.find(
-          (product) => product.id === medicineId
-        );
+    const normalizedItems: CustomerOrderItem[] = [];
 
-        if (!catalogProduct) {
-          return null;
-        }
+    for (const item of items) {
+      const medicineId = String(item.medicineId ?? '').trim();
+      const quantity = Number(item.quantity ?? 0);
+      const catalogProduct = await getProductById(medicineId);
 
-        const available = getAvailableStock(catalogProduct.id);
-        if (!Number.isFinite(quantity) || quantity <= 0 || quantity > available) {
-          return null;
-        }
+      if (!catalogProduct) {
+        continue;
+      }
 
-        if (catalogProduct.requiresPrescription) {
-          rxRequiredNames.push(catalogProduct.name);
-        }
+      const available = await getAvailableStock(catalogProduct.id);
+      if (!Number.isFinite(quantity) || quantity <= 0 || quantity > available) {
+        continue;
+      }
 
-        return {
-          medicineId: catalogProduct.id,
-          name: catalogProduct.name,
-          genericName: catalogProduct.genericName,
-          unitPrice: catalogProduct.price,
-          quantity,
-        } as CustomerOrderItem;
-      })
-      .filter((item): item is CustomerOrderItem => Boolean(item));
+      if (catalogProduct.requiresPrescription) {
+        rxRequiredNames.push(catalogProduct.name);
+      }
+
+      normalizedItems.push({
+        medicineId: catalogProduct.id,
+        name: catalogProduct.name,
+        genericName: catalogProduct.genericName,
+        unitPrice: catalogProduct.price,
+        quantity,
+      });
+    }
 
     if (!normalizedItems.length) {
       requestLogger.logResponse('POST', '/api/customer/orders', 400, startTime, {
@@ -191,7 +189,7 @@ export async function POST(req: Request) {
     // Check prescription requirement
     if (
       rxRequiredNames.length > 0 &&
-      !hasVerifiedPrescription(session.id)
+      !(await hasVerifiedPrescription(session.id))
     ) {
       requestLogger.logResponse('POST', '/api/customer/orders', 403, startTime, {
         userId: session.id,
@@ -236,7 +234,7 @@ export async function POST(req: Request) {
     });
 
     if (!created.ok) {
-      const snapshot = getStockSnapshot(itemIds);
+      const snapshot = await getStockSnapshot(itemIds);
       requestLogger.logResponse('POST', '/api/customer/orders', 409, startTime, {
         userId: session.id,
       });

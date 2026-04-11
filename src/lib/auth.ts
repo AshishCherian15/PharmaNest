@@ -20,11 +20,9 @@ type StoredUser = SessionUser & {
 type SessionPayload = SessionUser & {
   iat: number;
   exp: number;
-  bid: string;
 };
 
 const SESSION_TTL_SECONDS = 60 * 60 * 24 * 7;
-const SERVER_BOOT_ID = `${Date.now()}-${crypto.randomBytes(8).toString('hex')}`;
 
 // Get default password from environment or development default
 function getDefaultPassword(): string {
@@ -116,7 +114,6 @@ export function createSessionToken(user: SessionUser): string {
     ...user,
     iat: now,
     exp: now + SESSION_TTL_SECONDS,
-    bid: SERVER_BOOT_ID,
   };
 
   const header = base64UrlEncode(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
@@ -138,7 +135,6 @@ export function parseSessionToken(token?: string): SessionUser | null {
     const payload = JSON.parse(base64UrlDecode(body)) as SessionPayload;
     const now = Math.floor(Date.now() / 1000);
     if (!payload.exp || payload.exp < now) return null;
-    if (!payload.bid || payload.bid !== SERVER_BOOT_ID) return null;
     return {
       id: payload.id,
       name: payload.name,

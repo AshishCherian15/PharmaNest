@@ -17,7 +17,7 @@ export async function PATCH(req: Request, context: { params: Promise<{ id: strin
   }
 
   const { id } = await context.params;
-  const updated = updatePrescriptionStatus(id, body.status);
+  const updated = await updatePrescriptionStatus(id, body.status);
   if (!updated) return ApiErrors.notFound('Prescription not found.');
 
   return apiSuccess({ prescription: updated });
