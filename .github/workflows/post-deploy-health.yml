@@ -1,0 +1,32 @@
+name: Post Deploy Health Check
+
+on:
+  workflow_dispatch:
+    inputs:
+      healthcheck_url:
+        description: "Full health endpoint URL (for example https://your-domain.com/api/health)"
+        required: true
+        type: string
+
+jobs:
+  health-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Run health check
+        env:
+          HEALTHCHECK_URL: ${{ inputs.healthcheck_url }}
+        run: |
+          echo "Checking ${HEALTHCHECK_URL}"
+          response=$(curl -sS -w "\n%{http_code}" "${HEALTHCHECK_URL}")
+          body=$(echo "$response" | head -n -1)
+          status=$(echo "$response" | tail -n 1)
+
+          echo "Status: $status"
+          echo "Body: $body"
+
+          if [ "$status" -ne 200 ]; then
+            echo "Health check failed"
+            exit 1
+          fi

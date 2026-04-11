@@ -56,3 +56,5 @@ HEALTHCHECK_URL=https://<your-domain>/api/health npm run verify:health
 ```
 
 For final promotion checks, follow [docs/release-checklist.md](docs/release-checklist.md).
+
+You can also trigger the GitHub Action `Post Deploy Health Check` and pass your deployed `/api/health` URL.

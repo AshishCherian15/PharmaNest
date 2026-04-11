@@ -88,3 +88,4 @@ Release gates are documented in [docs/release-checklist.md](docs/release-checkli
 - `apphosting.yaml` has been removed because the deployment target is now Vercel.
 - `GET /api/health` checks database connectivity and returns deployment health metadata.
 - GitHub Actions CI runs typecheck and build for pushes and pull requests on `main`.
+- A manual GitHub Action (`Post Deploy Health Check`) can validate a live deployment URL.

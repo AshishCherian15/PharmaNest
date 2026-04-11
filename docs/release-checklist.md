@@ -34,6 +34,7 @@ npm run db:generate:postgres
 
 - Verify health endpoint returns success:
   - `GET /api/health`
+- Trigger GitHub Action `Post Deploy Health Check` with your production health URL.
 - Validate key paths:
   - Login
   - Catalog
