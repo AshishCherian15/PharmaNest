@@ -25,6 +25,12 @@
 *.pem
 *.bundle
 *.zip
+.idx/
+
+# generated root artifacts
+ARCHITECTURE_COMPLETE.json
+ARCHITECTURE_DOCUMENTATION.html
+push-log-*.txt
 
 # debug
 npm-debug.log*

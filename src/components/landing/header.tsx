@@ -6,7 +6,6 @@ import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { Search, ShoppingCart, Menu, X, User, ChevronDown } from 'lucide-react';
 import { useStoreCart } from '@/hooks/use-store-cart';
 import { Logo } from '@/components/logo';
-import { ThemeToggle } from '@/components/theme-toggle';
 
 const navCats = [
   { label: 'All',          value: 'all'           },
@@ -19,10 +18,10 @@ const navCats = [
 ];
 
 const navLinks = [
-  { href: '/',               label: 'Home'          },
+  { href: '/catalog',        label: 'Home'          },
   { href: '/catalog',        label: 'Shop'          },
   { href: '/knowledge-hub',  label: 'Knowledge Hub' },
-  { href: '/#why-choose',    label: 'About Us'      },
+  { href: '/about',          label: 'About Us'      },
 ];
 
 export function LandingHeader() {
@@ -91,7 +90,7 @@ export function LandingHeader() {
             </button>
 
             {/* Logo */}
-            <Logo href="/" imageSize={40} className="flex-shrink-0 mr-1" />
+            <Logo href="/catalog" hideImage alwaysShowText className="flex-shrink-0 mr-1" />
 
             {/* Desktop nav links */}
             <nav className="hidden items-center gap-5 md:flex">
@@ -133,9 +132,6 @@ export function LandingHeader() {
 
             {/* Actions */}
             <div className="flex flex-shrink-0 items-center gap-2">
-              <div className="hidden md:block">
-                <ThemeToggle />
-              </div>
               <Link
                 href="/login"
                 className="hidden items-center gap-1.5 rounded-full border border-stitch-primary px-4 py-1.5 text-sm font-semibold text-stitch-primary transition hover:bg-stitch-primary-fixed/20 active:scale-95 md:flex"
@@ -201,10 +197,6 @@ export function LandingHeader() {
               />
               <button type="submit" className="rounded-full bg-stitch-primary px-3 py-1 text-xs font-bold text-white">Go</button>
             </form>
-
-            <div className="flex justify-end pt-1">
-              <ThemeToggle />
-            </div>
 
             {/* Nav links */}
             {navLinks.map((link) => (

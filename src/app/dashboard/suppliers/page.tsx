@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { columns } from "./_components/columns"
 import { DataTable } from "@/app/dashboard/_components/data-table"
-import { mockSuppliers } from "@/lib/data"
 import type { Supplier } from "@/lib/types"
 import { SupplierFormDialog } from "./_components/add-supplier-dialog";
 import { PlusCircle, Download, Building2, Phone, Mail } from "lucide-react";
@@ -22,11 +21,25 @@ export default function SuppliersPage() {
   const [isDeleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
   const [editingSupplier, setEditingSupplier] = React.useState<Supplier | undefined>(undefined);
   const [selectedSupplierId, setSelectedSupplierId] = React.useState<string | null>(null);
+  const [loading, setLoading] = React.useState(true);
 
+  const loadSuppliers = React.useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/admin/suppliers', { cache: 'no-store' });
+      if (!res.ok) throw new Error('Failed to load suppliers');
+      const json = (await res.json()) as { suppliers?: Supplier[] };
+      setData(json.suppliers ?? []);
+    } catch {
+      toast({ variant: 'destructive', title: 'Load failed', description: 'Unable to fetch suppliers.' });
+    } finally {
+      setLoading(false);
+    }
+  }, [toast]);
 
   React.useEffect(() => {
-    setData(mockSuppliers);
-  }, []);
+    void loadSuppliers();
+  }, [loadSuppliers]);
 
   const metrics = useMemo(() => {
     return {
@@ -59,13 +72,30 @@ export default function SuppliersPage() {
     URL.revokeObjectURL(url);
   };
 
-  const handleSupplierSaved = (supplier: Supplier) => {
-    if (editingSupplier) {
-      setData(currentData => currentData.map(s => s.id === supplier.id ? supplier : s));
-    } else {
-      setData(currentData => [{...supplier, id: `SUP${Date.now()}`}, ...currentData]);
+  const handleSupplierSaved = async (supplier: Supplier) => {
+    try {
+      if (editingSupplier) {
+        const res = await fetch(`/api/admin/suppliers/${encodeURIComponent(supplier.id)}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(supplier),
+        });
+        if (!res.ok) throw new Error('Update failed');
+        toast({ title: 'Supplier Updated', description: `${supplier.name} has been successfully updated.` });
+      } else {
+        const res = await fetch('/api/admin/suppliers', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(supplier),
+        });
+        if (!res.ok) throw new Error('Create failed');
+        toast({ title: 'Supplier Added', description: `${supplier.name} has been successfully added.` });
+      }
+      setEditingSupplier(undefined);
+      await loadSuppliers();
+    } catch {
+      toast({ variant: 'destructive', title: 'Save failed', description: 'Unable to save supplier changes.' });
     }
-    setEditingSupplier(undefined);
   };
 
   const handleEdit = (supplier: Supplier) => {
@@ -83,16 +113,24 @@ export default function SuppliersPage() {
     setDeleteDialogOpen(true);
   }
 
-  const handleConfirmDelete = () => {
-    if (selectedSupplierId) {
-      setData(currentData => currentData.filter(s => s.id !== selectedSupplierId));
-       toast({
-        title: "Supplier Deleted",
-        description: "The supplier has been successfully removed.",
+  const handleConfirmDelete = async () => {
+    if (!selectedSupplierId) return;
+
+    try {
+      const supplier = data.find((s) => s.id === selectedSupplierId);
+      const res = await fetch(`/api/admin/suppliers/${encodeURIComponent(selectedSupplierId)}`, {
+        method: 'DELETE',
       });
+      if (!res.ok) throw new Error('Delete failed');
+
+      toast({ title: 'Supplier Deleted', description: `${supplier?.name || 'Item'} has been removed.` });
+      await loadSuppliers();
+    } catch {
+      toast({ variant: 'destructive', title: 'Delete failed', description: 'Unable to delete the supplier.' });
+    } finally {
+      setDeleteDialogOpen(false);
+      setSelectedSupplierId(null);
     }
-    setDeleteDialogOpen(false);
-    setSelectedSupplierId(null);
   }
 
   return (

@@ -1,14 +1,13 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
 import { ShoppingCart, Check } from 'lucide-react';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 import type { Medicine } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
 import { useStoreCart } from '@/hooks/use-store-cart';
 import { useToast } from '@/hooks/use-toast';
+import { ProductImage } from '@/components/ui/product-image';
 
 interface ProductCardProps {
   product: Medicine;
@@ -16,7 +15,6 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, className }: ProductCardProps) {
-  const image   = PlaceHolderImages.find((img) => img.id === product.imageId);
   const [added, setAdded] = useState(false);
   const { addItem } = useStoreCart();
   const { toast }   = useToast();
@@ -43,22 +41,17 @@ export function ProductCard({ product, className }: ProductCardProps) {
 
   return (
     <Link href={`/products/${product.id}`} className={cn('group block', className)}>
-      <div className="stitch-product-card border border-outline-variant/20 shadow-sm h-full flex flex-col">
+      <div className="stitch-product-card card-lift border border-outline-variant/20 shadow-sm h-full flex flex-col">
 
         {/* ── Image ── */}
         <div className="relative aspect-[4/3] overflow-hidden bg-surface-container-low">
-          {image ? (
-            <Image
-              src={image.imageUrl}
-              alt={product.name}
-              fill
-              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
-              className="object-cover transition-transform duration-500 group-hover:scale-110"
-              data-ai-hint={image.imageHint}
-            />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center text-5xl">💊</div>
-          )}
+          <ProductImage
+            imageId={product.imageId}
+            name={product.name}
+            category={product.category}
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+            className="group-hover:scale-110"
+          />
 
           {/* Badges */}
           <div className="absolute left-2 top-2 flex flex-col gap-1">
@@ -138,7 +131,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
               onClick={handleAdd}
               disabled={isOutOfStock}
               className={cn(
-                'flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl text-white transition-all active:scale-90 disabled:opacity-40',
+                'flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl text-white transition-all active:scale-90 disabled:opacity-40 btn-interactive',
                 added
                   ? 'bg-green-500 scale-95'
                   : 'bg-stitch-primary hover:bg-stitch-primary-container'

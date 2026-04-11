@@ -1,9 +1,8 @@
 'use client';
 
 import * as React from 'react';
-import { useMemo, useState } from 'react';
-import { mockMedicines, mockSales } from '@/lib/data';
-import type { Medicine, Sale } from '@/lib/types';
+import { useMemo } from 'react';
+import type { Medicine } from '@/lib/types';
 import { Input } from '@/components/ui/input';
 import { PosProductCard } from './_components/pos-product-card';
 import { SaleSummary } from './_components/sale-summary';
@@ -15,22 +14,61 @@ import { Badge } from '@/components/ui/badge';
 import { StatCard } from '../_components/stat-card';
 import { Download, TrendingUp, ShoppingCart, Clock } from 'lucide-react';
 
+type SaleTransaction = { id: string; amount: number; items: number; timestamp: string };
+type ApiMedicine = {
+  id: string;
+  name: string;
+  genericName?: string;
+  description?: string;
+  category?: string;
+  categoryId?: string;
+  price: number;
+  quantity: number;
+  expiryDate?: string | null;
+  image?: string | null;
+};
+
 export default function SalesPage() {
   const { toast } = useToast();
   const [medicines, setMedicines] = React.useState<Medicine[]>([]);
   const [searchTerm, setSearchTerm] = React.useState('');
   const [cart, setCart] = React.useState<CartItem[]>([]);
-  const [salesHistory, setSalesHistory] = React.useState<Array<{ id: string; amount: number; items: number; timestamp: string }>>([]);
+  const [salesHistory, setSalesHistory] = React.useState<SaleTransaction[]>([]);
 
-  React.useEffect(() => {
-    // In a real app, you'd fetch this from an API
-    setMedicines(mockMedicines);
+  const loadMedicines = React.useCallback(async () => {
+    const res = await fetch('/api/admin/products', { cache: 'no-store' });
+    if (!res.ok) throw new Error('Failed to load medicines');
+    const data = (await res.json()) as { medicines?: ApiMedicine[] };
+
+    const mapped = (data.medicines ?? []).map((m) => ({
+      id: m.id,
+      name: m.name,
+      genericName: m.genericName ?? m.name,
+      description: m.description ?? '',
+      category: m.category ?? m.categoryId ?? 'General',
+      price: m.price,
+      quantity: m.quantity,
+      expiryDate: m.expiryDate ?? new Date().toISOString().slice(0, 10),
+      imageId: m.image ?? 'med-image-1',
+    }));
+
+    setMedicines(mapped);
   }, []);
 
+  const loadSalesHistory = React.useCallback(async () => {
+    const res = await fetch('/api/admin/sales', { cache: 'no-store' });
+    if (!res.ok) throw new Error('Failed to load sales history');
+    const data = (await res.json()) as { sales?: SaleTransaction[] };
+    setSalesHistory(Array.isArray(data.sales) ? data.sales : []);
+  }, []);
+
+  React.useEffect(() => {
+    Promise.all([loadMedicines(), loadSalesHistory()]).catch(() => {
+      toast({ variant: 'destructive', title: 'Load failed', description: 'Unable to load POS data.' });
+    });
+  }, [loadMedicines, loadSalesHistory, toast]);
+
   const salesMetrics = useMemo(() => {
-    const today = new Date();
-    const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-    
     return {
       totalTransactions: salesHistory.length,
       totalRevenue: salesHistory.reduce((sum, sale) => sum + sale.amount, 0),
@@ -122,7 +160,7 @@ export default function SalesPage() {
     });
   }
 
-  const handleCompleteSale = () => {
+  const handleCompleteSale = async () => {
     if (cart.length === 0) {
         toast({
             variant: "destructive",
@@ -131,19 +169,30 @@ export default function SalesPage() {
         });
         return;
     }
-    const saleAmount = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const newSale = {
-      id: `TXN${Date.now()}`,
-      amount: saleAmount,
-      items: cart.length,
-      timestamp: new Date().toISOString(),
-    };
-    setSalesHistory(prev => [newSale, ...prev]);
-    setCart([]);
-    toast({
-        title: "Sale Completed",
-        description: `Transaction ${newSale.id}: ${(saleAmount / 100).toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}`,
-    });
+    try {
+      const res = await fetch('/api/admin/sales', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items: cart }),
+      });
+      if (!res.ok) throw new Error('Could not complete sale');
+
+      const payload = (await res.json()) as { transaction: SaleTransaction };
+      setSalesHistory((prev) => [payload.transaction, ...prev]);
+      setCart([]);
+      await loadMedicines();
+
+      toast({
+          title: "Sale Completed",
+          description: `Transaction ${payload.transaction.id}: ${(payload.transaction.amount / 100).toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}`,
+      });
+    } catch {
+      toast({
+        variant: 'destructive',
+        title: 'Sale failed',
+        description: 'Unable to complete sale. Please review stock and try again.',
+      });
+    }
   }
 
   const handleExportSalesReport = () => {

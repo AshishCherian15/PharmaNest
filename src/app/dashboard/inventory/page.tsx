@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 import { useMemo } from 'react';
-import { mockMedicines } from '@/lib/data';
 import type { Medicine } from '@/lib/types';
 import { MedicineFormDialog } from './_components/add-medicine-dialog';
 import { DeleteConfirmationDialog } from '@/components/delete-confirmation-dialog';
@@ -14,6 +13,7 @@ import { StatCard } from '../_components/stat-card';
 export default function InventoryPage() {
   const { toast } = useToast();
   const [data, setData]                   = React.useState<Medicine[]>([]);
+  const [loading, setLoading]             = React.useState(true);
   const [search, setSearch]               = React.useState('');
   const [categoryFilter, setCategoryFilter] = React.useState('all');
   const [statusFilter, setStatusFilter]   = React.useState('all');
@@ -24,7 +24,23 @@ export default function InventoryPage() {
   const [editing, setEditing]             = React.useState<Medicine | undefined>();
   const [deletingId, setDeletingId]       = React.useState<string | null>(null);
 
-  React.useEffect(() => { setData(mockMedicines); }, []);
+  const loadProducts = React.useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/admin/products', { cache: 'no-store' });
+      if (!res.ok) throw new Error('Failed to load products');
+      const json = (await res.json()) as { medicines?: Medicine[] };
+      setData(json.medicines ?? []);
+    } catch {
+      toast({ variant: 'destructive', title: 'Load failed', description: 'Unable to fetch products.' });
+    } finally {
+      setLoading(false);
+    }
+  }, [toast]);
+
+  React.useEffect(() => {
+    void loadProducts();
+  }, [loadProducts]);
 
   const inventory = useMemo(() => {
     return {
@@ -60,25 +76,50 @@ export default function InventoryPage() {
     return { label: 'IN STOCK', cls: 'bg-[#f0fdf4] text-stitch-primary border border-stitch-primary/10' };
   };
 
-  const handleSave = (m: Medicine) => {
-    if (editing) {
-      setData((d) => d.map((x) => (x.id === m.id ? m : x)));
-      toast({ title: 'Medicine Updated', description: `${m.name} has been successfully updated.` });
-    } else {
-      setData((d) => [{ ...m, id: `MED${Date.now()}` }, ...d]);
-      toast({ title: 'Medicine Added', description: `${m.name} has been successfully added to inventory.` });
+  const handleSave = async (m: Medicine) => {
+    try {
+      if (editing) {
+        const res = await fetch(`/api/admin/products/${encodeURIComponent(m.id)}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(m),
+        });
+        if (!res.ok) throw new Error('Update failed');
+        toast({ title: 'Medicine Updated', description: `${m.name} has been successfully updated.` });
+      } else {
+        const res = await fetch('/api/admin/products', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(m),
+        });
+        if (!res.ok) throw new Error('Create failed');
+        toast({ title: 'Medicine Added', description: `${m.name} has been successfully added to inventory.` });
+      }
+      setEditing(undefined);
+      await loadProducts();
+    } catch {
+      toast({ variant: 'destructive', title: 'Save failed', description: 'Unable to save medicine changes.' });
     }
-    setEditing(undefined);
   };
 
-  const handleDelete = () => {
-    if (deletingId) {
-      const medicine = data.find(m => m.id === deletingId);
-      setData((d) => d.filter((m) => m.id !== deletingId));
+  const handleDelete = async () => {
+    if (!deletingId) return;
+
+    try {
+      const medicine = data.find((m) => m.id === deletingId);
+      const res = await fetch(`/api/admin/products/${encodeURIComponent(deletingId)}`, {
+        method: 'DELETE',
+      });
+      if (!res.ok) throw new Error('Delete failed');
+
       toast({ title: 'Medicine Deleted', description: `${medicine?.name || 'Item'} has been removed from inventory.` });
+      await loadProducts();
+    } catch {
+      toast({ variant: 'destructive', title: 'Delete failed', description: 'Unable to delete the medicine.' });
+    } finally {
+      setDeleteOpen(false);
+      setDeletingId(null);
     }
-    setDeleteOpen(false);
-    setDeletingId(null);
   };
 
   const handlePageChange = (newPage: number) => {
@@ -283,7 +324,7 @@ export default function InventoryPage() {
                 {paginated.length === 0 && (
                   <tr>
                     <td colSpan={6} className="px-5 py-12 text-center text-sm text-on-surface-variant">
-                      No medicines found. Try adjusting your filters.
+                      {loading ? 'Loading medicines...' : 'No medicines found. Try adjusting your filters.'}
                     </td>
                   </tr>
                 )}

@@ -57,9 +57,9 @@ export class ErrorBoundary extends React.Component<Props, State> {
             </div>
 
             <div className="space-y-2">
-              <h1 className="text-2xl font-bold text-on-surface">Oops! Something went wrong</h1>
+              <h1 className="text-2xl font-bold text-on-surface">Something Went Wrong</h1>
               <p className="text-sm text-on-surface-variant">
-                We encountered an unexpected error. Please try again or contact support if the problem persists.
+                We're sorry! An unexpected issue occurred. Try refreshing the page, or return to the home page.
               </p>
             </div>
 

@@ -98,3 +98,17 @@ export function releaseStock(items: Array<{ medicineId: string; quantity: number
   const globalStore = getGlobalStore();
   globalStore.__pharmanestCatalogStockVersion = getStockVersion() + 1;
 }
+
+export function upsertStockForProduct(medicineId: string, quantity: number): void {
+  const store = getStockStore();
+  store[medicineId] = Math.max(0, Number(quantity) || 0);
+  const globalStore = getGlobalStore();
+  globalStore.__pharmanestCatalogStockVersion = getStockVersion() + 1;
+}
+
+export function removeStockForProduct(medicineId: string): void {
+  const store = getStockStore();
+  delete store[medicineId];
+  const globalStore = getGlobalStore();
+  globalStore.__pharmanestCatalogStockVersion = getStockVersion() + 1;
+}

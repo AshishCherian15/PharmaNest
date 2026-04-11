@@ -1,6 +1,7 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import * as React from 'react';
+import { useState } from 'react';
 import {
   DollarSign,
   Package,
@@ -14,48 +15,62 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { StatCard } from '../_components/stat-card';
-import { mockSales, mockMedicines } from '@/lib/data';
 import { SalesOverTimeChart } from './_components/sales-over-time-chart';
 import { SalesByCategoryChart } from './_components/sales-by-category-chart';
 import { PageHeader } from '@/components/dashboard/page-header';
+import { useToast } from '@/hooks/use-toast';
+
+type LowStockMedicine = {
+  id: string;
+  name: string;
+  quantity: number;
+};
+
+type TopMedicine = {
+  medicineId: string;
+  medicineName: string;
+  estimatedRevenue: number;
+};
+
+type ReportSummary = {
+  totalRevenue: number;
+  totalSales: number;
+  lowStockItems: number;
+  expiredItems: number;
+  lowStockMedicines: LowStockMedicine[];
+  topMedicines: TopMedicine[];
+};
 
 const REPORT_PERIODS = ['Last 7 days', 'Last 30 days', 'Year to date'] as const;
 
 export default function ReportsPage() {
+  const { toast } = useToast();
   const [selectedPeriod, setSelectedPeriod] = useState<(typeof REPORT_PERIODS)[number]>(
     'Last 30 days'
   );
+  const [summary, setSummary] = React.useState<ReportSummary | null>(null);
 
-  const totalRevenue = mockSales.reduce((sum, sale) => sum + sale.amount, 0);
-  const totalSales = mockSales.length;
-  const lowStockMedicines = mockMedicines.filter(m => m.quantity > 0 && m.quantity < 10);
-  const expiredMedicines = mockMedicines.filter(
-    m => new Date(m.expiryDate) < new Date()
-  );
-  const lowStockItems = lowStockMedicines.length;
-  const expiredItems = expiredMedicines.length;
+  const loadSummary = React.useCallback(async () => {
+    try {
+      const res = await fetch('/api/admin/reports/summary', { cache: 'no-store' });
+      if (!res.ok) throw new Error('Failed to load reports');
+      const data = (await res.json()) as { summary?: ReportSummary };
+      setSummary(data.summary ?? null);
+    } catch {
+      toast({ variant: 'destructive', title: 'Load failed', description: 'Unable to load report summary.' });
+    }
+  }, [toast]);
 
-  const topMedicines = useMemo(() => {
-    const salesByCategory = mockMedicines.reduce<Record<string, number>>(
-      (acc, medicine) => {
-        acc[medicine.category] = (acc[medicine.category] || 0) + medicine.price;
-        return acc;
-      },
-      {}
-    );
+  React.useEffect(() => {
+    void loadSummary();
+  }, [loadSummary]);
 
-    return Object.entries(salesByCategory)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 4)
-      .map(([category, value]) => {
-        const representative = mockMedicines.find(m => m.category === category);
-        return {
-          category,
-          medicineName: representative?.name || category,
-          estimatedRevenue: value,
-        };
-      });
-  }, []);
+  const totalRevenue = summary?.totalRevenue ?? 0;
+  const totalSales = summary?.totalSales ?? 0;
+  const lowStockItems = summary?.lowStockItems ?? 0;
+  const expiredItems = summary?.expiredItems ?? 0;
+  const lowStockMedicines = summary?.lowStockMedicines ?? [];
+  const topMedicines = summary?.topMedicines ?? [];
 
   const handleExportSummary = () => {
     const rows = [
@@ -175,12 +190,12 @@ export default function ReportsPage() {
             <div className="space-y-2 text-sm">
               {topMedicines.map(item => (
                 <div
-                  key={item.category}
+                  key={item.medicineId}
                   className="flex items-center justify-between rounded-md bg-muted/40 p-2"
                 >
                   <div>
                     <p className="font-medium">{item.medicineName}</p>
-                    <p className="text-xs text-muted-foreground">{item.category}</p>
+                    <p className="text-xs text-muted-foreground">{item.medicineId}</p>
                   </div>
                   <p className="font-semibold">
                     {(item.estimatedRevenue / 100).toLocaleString('en-IN', {
@@ -190,6 +205,9 @@ export default function ReportsPage() {
                   </p>
                 </div>
               ))}
+              {topMedicines.length === 0 && (
+                <p className="text-xs text-muted-foreground">No sales data available yet.</p>
+              )}
             </div>
           </div>
         </div>

@@ -3,12 +3,17 @@ import type {NextConfig} from 'next';
 const nextConfig: NextConfig = {
   /* config options here */
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false,
   },
   eslint: {
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: false,
+  },
+  experimental: {
+    optimizePackageImports: ['@/components', '@/lib'],
   },
   images: {
+    formats: ['image/avif', 'image/webp'],
+    qualities: [60, 75, 85, 95],
     remotePatterns: [
       {
         protocol: 'https',

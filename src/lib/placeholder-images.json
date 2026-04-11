@@ -39,61 +39,61 @@
     {
       "id": "med-image-1",
       "description": "Paracetamol 500mg tablets",
-      "imageUrl": "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=250&h=250&fit=crop&auto=format",
+      "imageUrl": "https://placehold.co/600x600/E8FFF3/0C6B4A?text=Paracetamol+500mg",
       "imageHint": "paracetamol pills white tablets"
     },
     {
       "id": "med-image-2",
       "description": "Amoxicillin capsules",
-      "imageUrl": "https://images.unsplash.com/photo-1471864190281-a93a3070b6de?w=250&h=250&fit=crop&auto=format",
+      "imageUrl": "https://placehold.co/600x600/E6F3FF/0E5AA6?text=Amoxicillin+Capsules",
       "imageHint": "antibiotic capsules medicine"
     },
     {
       "id": "med-image-3",
       "description": "Ibuprofen tablets",
-      "imageUrl": "https://images.unsplash.com/photo-1550572017-edd951b55104?w=250&h=250&fit=crop&auto=format",
+      "imageUrl": "https://placehold.co/600x600/FFF6E8/9A5A00?text=Ibuprofen+200mg",
       "imageHint": "ibuprofen painkiller tablets"
     },
     {
       "id": "med-image-4",
       "description": "Loratadine antihistamine",
-      "imageUrl": "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=250&h=250&fit=crop&auto=format",
+      "imageUrl": "https://placehold.co/600x600/F3EDFF/5B3A9C?text=Loratadine+10mg",
       "imageHint": "allergy medicine pills"
     },
     {
       "id": "med-image-5",
       "description": "Aspirin 81mg tablets",
-      "imageUrl": "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=250&h=250&fit=crop&auto=format",
+      "imageUrl": "https://placehold.co/600x600/FFEFF2/9B1134?text=Aspirin+81mg",
       "imageHint": "aspirin heart tablets"
     },
     {
       "id": "med-image-6",
       "description": "Omeprazole capsules",
-      "imageUrl": "https://images.unsplash.com/photo-1576671081837-49000212a370?w=250&h=250&fit=crop&auto=format",
+      "imageUrl": "https://placehold.co/600x600/FFF3E6/9A4D00?text=Omeprazole+20mg",
       "imageHint": "omeprazole stomach capsules"
     },
     {
       "id": "med-image-7",
       "description": "Metformin diabetes pills",
-      "imageUrl": "https://images.unsplash.com/photo-1563213126-a4273aed2016?w=250&h=250&fit=crop&auto=format",
+      "imageUrl": "https://placehold.co/600x600/E9F9FF/0A5C7A?text=Metformin+500mg",
       "imageHint": "metformin diabetes medicine"
     },
     {
       "id": "med-image-8",
       "description": "Salbutamol inhaler",
-      "imageUrl": "https://images.unsplash.com/photo-1609840114035-3c981b782dfe?w=250&h=250&fit=crop&auto=format",
+      "imageUrl": "https://placehold.co/600x600/EAF4FF/0A4B96?text=Salbutamol+Inhaler",
       "imageHint": "inhaler asthma blue"
     },
     {
       "id": "med-image-9",
       "description": "Cetirizine allergy tablets",
-      "imageUrl": "https://images.unsplash.com/photo-1584017911766-d451b3d0e843?w=250&h=250&fit=crop&auto=format",
+      "imageUrl": "https://placehold.co/600x600/F8F1FF/6938A3?text=Cetirizine+10mg",
       "imageHint": "cetirizine allergy tablets"
     },
     {
       "id": "med-image-10",
       "description": "Vitamin D3 softgels",
-      "imageUrl": "https://images.unsplash.com/photo-1616671276441-2f2c277b8bf6?w=250&h=250&fit=crop&auto=format",
+      "imageUrl": "https://placehold.co/600x600/FFFBEA/8A6600?text=Vitamin+D3+1000IU",
       "imageHint": "vitamin d supplement capsules"
     },
     {
@@ -105,109 +105,109 @@
     {
       "id": "cat-image-1",
       "description": "Personal care products",
-      "imageUrl": "https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=150&h=150&fit=crop&auto=format",
+      "imageUrl": "https://placehold.co/400x400/F5FFFD/0F766E?text=Personal+Care",
       "imageHint": "skincare personal care products"
     },
     {
       "id": "cat-image-2",
       "description": "Vitamin supplements",
-      "imageUrl": "https://images.unsplash.com/photo-1616671276441-2f2c277b8bf6?w=150&h=150&fit=crop&auto=format",
+      "imageUrl": "https://placehold.co/400x400/FFFCEB/A16207?text=Vitamins",
       "imageHint": "vitamin supplement bottles"
     },
     {
       "id": "cat-image-3",
       "description": "Baby care products",
-      "imageUrl": "https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=150&h=150&fit=crop&auto=format",
+      "imageUrl": "https://placehold.co/400x400/FFF4FB/9D174D?text=Baby+Care",
       "imageHint": "baby care products"
     },
     {
       "id": "cat-image-4",
       "description": "Medical devices",
-      "imageUrl": "https://images.unsplash.com/photo-1559757175-0eb30cd8c063?w=150&h=150&fit=crop&auto=format",
+      "imageUrl": "https://placehold.co/400x400/EEF6FF/1D4ED8?text=Medical+Devices",
       "imageHint": "medical devices equipment"
     },
     {
       "id": "cat-image-5",
       "description": "Pain relief medicines",
-      "imageUrl": "https://images.unsplash.com/photo-1550572017-edd951b55104?w=150&h=150&fit=crop&auto=format",
+      "imageUrl": "https://placehold.co/400x400/FFF5F5/B91C1C?text=Pain+Relief",
       "imageHint": "pain relief pills tablets"
     },
     {
       "id": "cat-image-6",
       "description": "Health foods and nutrition",
-      "imageUrl": "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=150&h=150&fit=crop&auto=format",
+      "imageUrl": "https://placehold.co/400x400/F1FFF4/166534?text=Health+Foods",
       "imageHint": "healthy food nutrition"
     },
     {
       "id": "lprod-image-1",
       "description": "Multivitamin Gummies",
-      "imageUrl": "https://images.unsplash.com/photo-1616671276441-2f2c277b8bf6?w=300&h=300&fit=crop&auto=format",
+      "imageUrl": "https://placehold.co/600x600/FFFBEA/8A6600?text=Multivitamin+Gummies",
       "imageHint": "multivitamin gummies supplement"
     },
     {
       "id": "lprod-image-2",
       "description": "Gentle Skin Cleanser",
-      "imageUrl": "https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=300&h=300&fit=crop&auto=format",
+      "imageUrl": "https://placehold.co/600x600/F5FFFD/0F766E?text=Gentle+Skin+Cleanser",
       "imageHint": "skin cleanser face wash"
     },
     {
       "id": "lprod-image-3",
       "description": "Organic Baby Shampoo",
-      "imageUrl": "https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=300&h=300&fit=crop&auto=format",
+      "imageUrl": "https://placehold.co/600x600/FFF4FB/9D174D?text=Organic+Baby+Shampoo",
       "imageHint": "baby shampoo organic"
     },
     {
       "id": "lprod-image-4",
       "description": "Digital Thermometer",
-      "imageUrl": "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=300&h=300&fit=crop&auto=format",
+      "imageUrl": "https://placehold.co/600x600/EEF6FF/1D4ED8?text=Digital+Thermometer",
       "imageHint": "digital thermometer medical"
     },
     {
       "id": "lprod-image-5",
       "description": "Vitamin C Effervescent Tablets",
-      "imageUrl": "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=300&h=300&fit=crop&auto=format",
+      "imageUrl": "https://placehold.co/600x600/FFFDEB/A16207?text=Vitamin+C+Tablets",
       "imageHint": "vitamin c tablets effervescent"
     },
     {
       "id": "lprod-image-6",
       "description": "Pain Relief Spray",
-      "imageUrl": "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=300&h=300&fit=crop&auto=format",
+      "imageUrl": "https://placehold.co/600x600/FFF5F5/B91C1C?text=Pain+Relief+Spray",
       "imageHint": "pain relief spray muscle"
     },
     {
       "id": "lprod-image-7",
       "description": "Protein Bar Chocolate",
-      "imageUrl": "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=300&h=300&fit=crop&auto=format",
+      "imageUrl": "https://placehold.co/600x600/F1FFF4/166534?text=Protein+Bar+Chocolate",
       "imageHint": "protein bar chocolate nutrition"
     },
     {
       "id": "lprod-image-8",
       "description": "Sunscreen SPF 50",
-      "imageUrl": "https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=300&h=300&fit=crop&auto=format",
+      "imageUrl": "https://placehold.co/600x600/F5FFFD/0F766E?text=Sunscreen+SPF+50",
       "imageHint": "sunscreen spf lotion"
     },
     {
       "id": "lprod-image-9",
       "description": "Baby Diaper Pants",
-      "imageUrl": "https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=300&h=300&fit=crop&auto=format",
+      "imageUrl": "https://placehold.co/600x600/FFF4FB/9D174D?text=Baby+Diaper+Pants",
       "imageHint": "baby diapers pants"
     },
     {
       "id": "lprod-image-10",
       "description": "Omega-3 Fish Oil Capsules",
-      "imageUrl": "https://images.unsplash.com/photo-1576671081837-49000212a370?w=300&h=300&fit=crop&auto=format",
+      "imageUrl": "https://placehold.co/600x600/EAF4FF/0A4B96?text=Omega-3+Fish+Oil",
       "imageHint": "omega 3 fish oil capsules"
     },
     {
       "id": "lprod-image-11",
       "description": "Knee Pain Relief Patch",
-      "imageUrl": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=300&fit=crop&auto=format",
+      "imageUrl": "https://placehold.co/600x600/FFF5F5/B91C1C?text=Knee+Pain+Patch",
       "imageHint": "knee pain patch herbal"
     },
     {
       "id": "lprod-image-12",
       "description": "Blood Pressure Monitor",
-      "imageUrl": "https://images.unsplash.com/photo-1559757175-0eb30cd8c063?w=300&h=300&fit=crop&auto=format",
+      "imageUrl": "https://placehold.co/600x600/EEF6FF/1D4ED8?text=Blood+Pressure+Monitor",
       "imageHint": "blood pressure monitor digital"
     }
   ]

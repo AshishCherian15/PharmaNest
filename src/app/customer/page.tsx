@@ -11,6 +11,8 @@ export default async function CustomerOverviewPage() {
   const orders  = session ? getOrdersForCustomer(session.id) : [];
   const rxList  = session ? getPrescriptionsForCustomer(session.id) : [];
   const recentOrder = orders[0] ?? null;
+  const pendingRxCount = rxList.filter((r) => r.status === 'pending').length;
+  const verifiedRxCount = rxList.filter((r) => r.status === 'verified').length;
 
   const quickReorder = landingProducts.slice(0, 3);
 
@@ -78,8 +80,8 @@ export default async function CustomerOverviewPage() {
         {[
           { label: 'Total Orders',    value: orders.length,                                  icon: '📦', color: 'bg-stitch-primary-fixed/20 text-stitch-primary' },
           { label: 'Prescriptions',   value: rxList.length,                                  icon: '📋', color: 'bg-stitch-secondary-fixed/20 text-stitch-secondary' },
-          { label: 'Pending Rx',      value: rxList.filter(r => r.status === 'pending').length, icon: '⏳', color: 'bg-amber-100 text-amber-700' },
-          { label: 'Verified Rx',     value: rxList.filter(r => r.status === 'verified').length, icon: '✅', color: 'bg-green-100 text-green-700' },
+          { label: 'Pending Rx',      value: pendingRxCount, icon: '⏳', color: 'bg-amber-100 text-amber-700' },
+          { label: 'Verified Rx',     value: verifiedRxCount, icon: '✅', color: 'bg-green-100 text-green-700' },
         ].map((s) => (
           <div key={s.label} className="rounded-2xl border border-outline-variant/20 bg-surface-container-lowest p-5 shadow-sm">
             <div className={`mb-3 flex h-10 w-10 items-center justify-center rounded-xl text-xl ${s.color}`}>
@@ -89,6 +91,38 @@ export default async function CustomerOverviewPage() {
             <p className="mt-0.5 text-xs font-medium text-on-surface-variant">{s.label}</p>
           </div>
         ))}
+      </section>
+
+      <section className="rounded-2xl border border-outline-variant/20 bg-surface-container-lowest p-5">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-wide text-outline">Recommended Next Step</p>
+            {pendingRxCount > 0 ? (
+              <>
+                <h3 className="mt-1 font-headline text-lg font-extrabold text-on-surface">Complete your prescription review</h3>
+                <p className="mt-1 text-sm text-on-surface-variant">
+                  You have {pendingRxCount} prescription request{pendingRxCount !== 1 ? 's' : ''} waiting for validation.
+                </p>
+              </>
+            ) : orders.length === 0 ? (
+              <>
+                <h3 className="mt-1 font-headline text-lg font-extrabold text-on-surface">Place your first order</h3>
+                <p className="mt-1 text-sm text-on-surface-variant">Start with common essentials and check live stock availability in the catalog.</p>
+              </>
+            ) : (
+              <>
+                <h3 className="mt-1 font-headline text-lg font-extrabold text-on-surface">Your account is in good shape</h3>
+                <p className="mt-1 text-sm text-on-surface-variant">Verified prescriptions: {verifiedRxCount}. You can reorder past medicines in a few taps.</p>
+              </>
+            )}
+          </div>
+          <Link
+            href={pendingRxCount > 0 ? '/customer/prescriptions' : '/catalog'}
+            className="inline-flex rounded-xl bg-stitch-primary px-5 py-2.5 text-sm font-bold text-white transition hover:bg-stitch-primary-container"
+          >
+            {pendingRxCount > 0 ? 'Review Prescriptions' : 'Continue Shopping'}
+          </Link>
+        </div>
       </section>
 
       {/* ── Active prescriptions ── */}
@@ -147,7 +181,7 @@ export default async function CustomerOverviewPage() {
           <h3 className="font-headline mb-5 text-xl font-extrabold text-on-surface">Essentials Quick Re-order</h3>
           <div className="overflow-hidden rounded-2xl bg-surface-container-low">
             {quickReorder.map((product, idx) => (
-              <div key={product.id} className={`flex items-center gap-4 p-4 transition hover:bg-surface-container-high cursor-pointer ${idx < quickReorder.length - 1 ? 'border-b border-outline-variant/10' : ''}`}>
+              <div key={product.id} className={`flex items-center gap-4 p-4 transition hover:bg-surface-container-high ${idx < quickReorder.length - 1 ? 'border-b border-outline-variant/10' : ''}`}>
                 <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-xl bg-stitch-primary-fixed/20 text-2xl">
                   💊
                 </div>
@@ -196,14 +230,14 @@ export default async function CustomerOverviewPage() {
           🔒
         </div>
         <div className="flex-1">
-          <h3 className="font-headline text-lg font-bold text-on-surface">Secure & Certified Pharmacy</h3>
+          <h3 className="font-headline text-lg font-bold text-on-surface">Security You Can Rely On</h3>
           <p className="mt-1 max-w-xl text-sm text-on-surface-variant">
-            Pharma Nest uses 256-bit encryption and is a HIPAA-compliant platform. Your medical history and data are protected by industry-leading security protocols.
+            Pharma Nest protects account and order data using encrypted sessions, signed authentication tokens, and role-based access controls across customer and admin workflows.
           </p>
         </div>
-        <button className="flex-shrink-0 rounded-xl border-2 border-stitch-primary px-6 py-2.5 text-sm font-bold text-stitch-primary transition hover:bg-stitch-primary hover:text-white">
-          Learn More
-        </button>
+        <Link href="/knowledge-hub" className="flex-shrink-0 rounded-xl border-2 border-stitch-primary px-6 py-2.5 text-sm font-bold text-stitch-primary transition hover:bg-stitch-primary hover:text-white">
+          Explore Knowledge Hub
+        </Link>
       </section>
     </div>
   );

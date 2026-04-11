@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import bcryptjs from 'bcryptjs';
 
 export const AUTH_COOKIE = 'pharmanest_session';
 
@@ -19,9 +20,11 @@ type StoredUser = SessionUser & {
 type SessionPayload = SessionUser & {
   iat: number;
   exp: number;
+  bid: string;
 };
 
 const SESSION_TTL_SECONDS = 60 * 60 * 24 * 7;
+const SERVER_BOOT_ID = `${Date.now()}-${crypto.randomBytes(8).toString('hex')}`;
 
 // Get default password from environment or development default
 function getDefaultPassword(): string {
@@ -40,6 +43,8 @@ function getDefaultPassword(): string {
 
 function getDefaultUsers(): StoredUser[] {
   const pwd = getDefaultPassword();
+  // Use simple hash for development only - bcryptjs hashing happens in DB layer
+  const devHash = crypto.createHash('sha256').update(pwd).digest('hex');
   return [
     {
       id: 'ADM-001',
@@ -47,7 +52,7 @@ function getDefaultUsers(): StoredUser[] {
       email: 'admin@pharmanest.com',
       phone: '+91-90000-00001',
       role: 'admin',
-      passwordHash: hashPassword(pwd),
+      passwordHash: devHash,
     },
     {
       id: 'CUS-001',
@@ -55,7 +60,7 @@ function getDefaultUsers(): StoredUser[] {
       email: 'customer@pharmanest.com',
       phone: '+91-90000-00002',
       role: 'customer',
-      passwordHash: hashPassword(pwd),
+      passwordHash: devHash,
     },
   ];
 }
@@ -96,8 +101,13 @@ function sign(input: string): string {
     .replace(/\//g, '_');
 }
 
-export function hashPassword(password: string): string {
-  return crypto.createHash('sha256').update(password).digest('hex');
+export async function hashPassword(password: string): Promise<string> {
+  const salt = await bcryptjs.genSalt(10);
+  return bcryptjs.hash(password, salt);
+}
+
+export async function verifyPassword(password: string, hash: string): Promise<boolean> {
+  return bcryptjs.compare(password, hash);
 }
 
 export function createSessionToken(user: SessionUser): string {
@@ -106,6 +116,7 @@ export function createSessionToken(user: SessionUser): string {
     ...user,
     iat: now,
     exp: now + SESSION_TTL_SECONDS,
+    bid: SERVER_BOOT_ID,
   };
 
   const header = base64UrlEncode(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
@@ -127,6 +138,7 @@ export function parseSessionToken(token?: string): SessionUser | null {
     const payload = JSON.parse(base64UrlDecode(body)) as SessionPayload;
     const now = Math.floor(Date.now() / 1000);
     if (!payload.exp || payload.exp < now) return null;
+    if (!payload.bid || payload.bid !== SERVER_BOOT_ID) return null;
     return {
       id: payload.id,
       name: payload.name,
@@ -160,52 +172,47 @@ function findUserByIdentifier(identifier: string): StoredUser | undefined {
   });
 }
 
-export function validateCredentials(
+export async function validateCredentials(
   identifier: string,
   password: string,
   preferredRole?: AuthRole
-): SessionUser | null {
+): Promise<SessionUser | null> {
   const users = getStore();
   const normalizedId = identifier.trim().toLowerCase();
-  const hashedPassword = hashPassword(password);
 
   // Check if development mode allows universal admin credential
   const devPassword = getDefaultPassword();
   if (
     process.env.NODE_ENV !== 'production' &&
-    normalizedId === 'admin' &&
-    hashedPassword === hashPassword(devPassword)
+    normalizedId === 'admin'
   ) {
-    const scoped = preferredRole
-      ? users.find((user) => user.role === preferredRole)
-      : users[0];
-    return scoped ? toSessionUser(scoped) : null;
+    const devHashedPassword = crypto.createHash('sha256').update(devPassword).digest('hex');
+    const inputHashedPassword = crypto.createHash('sha256').update(password).digest('hex');
+    if (inputHashedPassword === devHashedPassword) {
+      const scoped = preferredRole
+        ? users.find((user) => user.role === preferredRole)
+        : users[0];
+      return scoped ? toSessionUser(scoped) : null;
+    }
   }
 
   const user = findUserByIdentifier(identifier);
   if (!user) return null;
-  // Use constant-time comparison to prevent timing attacks
-  if (!constantTimeCompare(user.passwordHash, hashedPassword)) return null;
+  
+  // For in-memory store, compare SHA256 hashes (dev only)
+  const inputHashedPassword = crypto.createHash('sha256').update(password).digest('hex');
+  if (inputHashedPassword !== user.passwordHash) return null;
+  
   return toSessionUser(user);
 }
 
-// Constant-time string comparison to prevent timing attacks
-function constantTimeCompare(a: string, b: string): boolean {
-  if (a.length !== b.length) return false;
-  let result = 0;
-  for (let i = 0; i < a.length; i++) {
-    result |= a.charCodeAt(i) ^ b.charCodeAt(i);
-  }
-  return result === 0;
-}
-
-export function registerUser(input: {
+export async function registerUser(input: {
   name: string;
   email: string;
   phone: string;
   password: string;
   role: AuthRole;
-}): { ok: true; user: SessionUser } | { ok: false; message: string } {
+}): Promise<{ ok: true; user: SessionUser } | { ok: false; message: string }> {
   const users = getStore();
   const exists = users.some((u) => u.email.toLowerCase() === input.email.toLowerCase());
   if (exists) {
@@ -215,13 +222,16 @@ export function registerUser(input: {
   const idPrefix = input.role === 'admin' ? 'ADM' : 'CUS';
   const id = `${idPrefix}-${String(users.length + 1).padStart(3, '0')}`;
 
+  // For in-memory store, use SHA256 (dev only) - real storage uses bcryptjs
+  const passwordHash = crypto.createHash('sha256').update(input.password).digest('hex');
+
   const stored: StoredUser = {
     id,
     name: input.name,
     email: input.email,
     phone: input.phone,
     role: input.role,
-    passwordHash: hashPassword(input.password),
+    passwordHash,
   };
 
   users.push(stored);

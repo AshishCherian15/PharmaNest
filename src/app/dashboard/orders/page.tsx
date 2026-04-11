@@ -1,8 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { mockOrders, mockSuppliers } from '@/lib/data';
-import type { CustomerOrder, CustomerOrderStatus, PurchaseOrder } from '@/lib/types';
+import type { CustomerOrder, CustomerOrderStatus, PurchaseOrder, Supplier } from '@/lib/types';
 import { OrderFormDialog } from './_components/add-order-dialog';
 import { useToast } from '@/hooks/use-toast';
 import { Search, PlusCircle } from 'lucide-react';
@@ -38,14 +37,44 @@ const nextStatusOptions: Record<CustomerOrderStatus, CustomerOrderStatus[]> = {
 export default function OrdersPage() {
   const { toast } = useToast();
   const [purchaseOrders, setPurchaseOrders] = React.useState<PurchaseOrder[]>([]);
+  const [suppliers, setSuppliers] = React.useState<Supplier[]>([]);
   const [customerOrders, setCustomerOrders] = React.useState<CustomerOrder[]>([]);
   const [loadingCO, setLoadingCO]           = React.useState(true);
+  const [loadingPO, setLoadingPO]           = React.useState(true);
   const [updatingId, setUpdatingId]         = React.useState<string | null>(null);
   const [isFormOpen, setFormOpen]           = React.useState(false);
   const [tab, setTab]                       = React.useState<'customer' | 'purchase'>('customer');
   const [search, setSearch]                 = React.useState('');
 
-  React.useEffect(() => { setPurchaseOrders(mockOrders); }, []);
+  const loadPurchaseOrders = React.useCallback(async () => {
+    setLoadingPO(true);
+    try {
+      const res = await fetch('/api/admin/purchase-orders', { cache: 'no-store' });
+      if (!res.ok) throw new Error('Failed to load purchase orders');
+      const data = (await res.json()) as { orders?: PurchaseOrder[] };
+      setPurchaseOrders(Array.isArray(data.orders) ? data.orders : []);
+    } catch {
+      toast({ variant: 'destructive', title: 'Could not load purchase orders' });
+    } finally {
+      setLoadingPO(false);
+    }
+  }, [toast]);
+
+  const loadSuppliers = React.useCallback(async () => {
+    try {
+      const res = await fetch('/api/admin/suppliers', { cache: 'no-store' });
+      if (!res.ok) throw new Error('Failed to load suppliers');
+      const data = (await res.json()) as { suppliers?: Supplier[] };
+      setSuppliers(Array.isArray(data.suppliers) ? data.suppliers : []);
+    } catch {
+      toast({ variant: 'destructive', title: 'Could not load suppliers' });
+    }
+  }, [toast]);
+
+  React.useEffect(() => {
+    void loadPurchaseOrders();
+    void loadSuppliers();
+  }, [loadPurchaseOrders, loadSuppliers]);
 
   React.useEffect(() => {
     let mounted = true;
@@ -75,6 +104,25 @@ export default function OrdersPage() {
     } finally {
       setUpdatingId(null);
     }
+  };
+
+  const handleCreatePurchaseOrder = async (orderInput: {
+    supplierId: string;
+    total: number;
+    expectedDeliveryDate: string;
+  }) => {
+    const res = await fetch('/api/admin/purchase-orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(orderInput),
+    });
+
+    if (!res.ok) {
+      throw new Error('Create failed');
+    }
+
+    const payload = (await res.json()) as { order: PurchaseOrder };
+    setPurchaseOrders((current) => [payload.order, ...current]);
   };
 
   const filteredCustomer = customerOrders.filter((o) =>
@@ -190,6 +238,9 @@ export default function OrdersPage() {
         {/* ── Purchase orders ── */}
         {tab === 'purchase' && (
           <div className="overflow-hidden rounded-2xl bg-surface-container-lowest shadow-sm">
+            {loadingPO ? (
+              <div className="p-12 text-center text-sm text-on-surface-variant">Loading purchase orders...</div>
+            ) : (
             <table className="w-full text-left text-sm">
               <thead>
                 <tr className="border-b border-surface-container bg-surface-container-low/50 text-[10px] font-black uppercase tracking-widest text-on-surface-variant">
@@ -218,8 +269,16 @@ export default function OrdersPage() {
                     </td>
                   </tr>
                 ))}
+                {filteredPurchase.length === 0 && (
+                  <tr>
+                    <td colSpan={6} className="px-5 py-10 text-center text-sm text-on-surface-variant">
+                      No purchase orders found.
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
+            )}
           </div>
         )}
       </div>
@@ -227,8 +286,8 @@ export default function OrdersPage() {
       <OrderFormDialog
         open={isFormOpen}
         onOpenChange={setFormOpen}
-        onSave={(o) => setPurchaseOrders((d) => [o, ...d])}
-        suppliers={mockSuppliers}
+        onSave={handleCreatePurchaseOrder}
+        suppliers={suppliers}
       />
     </>
   );

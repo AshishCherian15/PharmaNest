@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import { mockPrescriptions } from '@/lib/data';
 import type { Prescription } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 
@@ -16,13 +15,41 @@ export default function PrescriptionsPage() {
   const [data, setData]   = React.useState<Prescription[]>([]);
   const [tab, setTab]     = React.useState<'pending' | 'verified' | 'rejected'>('pending');
   const [selected, setSelected] = React.useState<Prescription | null>(null);
+  const [loading, setLoading] = React.useState(true);
 
-  React.useEffect(() => { setData(mockPrescriptions); }, []);
+  const loadPrescriptions = React.useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/admin/prescriptions', { cache: 'no-store' });
+      if (!res.ok) throw new Error('Failed to load prescriptions');
+      const json = (await res.json()) as { prescriptions?: Prescription[] };
+      setData(json.prescriptions ?? []);
+    } catch {
+      toast({ variant: 'destructive', title: 'Load failed', description: 'Unable to load prescriptions.' });
+    } finally {
+      setLoading(false);
+    }
+  }, [toast]);
 
-  const updateStatus = (id: string, status: Prescription['status']) => {
-    setData((d) => d.map((p) => (p.id === id ? { ...p, status } : p)));
-    setSelected((s) => s?.id === id ? { ...s, status } : s);
-    toast({ title: `Prescription ${status}`, description: `ID: ${id}` });
+  React.useEffect(() => {
+    void loadPrescriptions();
+  }, [loadPrescriptions]);
+
+  const updateStatus = async (id: string, status: Prescription['status']) => {
+    try {
+      const res = await fetch(`/api/admin/prescriptions/${encodeURIComponent(id)}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status }),
+      });
+      if (!res.ok) throw new Error('Update failed');
+
+      setData((d) => d.map((p) => (p.id === id ? { ...p, status } : p)));
+      setSelected((s) => (s?.id === id ? { ...s, status } : s));
+      toast({ title: `Prescription ${status}`, description: `ID: ${id}` });
+    } catch {
+      toast({ variant: 'destructive', title: 'Update failed', description: 'Unable to update status.' });
+    }
   };
 
   const filtered = data.filter((p) => p.status === tab);
@@ -33,8 +60,8 @@ export default function PrescriptionsPage() {
 
       {/* ── Header ── */}
       <div>
-        <h2 className="font-headline text-4xl font-extrabold tracking-tight text-stitch-primary">Prescription Management</h2>
-        <p className="mt-1 font-medium text-on-surface-variant">Verify prescriptions and dispatch healthcare essentials.</p>
+        <h2 className="font-headline text-4xl font-extrabold tracking-tight text-stitch-primary">Review Prescriptions</h2>
+        <p className="mt-1 font-medium text-on-surface-variant">Verify customer prescriptions and approve orders for Rx items.</p>
       </div>
 
       {/* ── Tabs ── */}
@@ -57,7 +84,7 @@ export default function PrescriptionsPage() {
           {filtered.length === 0 ? (
             <div className="rounded-2xl bg-surface-container-lowest p-12 text-center shadow-sm">
               <p className="text-4xl mb-3">📋</p>
-              <p className="font-bold text-on-surface">No {tab} prescriptions</p>
+              <p className="font-bold text-on-surface">{loading ? 'Loading prescriptions...' : `No ${tab} prescriptions`}</p>
             </div>
           ) : (
             filtered.map((rx) => {
@@ -74,10 +101,10 @@ export default function PrescriptionsPage() {
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
-                        <h3 className="font-headline text-lg font-extrabold text-on-surface">Order #{rx.id}</h3>
+                        <h3 className="font-headline text-lg font-extrabold text-on-surface">Rx #{rx.id}</h3>
                         {rx.status === 'pending' && (
-                          <span className="rounded-full bg-error-container px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-error">
-                            Urgent Verification
+                          <span className="rounded-full bg-amber-100 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-800">
+                            Awaiting Review
                           </span>
                         )}
                       </div>
@@ -102,6 +129,13 @@ export default function PrescriptionsPage() {
                       </div>
                     ))}
                   </div>
+
+                  {rx.imageDataUrl && (
+                    <div className="mt-4">
+                      <p className="mb-2 text-xs font-bold uppercase tracking-wider text-on-surface-variant">Prescription Image</p>
+                      <img src={rx.imageDataUrl} alt="Prescription upload" className="h-24 rounded-lg border border-outline-variant/20 object-cover" />
+                    </div>
+                  )}
 
                   {/* AI pre-verified notice */}
                   {rx.status === 'pending' && (

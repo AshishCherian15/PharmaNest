@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 
@@ -8,6 +7,10 @@ interface LogoProps {
   imageSize?: number;
   /** If true, always show text even on small screens */
   alwaysShowText?: boolean;
+  /** If true, hide text and render image-only logo */
+  hideText?: boolean;
+  /** If true, hide image and render text-only logo */
+  hideImage?: boolean;
   /** dark = white/mint text for dark backgrounds */
   variant?: 'light' | 'dark';
 }
@@ -17,30 +20,41 @@ export function Logo({
   className,
   imageSize = 40,
   alwaysShowText = false,
+  hideText = false,
+  hideImage = false,
   variant = 'light',
 }: LogoProps) {
-  const primaryText = variant === 'dark' ? '#a6eac8' : '#0d4f32';
-  const accentText  = variant === 'dark' ? '#ffffff' : '#2daa6e';
+  const isDark = variant === 'dark';
+  const textSizeClass = imageSize >= 56 ? 'text-3xl' : imageSize >= 48 ? 'text-2xl' : 'text-xl';
 
   return (
-    <Link href={href} className={cn('flex items-center gap-2.5', className)}>
-      <Image
-        src="/PharmaNest.png"
-        alt="Pharma Nest"
-        width={imageSize}
-        height={imageSize}
-        className="shrink-0 rounded-xl object-contain"
-        priority
-      />
-      <span
-        className={cn(
-          'font-extrabold leading-none tracking-tight',
-          alwaysShowText ? 'block' : 'hidden md:block'
-        )}
-        style={{ fontSize: 26, color: primaryText }}
-      >
-        Pharma<span style={{ color: accentText }}>Nest</span>
-      </span>
+    <Link href={href} className={cn('group flex items-center gap-3 transition-all duration-200 hover:opacity-90', className)}>
+      {/* Enhanced text logo with gradient and styling */}
+      {!hideText && (
+        <span
+          className={cn(
+            'font-header font-extrabold leading-tight tracking-tight transition-all duration-300',
+            alwaysShowText ? 'block' : 'hidden sm:block',
+            textSizeClass,
+            'group-hover:scale-105 origin-left'
+          )}
+        >
+          <span className={cn(
+            'bg-clip-text',
+            isDark
+              ? 'bg-gradient-to-r from-stitch-primary-fixed via-stitch-secondary-fixed to-stitch-primary-fixed text-transparent'
+              : 'bg-gradient-to-r from-stitch-primary via-stitch-primary-container to-stitch-secondary text-transparent'
+          )}>
+            Pharma
+          </span>
+          <span className={cn(
+            'ml-0.5 font-bold transition-colors duration-300',
+            isDark ? 'text-white' : 'text-stitch-secondary'
+          )}>
+            Nest
+          </span>
+        </span>
+      )}
     </Link>
   );
 }

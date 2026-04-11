@@ -3,7 +3,6 @@ import type { Profile } from '@/lib/types';
 import { UserNav } from '@/components/user-nav';
 import { Separator } from '@/components/ui/separator';
 import { BackButton } from '@/components/navigation/back-button';
-import { ThemeToggle } from '@/components/theme-toggle';
 
 type HeaderProps = { user: Profile };
 
@@ -14,7 +13,6 @@ export function Header({ user }: HeaderProps) {
       <Separator orientation="vertical" className="h-5 bg-outline-variant/30" />
       <BackButton fallbackHref="/dashboard" />
       <div className="flex-1" />
-      <ThemeToggle />
       <UserNav user={user} />
     </header>
   );

@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge";
 import { columns } from "./_components/columns"
 import { DataTable } from "@/app/dashboard/_components/data-table"
-import { mockUsers } from "@/lib/data"
 import type { User } from "@/lib/types"
 import { Download, PlusCircle, ShieldCheck, Stethoscope, Users } from "lucide-react";
 import { UserFormDialog } from "./_components/add-customer-dialog";
@@ -24,10 +23,25 @@ export default function UsersPage() {
   const [isDeleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
   const [editingUser, setEditingUser] = React.useState<User | undefined>(undefined);
   const [selectedUserId, setSelectedUserId] = React.useState<string | null>(null);
+  const [loading, setLoading] = React.useState(true);
+
+  const loadUsers = React.useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/admin/users', { cache: 'no-store' });
+      if (!res.ok) throw new Error('Failed to load users');
+      const json = (await res.json()) as { users?: User[] };
+      setData(json.users ?? []);
+    } catch {
+      toast({ variant: 'destructive', title: 'Load failed', description: 'Unable to fetch users.' });
+    } finally {
+      setLoading(false);
+    }
+  }, [toast]);
 
   React.useEffect(() => {
-    setData(mockUsers);
-  }, []);
+    void loadUsers();
+  }, [loadUsers]);
 
   const filteredData = React.useMemo(
     () => (roleFilter === 'All' ? data : data.filter(user => user.role === roleFilter)),
@@ -55,13 +69,30 @@ export default function UsersPage() {
     URL.revokeObjectURL(url);
   };
 
-  const handleUserSaved = (user: User) => {
-    if (editingUser) {
-      setData(currentData => currentData.map(u => u.id === user.id ? user : u));
-    } else {
-      setData(currentData => [{...user, id: `CUS${Date.now()}`}, ...currentData]);
+  const handleUserSaved = async (user: User) => {
+    try {
+      if (editingUser) {
+        const res = await fetch(`/api/admin/users/${encodeURIComponent(user.id)}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(user),
+        });
+        if (!res.ok) throw new Error('Update failed');
+        toast({ title: 'User Updated', description: `${user.name} has been successfully updated.` });
+      } else {
+        const res = await fetch('/api/admin/users', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(user),
+        });
+        if (!res.ok) throw new Error('Create failed');
+        toast({ title: 'User Added', description: `${user.name} has been successfully added.` });
+      }
+      setEditingUser(undefined);
+      await loadUsers();
+    } catch {
+      toast({ variant: 'destructive', title: 'Save failed', description: 'Unable to save user changes.' });
     }
-    setEditingUser(undefined);
   };
   
   const handleEdit = (user: User) => {
@@ -79,16 +110,24 @@ export default function UsersPage() {
     setDeleteDialogOpen(true);
   };
 
-  const handleConfirmDelete = () => {
-    if (selectedUserId) {
-      setData(currentData => currentData.filter(u => u.id !== selectedUserId));
-      toast({
-        title: "User Deleted",
-        description: "The user has been successfully removed.",
+  const handleConfirmDelete = async () => {
+    if (!selectedUserId) return;
+
+    try {
+      const user = data.find((u) => u.id === selectedUserId);
+      const res = await fetch(`/api/admin/users/${encodeURIComponent(selectedUserId)}`, {
+        method: 'DELETE',
       });
+      if (!res.ok) throw new Error('Delete failed');
+
+      toast({ title: 'User Deleted', description: `${user?.name || 'Item'} has been removed.` });
+      await loadUsers();
+    } catch {
+      toast({ variant: 'destructive', title: 'Delete failed', description: 'Unable to delete the user.' });
+    } finally {
+      setDeleteDialogOpen(false);
+      setSelectedUserId(null);
     }
-    setDeleteDialogOpen(false);
-    setSelectedUserId(null);
   };
 
 

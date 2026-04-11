@@ -69,6 +69,8 @@ export type Prescription = {
   status: 'pending' | 'verified' | 'rejected';
   medicines: PrescriptionMedicine[];
   patientId: string;
+  notes?: string;
+  imageDataUrl?: string;
 };
 
 export type PurchaseOrder = {

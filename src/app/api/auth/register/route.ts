@@ -1,37 +1,110 @@
-import { NextResponse } from 'next/server';
 import {
   AUTH_COOKIE,
   authCookieOptions,
   createSessionToken,
-  registerUser,
 } from '@/lib/auth';
+import { registerUserDb } from '@/lib/auth-db';
+import { validatePassword } from '@/lib/validation';
+import { apiSuccess, apiError } from '@/lib/api-response';
+import {
+  validateRequiredString,
+  validateEmail,
+  validatePhone,
+} from '@/lib/api-validation';
+import { requestLogger } from '@/lib/api-logger';
+import { authLimiter } from '@/lib/rate-limit';
 
+/**
+ * POST /api/auth/register
+ * Creates a new customer account with registration details
+ * Returns session token in secure HTTP-only cookie
+ * 
+ * Request body:
+ *   - name: string (required, 2-100 chars)
+ *   - email: string (required, valid email)
+ *   - phone: string (required, valid phone)
+ *   - password: string (required, strong policy enforced)
+ * 
+ * Response: { user: SessionUser }
+ * Errors: 400, 409, 429 (rate limited)
+ */
 export async function POST(req: Request) {
+  const startTime = performance.now();
+
+  // Check rate limit
+  const nextReq = req as any; // Type assertion for rate limiter
+  const limitResult = authLimiter(nextReq);
+  if (!limitResult.ok) {
+    requestLogger.logResponse('POST', '/api/auth/register', 429, startTime);
+    const res = apiError('Too many registration attempts. Please try again later.', 429, 'RATE_LIMITED');
+    res.headers.set('Retry-After', String(limitResult.retryAfter || 900));
+    return res;
+  }
+
   try {
     const body = await req.json();
     const name = String(body?.name ?? '').trim();
     const email = String(body?.email ?? '').trim();
     const phone = String(body?.phone ?? '').trim();
-    const password = String(body?.password ?? '').trim();
+    const password = String(body?.password ?? '');
 
-    if (!name || !email || !phone || !password) {
-      return NextResponse.json({ message: 'All fields are required' }, { status: 400 });
+    // Validate name
+    const nameCheck = validateRequiredString(name, 'Name', 2, 100);
+    if (!nameCheck.valid) {
+      requestLogger.logResponse('POST', '/api/auth/register', 400, startTime);
+      return apiError(nameCheck.error!, 400, 'INVALID_NAME');
     }
 
-    if (password.length < 5) {
-      return NextResponse.json({ message: 'Password must be at least 5 characters' }, { status: 400 });
+    // Validate email
+    const emailCheck = validateEmail(email, 'Email');
+    if (!emailCheck.valid) {
+      requestLogger.logResponse('POST', '/api/auth/register', 400, startTime);
+      return apiError(emailCheck.error!, 400, 'INVALID_EMAIL');
     }
 
-    const result = registerUser({ name, email, phone, password, role: 'customer' });
+    // Validate phone
+    const phoneCheck = validatePhone(phone, 'Phone');
+    if (!phoneCheck.valid) {
+      requestLogger.logResponse('POST', '/api/auth/register', 400, startTime);
+      return apiError(phoneCheck.error!, 400, 'INVALID_PHONE');
+    }
+
+    // Validate password strength
+    const passwordCheck = validatePassword(password);
+    if (!passwordCheck.valid) {
+      requestLogger.logResponse('POST', '/api/auth/register', 400, startTime);
+      return apiError(
+        passwordCheck.feedback[0] ?? 'Password does not meet requirements',
+        400,
+        'WEAK_PASSWORD',
+        { feedback: passwordCheck.feedback }
+      );
+    }
+
+    // Attempt to register
+    const result = await registerUserDb({
+      name,
+      email,
+      phone,
+      password,
+      role: 'customer',
+    });
     if (!result.ok) {
-      return NextResponse.json({ message: result.message }, { status: 409 });
+      requestLogger.logResponse('POST', '/api/auth/register', 409, startTime);
+      return apiError(result.message, 409, 'EMAIL_EXISTS');
     }
 
+    // Create session and set cookie
     const token = createSessionToken(result.user);
-    const res = NextResponse.json({ user: result.user });
+    const res = apiSuccess({ user: result.user }, 201);
     res.cookies.set(AUTH_COOKIE, token, authCookieOptions);
+
+    requestLogger.logResponse('POST', '/api/auth/register', 201, startTime, {
+      userId: result.user.id,
+    });
     return res;
-  } catch {
-    return NextResponse.json({ message: 'Invalid request payload' }, { status: 400 });
+  } catch (error) {
+    requestLogger.logError('POST', '/api/auth/register', error, startTime);
+    return apiError('Invalid request payload', 400, 'PARSE_ERROR');
   }
 }

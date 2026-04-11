@@ -102,9 +102,9 @@ export default function CustomerCheckoutPage() {
       <div className="flex flex-col items-center justify-center py-24 text-center">
         <p className="text-6xl mb-4">🛒</p>
         <h2 className="font-headline text-2xl font-bold text-on-surface">Your cart is empty</h2>
-        <p className="mt-2 text-sm text-on-surface-variant">Add some medicines before checking out.</p>
+        <p className="mt-2 text-sm text-on-surface-variant">Start adding medicines and health products to your cart.</p>
         <Link href="/catalog" className="mt-6 rounded-xl bg-stitch-primary px-8 py-3 font-bold text-white transition hover:bg-stitch-primary-container">
-          Browse Products
+          Shop Now
         </Link>
       </div>
     );

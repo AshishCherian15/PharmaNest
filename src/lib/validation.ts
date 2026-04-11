@@ -1,5 +1,3 @@
-'use client';
-
 /**
  * Form Validation Utilities
  * Centralized validation for all form inputs across the application

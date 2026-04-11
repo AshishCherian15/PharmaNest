@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Calendar as CalendarIcon, Loader2 } from 'lucide-react';
-import type { PurchaseOrder, Supplier } from '@/lib/types';
+import type { Supplier } from '@/lib/types';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
@@ -25,7 +25,11 @@ import { Textarea } from '@/components/ui/textarea';
 interface OrderFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSave: (order: PurchaseOrder) => void;
+  onSave: (order: {
+    supplierId: string;
+    total: number;
+    expectedDeliveryDate: string;
+  }) => Promise<void>;
   suppliers: Supplier[];
 }
 
@@ -34,7 +38,7 @@ export function OrderFormDialog({ open, onOpenChange, onSave, suppliers }: Order
   const [isSaving, setIsSaving] = useState(false);
   const [expectedDate, setExpectedDate] = useState<Date | undefined>();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!expectedDate) {
         toast({
@@ -57,24 +61,26 @@ export function OrderFormDialog({ open, onOpenChange, onSave, suppliers }: Order
         return;
     }
 
-    const savedOrder: PurchaseOrder = {
-      id: `PO-${Date.now()}`,
-      supplierName: supplier.name,
-      orderDate: new Date().toISOString().split('T')[0],
-      expectedDate: format(expectedDate, 'yyyy-MM-dd'),
-      status: 'Pending',
-      total: parseFloat(data.total as string) * 100, // Store in cents/paise
-    };
-
-    setTimeout(() => {
-      onSave(savedOrder);
+    try {
+      await onSave({
+        supplierId: String(data.supplierId),
+        expectedDeliveryDate: format(expectedDate, 'yyyy-MM-dd'),
+        total: Math.round(parseFloat(String(data.total)) * 100),
+      });
       setIsSaving(false);
       onOpenChange(false);
       toast({
         title: 'Order Created',
         description: `A new purchase order for ${supplier.name} has been created.`,
       });
-    }, 1000);
+    } catch {
+      setIsSaving(false);
+      toast({
+        variant: 'destructive',
+        title: 'Create failed',
+        description: 'Unable to create purchase order.',
+      });
+    }
   };
 
   return (

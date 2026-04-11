@@ -3,8 +3,7 @@ import { Suspense } from 'react';
 import { LandingHeader } from '@/components/landing/header';
 import { LandingFooter } from '@/components/landing/footer';
 import { ProductCard } from '@/components/landing/product-card';
-import { landingProducts, mockMedicines } from '@/lib/data';
-import { getAvailableStock } from '@/lib/catalog-stock';
+import { getAllProducts } from '@/lib/product-store';
 
 const ITEMS_PER_PAGE = 12;
 
@@ -38,17 +37,18 @@ export default async function CatalogPage({ searchParams }: { searchParams?: Pro
   const category = typeof params.category === 'string' ? params.category : 'all';
   const sort     = typeof params.sort     === 'string' ? params.sort     : 'popular';
   const query    = (typeof params.q === 'string' ? params.q : '').trim().toLowerCase();
+  const inStockOnly = typeof params.inStock === 'string' && params.inStock === '1';
+  const rxOnly      = typeof params.rx === 'string' && params.rx === '1';
   const page     = Math.max(1, parseInt(typeof params.page === 'string' ? params.page : '1', 10));
 
   /* ── combine + deduplicate ── */
-  const seen = new Set<string>();
-  const uniqueProducts = [...landingProducts, ...mockMedicines]
-    .map((p) => ({ ...p, quantity: getAvailableStock(p.id) }))
-    .filter((p) => { if (seen.has(p.id)) return false; seen.add(p.id); return true; });
+  const uniqueProducts = getAllProducts();
 
   /* ── filter ── */
   let filtered = uniqueProducts.filter((p) => {
     if (category !== 'all' && p.category !== category) return false;
+    if (inStockOnly && p.quantity <= 0) return false;
+    if (rxOnly && !p.requiresPrescription) return false;
     if (!query) return true;
     return [p.name, p.genericName, p.category, p.description].join(' ').toLowerCase().includes(query);
   });
@@ -68,6 +68,8 @@ export default async function CatalogPage({ searchParams }: { searchParams?: Pro
     if (category !== 'all')   p.set('category', category);
     if (sort !== 'popular')   p.set('sort', sort);
     if (query)                p.set('q', query);
+    if (inStockOnly)          p.set('inStock', '1');
+    if (rxOnly)               p.set('rx', '1');
     p.set('page', String(currentPage));
     Object.entries(overrides).forEach(([k, v]) => {
       if (!v || v === 'all' || v === 'popular') p.delete(k);
@@ -131,15 +133,21 @@ export default async function CatalogPage({ searchParams }: { searchParams?: Pro
                 {/* Availability */}
                 <div className="border-t border-outline-variant/20 pt-4">
                   <h3 className="mb-3 text-xs font-bold uppercase tracking-widest text-outline">Availability</h3>
-                  <div className="space-y-2.5 text-sm">
-                    <label className="flex cursor-pointer items-center gap-2.5">
-                      <input type="checkbox" defaultChecked className="h-4 w-4 rounded border-outline-variant accent-stitch-primary" />
-                      <span className="text-on-surface-variant">In Stock</span>
-                    </label>
-                    <label className="flex cursor-pointer items-center gap-2.5">
-                      <input type="checkbox" className="h-4 w-4 rounded border-outline-variant accent-stitch-primary" />
-                      <span className="text-on-surface-variant">Prescription Required</span>
-                    </label>
+                  <div className="space-y-2 text-sm">
+                    <Link
+                      href={buildUrl({ inStock: inStockOnly ? '' : '1', page: '1' })}
+                      className={`chip w-full justify-start ${inStockOnly ? 'chip-active' : ''}`}
+                    >
+                      <span>{inStockOnly ? '✓' : '○'}</span>
+                      <span>In Stock Only</span>
+                    </Link>
+                    <Link
+                      href={buildUrl({ rx: rxOnly ? '' : '1', page: '1' })}
+                      className={`chip w-full justify-start ${rxOnly ? 'chip-active' : ''}`}
+                    >
+                      <span>{rxOnly ? '✓' : '○'}</span>
+                      <span>Prescription Required</span>
+                    </Link>
                   </div>
                 </div>
 
@@ -205,6 +213,40 @@ export default async function CatalogPage({ searchParams }: { searchParams?: Pro
                 ))}
               </div>
             </div>
+
+            {(query || category !== 'all' || sort !== 'popular' || inStockOnly || rxOnly) && (
+              <div className="mb-6 flex flex-wrap items-center gap-2 rounded-xl border border-outline-variant/20 bg-surface-container-lowest p-3">
+                <span className="text-xs font-bold uppercase tracking-wide text-outline">Active Filters</span>
+                {category !== 'all' && (
+                  <Link href={buildUrl({ category: 'all', page: '1' })} className="chip chip-active px-3 py-1 text-xs">
+                    Category: {activeCategory.label} ×
+                  </Link>
+                )}
+                {query && (
+                  <Link href={buildUrl({ q: '', page: '1' })} className="chip chip-active px-3 py-1 text-xs">
+                    Search: {query} ×
+                  </Link>
+                )}
+                {inStockOnly && (
+                  <Link href={buildUrl({ inStock: '', page: '1' })} className="chip chip-active px-3 py-1 text-xs">
+                    In Stock ×
+                  </Link>
+                )}
+                {rxOnly && (
+                  <Link href={buildUrl({ rx: '', page: '1' })} className="chip chip-active px-3 py-1 text-xs">
+                    Rx Only ×
+                  </Link>
+                )}
+                {sort !== 'popular' && (
+                  <Link href={buildUrl({ sort: 'popular', page: '1' })} className="chip chip-active px-3 py-1 text-xs">
+                    Sort: {sortOptions.find((s) => s.value === sort)?.label ?? 'Custom'} ×
+                  </Link>
+                )}
+                <Link href="/catalog" className="ml-auto rounded-lg bg-surface-container-high px-3 py-1.5 text-xs font-bold text-on-surface-variant transition hover:bg-surface-container">
+                  Reset All
+                </Link>
+              </div>
+            )}
 
             {/* Products grid */}
             {paginatedProducts.length === 0 ? (

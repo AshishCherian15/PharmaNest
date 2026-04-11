@@ -2,18 +2,59 @@ import { NextResponse, type NextRequest } from 'next/server';
 
 const AUTH_COOKIE = 'pharmanest_session';
 
+const AUTH_SECRET_FALLBACK = 'pharmanest-dev-secret-change-in-production';
+
 type LightweightSession = {
   role: 'admin' | 'customer';
   exp: number;
 };
 
-function parseSessionFromToken(token?: string): LightweightSession | null {
+function base64UrlToBytes(value: string): Uint8Array {
+  const normalized = value.replace(/-/g, '+').replace(/_/g, '/');
+  const padded = normalized + '='.repeat((4 - (normalized.length % 4)) % 4);
+  const binary = atob(padded);
+  const bytes = new Uint8Array(binary.length);
+  for (let index = 0; index < binary.length; index += 1) {
+    bytes[index] = binary.charCodeAt(index);
+  }
+  return bytes;
+}
+
+function getAuthSecret(): string | null {
+  const secret = process.env.AUTH_SECRET?.trim();
+  if (secret) return secret;
+  if (process.env.NODE_ENV === 'production') return null;
+  return AUTH_SECRET_FALLBACK;
+}
+
+async function verifySignature(header: string, body: string, signature: string): Promise<boolean> {
+  const secret = getAuthSecret();
+  if (!secret) return false;
+
+  const key = await crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(secret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['verify']
+  );
+
+  const payload = new TextEncoder().encode(`${header}.${body}`);
+  const expected = base64UrlToBytes(signature);
+  return crypto.subtle.verify('HMAC', key, expected, payload);
+}
+
+async function parseSessionFromToken(token?: string): Promise<LightweightSession | null> {
   if (!token) return null;
   const parts = token.split('.');
-  if (parts.length < 2) return null;
+  if (parts.length !== 3) return null;
 
   try {
-    const payload = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+    const [header, body, signature] = parts;
+    const isValid = await verifySignature(header, body, signature);
+    if (!isValid) return null;
+
+    const payload = body.replace(/-/g, '+').replace(/_/g, '/');
     const padded = payload + '='.repeat((4 - (payload.length % 4)) % 4);
     const json = atob(padded);
     const data = JSON.parse(json) as LightweightSession;
@@ -29,7 +70,7 @@ function parseSessionFromToken(token?: string): LightweightSession | null {
   }
 }
 
-export function middleware(req: NextRequest) {
+export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   // Allow static files from /public and any extension-based asset paths.
@@ -38,7 +79,7 @@ export function middleware(req: NextRequest) {
   }
 
   const token = req.cookies.get(AUTH_COOKIE)?.value;
-  const session = parseSessionFromToken(token);
+  const session = await parseSessionFromToken(token);
 
   const isSplashRoute = pathname === '/';
   const isDashboardRoute = pathname.startsWith('/dashboard');

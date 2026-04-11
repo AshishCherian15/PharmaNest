@@ -2,11 +2,11 @@ import Link from 'next/link';
 import { Logo } from '@/components/logo';
 
 const quickLinks = [
-  { label: 'Home',             href: '/'                    },
+  { label: 'Home',             href: '/catalog'             },
   { label: 'Medicines Catalog',href: '/catalog'             },
   { label: 'New Arrivals',     href: '/catalog?sort=newest' },
   { label: 'Knowledge Hub',    href: '/knowledge-hub'       },
-  { label: 'About Us',         href: '/#why-choose'         },
+  { label: 'About Us',         href: '/about'               },
 ];
 
 const customerLinks = [
@@ -33,7 +33,7 @@ export function LandingFooter() {
 
           {/* Brand */}
           <div className="col-span-2 space-y-5 md:col-span-2">
-            <Logo href="/" imageSize={44} alwaysShowText variant="dark" />
+            <Logo href="/catalog" imageSize={58} alwaysShowText variant="dark" />
             <p className="max-w-[260px] text-[13px] leading-relaxed text-stitch-primary-fixed/55">
               India's most trusted online pharmacy — delivering genuine medicines at the best prices, with same-day delivery across 50+ cities.
             </p>

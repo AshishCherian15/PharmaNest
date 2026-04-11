@@ -4,16 +4,16 @@ import { LandingHeader } from '@/components/landing/header';
 import { LandingFooter } from '@/components/landing/footer';
 
 const articles = [
-  { tag: 'Supply Chain', title: 'Integrity in the Cold Chain', desc: 'How we maintain molecular stability from the lab to your doorstep using thermal smart-monitoring.', author: 'Dr. Elena Vance', emoji: '🔬', bg: 'bg-stitch-primary-fixed/20' },
-  { tag: 'Dosage Safety', title: 'Precision at Every Milligram', desc: 'Understanding the pharmacological window and why accuracy matters for long-term health outcomes.', author: 'PharmD. Marcus Thorne', emoji: '💊', bg: 'bg-stitch-secondary-fixed/20' },
-  { tag: 'Holistic Care', title: 'Beyond the Prescription', desc: 'The synergy between pharmacological treatment and lifestyle adjustments for chronic management.', author: 'Dr. Sarah Jenkins', emoji: '🌿', bg: 'bg-amber-100' },
+  { tag: 'How It Works', title: 'How We Store & Deliver Your Medicines', desc: 'Learn how we keep your medications safe from storage to delivery. Proper storage = better results.', author: 'PharmaNest Team', emoji: '🚚', bg: 'bg-stitch-primary-fixed/20' },
+  { tag: 'Medication', title: 'Getting the Most From Your Medicines', desc: 'Simple tips on timing, storage, and recognizing side effects. Your pharmacist is always here to help.', author: 'PharmaNest Team', emoji: '💊', bg: 'bg-stitch-secondary-fixed/20' },
+  { tag: 'Health Tips', title: 'Managing Long-Term Conditions at Home', desc: 'Practical advice for staying healthy while managing chronic conditions. Managing diabetes, blood pressure, and more.', author: 'PharmaNest Team', emoji: '🏠', bg: 'bg-amber-100' },
 ];
 
 const bentoItems = [
-  { title: 'Supply Chain Visualizer', desc: 'Interactive flow of clinical components from laboratory synthesis to patient delivery.', icon: '🧬', bg: 'bg-stitch-primary-container', textColor: 'text-white', span: 'md:col-span-2 md:row-span-2', minH: 'min-h-[280px]' },
-  { title: 'Safe Usage Tutorials',    desc: 'Short-form mastery videos for common prescription protocols.',                          icon: '▶️', bg: 'bg-surface-container-lowest border border-outline-variant/20', textColor: 'text-on-surface', span: 'md:col-span-2', minH: 'min-h-[130px]' },
-  { title: 'Live Q&A',                desc: 'Direct line to our certified pharmaceutical consultants.',                              icon: '💬', bg: 'bg-stitch-secondary-container', textColor: 'text-on-stitch-secondary-container', span: '', minH: 'min-h-[130px]' },
-  { title: 'Read Reports',            desc: 'Whitepapers on next-gen clinical advancements.',                                        icon: '📖', bg: 'bg-stitch-tertiary-fixed',      textColor: 'text-on-surface', span: '', minH: 'min-h-[130px]' },
+  { title: 'Find Your Medicine', desc: 'Search by symptom, condition, or brand. Get instant information on uses, precautions, and cost.', icon: '🔍', bg: 'bg-stitch-primary-container', textColor: 'text-white', span: 'md:col-span-2 md:row-span-2', minH: 'min-h-[280px]' },
+  { title: 'Medicine FAQs',    desc: 'Common questions about taking medicines safely, side effects, and what to expect.',                          icon: '❓', bg: 'bg-surface-container-lowest border border-outline-variant/20', textColor: 'text-on-surface', span: 'md:col-span-2', minH: 'min-h-[130px]' },
+  { title: 'Talk to Pharmacist',                desc: 'Have questions? Chat with our licensed pharmacists during business hours.',                              icon: '💬', bg: 'bg-stitch-secondary-container', textColor: 'text-on-stitch-secondary-container', span: '', minH: 'min-h-[130px]' },
+  { title: 'Health Tips',            desc: 'Simple wellness advice: managing conditions, medication timing, storage tips.',                                        icon: '📚', bg: 'bg-stitch-tertiary-fixed',      textColor: 'text-on-surface', span: '', minH: 'min-h-[130px]' },
 ];
 
 export default function KnowledgeHubPage() {
@@ -30,22 +30,22 @@ export default function KnowledgeHubPage() {
           <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-2">
               <div className="space-y-6">
-                <span className="text-xs font-bold uppercase tracking-widest text-stitch-secondary">Resource Library</span>
+                <span className="text-xs font-bold uppercase tracking-widest text-stitch-secondary">Help & Resources</span>
                 <h1 className="font-headline text-5xl font-extrabold leading-tight tracking-tight text-stitch-primary lg:text-6xl">
-                  The Science of<br />Safe Sanctuary.
+                  Take Control<br />of Your Health.
                 </h1>
                 <p className="max-w-xl text-lg font-light leading-relaxed text-on-surface-variant">
-                  Explore our curated knowledge ecosystem. From molecular supply chain transparency to precision dosage safety — everything you need for pharmaceutical excellence.
+                  Find medication information, get pharmacy advice, and learn how to manage your health at home. We're here to help with clear, simple answers.
                 </p>
                 <div className="flex flex-wrap gap-4">
-                  <button className="btn-primary-gradient px-8 py-3 shadow-lg">Start Learning</button>
+                  <button className="btn-primary-gradient px-8 py-3 shadow-lg">Browse Health Topics</button>
                   <button className="rounded-xl bg-surface-container-lowest px-8 py-3 font-bold text-stitch-primary transition hover:bg-surface-container-high">
-                    Q&amp;A Forum
+                    Ask Pharmacist
                   </button>
                 </div>
               </div>
               <div className="flex h-72 items-center justify-center rounded-2xl bg-stitch-primary-fixed/20 text-8xl lg:h-96">
-                🧬
+                📖
               </div>
             </div>
           </div>

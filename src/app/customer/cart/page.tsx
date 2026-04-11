@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Minus, Plus, Trash2, ShoppingBag } from 'lucide-react';
 import { useStoreCart } from '@/hooks/use-store-cart';
 import { useToast } from '@/hooks/use-toast';
+import { ProductImage } from '@/components/ui/product-image';
 
 type StockConflict = { id: string; name: string; requested: number; available: number };
 
@@ -107,8 +108,13 @@ export default function CustomerCartPage() {
               <div key={item.id} className="rounded-2xl border border-outline-variant/20 bg-surface-container-lowest p-5 shadow-sm transition hover:shadow-md">
                 <div className="flex items-start gap-4">
                   {/* Product icon */}
-                  <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-xl bg-stitch-primary-fixed/20 text-3xl">
-                    💊
+                  <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-xl bg-surface-container-low">
+                    <ProductImage
+                      imageId={item.imageId}
+                      name={item.name}
+                      sizes="64px"
+                      showNameInFallback={false}
+                    />
                   </div>
 
                   {/* Info */}

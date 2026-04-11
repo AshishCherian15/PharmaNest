@@ -1,6 +1,76 @@
+@import './animations.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Font family aliases for better performance */
+@layer base {
+  :root {
+    --font-header: var(--font-manrope), system-ui, -apple-system, sans-serif;
+  }
+}
+
+/* Smooth transitions and animations */
+@layer utilities {
+  .font-header {
+    font-family: var(--font-header);
+  }
+
+  /* Faster page transitions */
+  .page-transition {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  /* Optimize image rendering */
+  img {
+    content-visibility: auto;
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer base {
+  /* Performance optimizations */
+  * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Optimize animations for users who prefer reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  /* Hint browser to optimize interactive elements */
+  button,
+  a,
+  [role="button"] {
+    will-change: auto;
+  }
+
+  button:active,
+  a:active,
+  [role="button"]:active {
+    will-change: transform;
+  }
+}
 
 @layer base {
   :root {

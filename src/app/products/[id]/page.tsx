@@ -3,12 +3,14 @@ import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
 import { LandingHeader } from '@/components/landing/header';
 import { LandingFooter } from '@/components/landing/footer';
-import { landingProducts, mockMedicines } from '@/lib/data';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { getAvailableStock } from '@/lib/catalog-stock';
 import { ProductDetailClient } from './product-detail-client';
+import { ProductImage } from '@/components/ui/product-image';
+import { ProductImageGallery } from './product-image-gallery';
+import { getProductGalleryImageIds } from '@/lib/product-image-galleries';
+import { getAllProducts } from '@/lib/product-store';
 
-const allProducts = [...landingProducts, ...mockMedicines];
+const allProducts = getAllProducts();
 
 export async function generateStaticParams() {
   return allProducts.map((p) => ({ id: p.id }));
@@ -20,11 +22,21 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
   if (!product) notFound();
 
   const stock   = getAvailableStock(product.id);
-  const image   = PlaceHolderImages.find((img) => img.id === product.imageId);
   const related = allProducts
     .filter((p) => p.category === product.category && p.id !== product.id)
     .slice(0, 4)
     .map((p) => ({ ...p, quantity: getAvailableStock(p.id) }));
+
+  const relatedImageIds = allProducts
+    .filter((p) => p.category === product.category && p.id !== product.id)
+    .map((p) => p.imageId)
+    .filter((imgId, idx, arr) => arr.indexOf(imgId) === idx);
+
+  const galleryImageIds = getProductGalleryImageIds(
+    product.id,
+    product.imageId,
+    relatedImageIds
+  );
 
   const discount = product.previousPrice
     ? Math.round(((product.previousPrice - product.price) / product.previousPrice) * 100)
@@ -59,20 +71,16 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
           {/* Image panel */}
           <div className="lg:col-span-7">
-            <div className="relative mb-4 flex aspect-[4/3] items-center justify-center overflow-hidden rounded-2xl bg-surface-container-lowest p-8 shadow-sm group">
-              {image ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={image.imageUrl}
-                  alt={product.name}
-                  className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-105"
-                />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center text-8xl">💊</div>
-              )}
+            <div className="relative">
+              <ProductImageGallery
+                imageId={product.imageId}
+                productName={product.name}
+                category={product.category}
+                additionalImageIds={galleryImageIds}
+              />
               {product.requiresPrescription && (
                 <div className="absolute right-4 top-4 rounded-full bg-stitch-primary/10 px-4 py-1.5 text-xs font-bold text-stitch-primary">
-                  FDA APPROVED · Rx REQUIRED
+                  Prescription Required
                 </div>
               )}
               {discount && (
@@ -80,17 +88,6 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                   -{discount}% OFF
                 </div>
               )}
-            </div>
-            {/* Thumbnail strip */}
-            <div className="grid grid-cols-4 gap-3">
-              {[1, 2, 3].map((i) => (
-                <button key={i} className={`rounded-xl p-2 transition ${i === 1 ? 'border-2 border-stitch-primary bg-surface-container-lowest' : 'bg-surface-container-low hover:bg-surface-container-high'}`}>
-                  <div className="aspect-square rounded-lg bg-surface-container flex items-center justify-center text-2xl">💊</div>
-                </button>
-              ))}
-              <button className="flex items-center justify-center rounded-xl bg-surface-container-low p-2 text-outline hover:bg-surface-container-high">
-                ···
-              </button>
             </div>
           </div>
 
@@ -153,7 +150,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             {/* Trust badges */}
             <div className="mt-8 grid grid-cols-3 gap-3 border-t border-outline-variant/20 pt-6">
               {[
-                { icon: '✓', label: 'Certified' },
+                { icon: '✓', label: 'Quality Checked' },
                 { icon: '🚚', label: 'Cold Chain' },
                 { icon: '💬', label: '24/7 Support' },
               ].map((b) => (
@@ -281,20 +278,20 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             <h2 className="font-headline mb-8 text-2xl font-extrabold text-on-surface">Related Products</h2>
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
               {related.map((p) => {
-                const relImg = PlaceHolderImages.find((img) => img.id === p.imageId);
                 return (
                   <Link
                     key={p.id}
                     href={`/products/${p.id}`}
                     className="stitch-product-card group p-4 border border-outline-variant/20 shadow-sm"
                   >
-                    <div className="mb-3 flex aspect-square items-center justify-center overflow-hidden rounded-xl bg-surface-container-low">
-                      {relImg ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={relImg.imageUrl} alt={p.name} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                      ) : (
-                        <span className="text-4xl">💊</span>
-                      )}
+                    <div className="relative mb-3 flex aspect-square items-center justify-center overflow-hidden rounded-xl bg-surface-container-low">
+                      <ProductImage
+                        imageId={p.imageId}
+                        name={p.name}
+                        category={p.category}
+                        sizes="(max-width: 640px) 50vw, 25vw"
+                        className="group-hover:scale-110"
+                      />
                     </div>
                     <span className="text-[10px] font-bold uppercase tracking-widest text-stitch-secondary">{p.category}</span>
                     <h4 className="mt-1 font-bold text-on-surface line-clamp-2">{p.name}</h4>

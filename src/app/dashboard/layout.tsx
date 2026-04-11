@@ -7,19 +7,21 @@ import {
   SidebarInset,
 } from '@/components/ui/sidebar';
 import Link from 'next/link';
-import Image from 'next/image';
 import { SidebarNav } from './_components/sidebar-nav';
 import { Header } from './_components/header';
 import { mockUser } from '@/lib/data';
 import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 import { AUTH_COOKIE, parseSessionToken } from '@/lib/auth';
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const token = (await cookies()).get(AUTH_COOKIE)?.value;
   const session = parseSessionToken(token);
-  const currentUser = session
-    ? { name: session.name, email: session.email, avatarId: mockUser.avatarId }
-    : mockUser;
+  if (!session || session.role !== 'admin') {
+    redirect('/login');
+  }
+
+  const currentUser = { name: session.name, email: session.email, avatarId: mockUser.avatarId };
 
   return (
     <SidebarProvider>
@@ -30,15 +32,6 @@ export default async function DashboardLayout({ children }: { children: React.Re
             href="/dashboard"
             className="flex items-center gap-3 rounded-xl transition hover:bg-surface-container-high px-2 py-1"
           >
-            <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-stitch-primary">
-              <Image
-                src="/PharmaNest.png"
-                alt="Pharma Nest"
-                width={28}
-                height={28}
-                className="rounded-md object-contain"
-              />
-            </div>
             <div className="group-data-[collapsible=icon]:hidden">
               <p className="font-headline text-lg font-extrabold leading-tight">
                 <span className="text-stitch-primary">Pharma</span>

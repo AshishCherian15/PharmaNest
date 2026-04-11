@@ -1,21 +1,32 @@
-import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { AUTH_COOKIE, parseSessionToken } from '@/lib/auth';
 import { getPrescriptionEligibility } from '@/lib/prescriptions';
+import { apiSuccess, ApiErrors } from '@/lib/api-response';
+import { requestLogger } from '@/lib/api-logger';
 
-function unauthorized() {
-  return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
-}
-
+/**
+ * GET /api/customer/prescriptions/eligibility
+ * Checks if customer has a verified prescription on file
+ * Required before ordering Rx items
+ * 
+ * Response: { eligibility: { hasVerifiedPrescription: boolean } }
+ * Errors: 401
+ */
 export async function GET() {
+  const startTime = performance.now();
+
   const token = (await cookies()).get(AUTH_COOKIE)?.value;
   const session = parseSessionToken(token);
 
   if (!session || session.role !== 'customer') {
-    return unauthorized();
+    requestLogger.logResponse('GET', '/api/customer/prescriptions/eligibility', 401, startTime);
+    return ApiErrors.unauthorized();
   }
 
-  return NextResponse.json({
-    eligibility: getPrescriptionEligibility(session.id),
+  const eligibility = getPrescriptionEligibility(session.id);
+  requestLogger.logResponse('GET', '/api/customer/prescriptions/eligibility', 200, startTime, {
+    userId: session.id,
   });
+
+  return apiSuccess({ eligibility });
 }

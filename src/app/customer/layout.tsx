@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 import { AUTH_COOKIE, parseSessionToken } from '@/lib/auth';
 import { CustomerNav } from '@/components/customer/customer-nav';
 import { BackButton } from '@/components/navigation/back-button';
@@ -27,9 +28,11 @@ const mobileNav = [
 export default async function CustomerLayout({ children }: { children: React.ReactNode }) {
   const token = (await cookies()).get(AUTH_COOKIE)?.value;
   const session = parseSessionToken(token);
-  const profile = session
-    ? { name: session.name, email: session.email, avatarId: mockUser.avatarId }
-    : mockUser;
+  if (!session || session.role !== 'customer') {
+    redirect('/login');
+  }
+
+  const profile = { name: session.name, email: session.email, avatarId: mockUser.avatarId };
 
   return (
     <div className="min-h-screen bg-surface">
@@ -40,7 +43,7 @@ export default async function CustomerLayout({ children }: { children: React.Rea
           <BackButton fallbackHref="/" className="flex-shrink-0" />
 
           {/* Logo */}
-          <Logo href="/" imageSize={36} className="flex-shrink-0" />
+          <Logo href="/catalog" imageSize={36} alwaysShowText className="flex-shrink-0" />
 
           {/* Desktop nav */}
           <CustomerNav items={navItems} />

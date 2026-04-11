@@ -1,16 +1,16 @@
 'use client';
-import Image from 'next/image';
 import Link from 'next/link';
 import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { Logo } from '@/components/logo';
 
 const features = [
-  { icon: '💊', text: 'Order prescription medicines online' },
-  { icon: '🚚', text: 'Same-day delivery across 50+ cities' },
+  { icon: '✓', text: 'Prescription ordering with pharmacist checks' },
+  { icon: '🚚', text: 'Fast delivery with live order tracking' },
   { icon: '📋', text: 'Digital prescription management' },
-  { icon: '🔒', text: 'Secure & encrypted health data' },
+  { icon: '🔒', text: 'Secure, private account access' },
 ];
 
 export default function RegisterPage() {
@@ -52,13 +52,7 @@ export default function RegisterPage() {
       {/* ── Left panel — stitch branding ── */}
       <div className="hidden flex-col justify-between px-12 py-16 lg:flex lg:w-5/12 mg-gradient-teal">
         {/* Logo */}
-        <div className="flex items-center gap-3">
-          <Image src="/PharmaNest.png" alt="Pharma Nest" width={48} height={48} className="rounded-xl object-contain" />
-          <div>
-            <p className="font-headline text-2xl font-extrabold text-stitch-primary-fixed">Pharma Nest</p>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-stitch-primary-fixed/50">The Clinical Curator</p>
-          </div>
-        </div>
+        <Logo href="/catalog" imageSize={56} alwaysShowText variant="dark" />
 
         {/* Copy */}
         <div className="space-y-8">
@@ -67,7 +61,7 @@ export default function RegisterPage() {
               Your health journey<br />starts here.
             </h1>
             <p className="mt-4 max-w-sm text-[15px] leading-relaxed text-white/65">
-              Join 2 lakh+ patients who trust Pharma Nest for genuine medicines, fast delivery, and expert pharmacist support.
+              Create a customer account to order medicines, manage prescriptions, and track pharmacy services securely.
             </p>
           </div>
           <ul className="space-y-4">
@@ -87,9 +81,8 @@ export default function RegisterPage() {
       {/* ── Right panel — form ── */}
       <div className="flex flex-1 flex-col items-center justify-center px-6 py-12 sm:px-10">
         {/* Mobile logo */}
-        <div className="mb-8 flex items-center gap-3 lg:hidden">
-          <Image src="/PharmaNest.png" alt="Pharma Nest" width={40} height={40} className="rounded-xl object-contain" />
-          <span className="font-headline text-2xl font-extrabold text-stitch-primary">Pharma Nest</span>
+        <div className="mb-8 lg:hidden">
+          <Logo href="/catalog" imageSize={48} alwaysShowText />
         </div>
 
         <div className="w-full max-w-md">
@@ -144,9 +137,9 @@ export default function RegisterPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Min. 5 characters"
+                placeholder="Min. 8 characters"
                 required
-                minLength={5}
+                minLength={8}
                 className={inputCls}
               />
             </div>

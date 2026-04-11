@@ -4,9 +4,22 @@ import type { AuthRole } from '@/lib/auth';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2 } from 'lucide-react';
+import { Loader2, ShieldCheck, UserRound, KeyRound, Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
-import Image from 'next/image';
+import { Logo } from '@/components/logo';
+
+const DEMO_CREDENTIALS: Record<AuthRole, { identifier: string; password: string; label: string }> = {
+  admin: {
+    identifier: 'admin@pharmanest.com',
+    password: 'admin',
+    label: 'Admin Demo',
+  },
+  customer: {
+    identifier: 'customer@pharmanest.com',
+    password: 'admin',
+    label: 'Customer Demo',
+  },
+};
 
 export default function LoginPage() {
   const router = useRouter();
@@ -15,12 +28,17 @@ export default function LoginPage() {
   const [role, setRole] = useState<AuthRole>('customer');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const applyDemo = (r: AuthRole) => {
+    setEmail(DEMO_CREDENTIALS[r].identifier);
+    setPassword(DEMO_CREDENTIALS[r].password);
+  };
 
   const selectRole = (r: AuthRole) => {
     setRole(r);
-    setEmail('');
-    setPassword('');
+    applyDemo(r);
     setStep('form');
   };
 
@@ -61,13 +79,8 @@ export default function LoginPage() {
       <main className="relative z-10 flex min-h-screen flex-col items-center justify-center px-6 py-12">
         {/* Logo */}
         <header className="mb-12 flex flex-col items-center">
-          <div className="flex items-center gap-4">
-            <Image src="/PharmaNest.png" alt="Pharma Nest" width={64} height={64} className="rounded-xl object-contain" />
-            <div>
-              <h1 className="font-headline text-4xl font-extrabold tracking-tight text-stitch-primary">Pharma Nest</h1>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant opacity-70">The Clinical Curator</p>
-            </div>
-          </div>
+          <Logo href="/catalog" imageSize={72} alwaysShowText className="mb-2" />
+          <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant opacity-70">Verified Pharmacy Workspace</p>
         </header>
 
         {step === 'select' ? (
@@ -79,15 +92,15 @@ export default function LoginPage() {
                 onClick={() => selectRole('customer')}
                 className="group relative overflow-hidden rounded-xl border border-outline-variant/10 bg-surface-container-lowest p-8 text-left transition-all duration-300 hover:-translate-y-1 hover:border-stitch-secondary-fixed/50 hover:shadow-2xl active:scale-95"
               >
-                <div className="absolute right-0 top-0 p-4 opacity-5 transition-opacity group-hover:opacity-10">
-                  <span className="text-[160px] leading-none">👤</span>
+                <div className="absolute right-0 top-0 p-4 opacity-5 transition-opacity group-hover:opacity-10" aria-hidden>
+                  <UserRound className="h-28 w-28 text-stitch-secondary" />
                 </div>
-                <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-xl bg-stitch-secondary-container text-3xl shadow-sm transition-transform group-hover:scale-110">
-                  👤
+                <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-xl bg-stitch-secondary-container shadow-sm transition-transform group-hover:scale-110">
+                  <UserRound className="h-8 w-8 text-stitch-primary" />
                 </div>
                 <h2 className="font-headline text-2xl font-bold text-stitch-primary">Customer Login</h2>
                 <p className="mt-2 max-w-[240px] leading-relaxed text-on-surface-variant">
-                  Access your prescriptions, order history, and health tracking tools.
+                  Access prescriptions, orders, and refill tracking in one secure account.
                 </p>
                 <div className="mt-8 flex items-center gap-2 text-sm font-bold text-stitch-secondary transition-transform group-hover:translate-x-2">
                   <span>Continue as Patient</span>
@@ -100,19 +113,19 @@ export default function LoginPage() {
                 onClick={() => selectRole('admin')}
                 className="group relative overflow-hidden rounded-xl bg-stitch-primary-container p-8 text-left transition-all duration-300 hover:-translate-y-1 hover:bg-stitch-primary hover:shadow-2xl active:scale-95"
               >
-                <div className="absolute right-0 top-0 p-4 opacity-10 transition-opacity group-hover:opacity-20">
-                  <span className="text-[160px] leading-none text-white">🏪</span>
+                <div className="absolute right-0 top-0 p-4 opacity-10 transition-opacity group-hover:opacity-20" aria-hidden>
+                  <ShieldCheck className="h-28 w-28 text-white" />
                 </div>
-                <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-xl bg-surface-container-lowest text-3xl shadow-sm transition-transform group-hover:scale-110">
-                  🏪
+                <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-xl bg-surface-container-lowest shadow-sm transition-transform group-hover:scale-110">
+                  <ShieldCheck className="h-8 w-8 text-stitch-primary" />
                 </div>
                 <h2 className="font-headline text-2xl font-bold text-white">Pharmacist / Admin</h2>
                 <p className="mt-2 max-w-[240px] leading-relaxed text-white/80">
-                  Manage inventory, process orders, and generate operational reports.
+                  Manage stock, process prescriptions, and monitor store operations.
                 </p>
                 <div className="mt-8 flex items-center gap-2 text-sm font-bold text-stitch-primary-fixed transition-transform group-hover:translate-x-2">
                   <span>Staff Console</span>
-                  <span>⚙️</span>
+                  <span>→</span>
                 </div>
               </button>
             </div>
@@ -138,14 +151,33 @@ export default function LoginPage() {
             </button>
             <div className="rounded-2xl border border-outline-variant/20 bg-surface-container-lowest p-8 shadow-lg">
               <div className="mb-6 flex items-center gap-3">
-                <div className={`flex h-12 w-12 items-center justify-center rounded-xl text-2xl ${role === 'admin' ? 'bg-stitch-primary-container' : 'bg-stitch-secondary-container'}`}>
-                  {role === 'admin' ? '🏪' : '👤'}
+                <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${role === 'admin' ? 'bg-stitch-primary-container text-white' : 'bg-stitch-secondary-container text-stitch-primary'}`}>
+                  {role === 'admin' ? <ShieldCheck className="h-6 w-6" /> : <UserRound className="h-6 w-6" />}
                 </div>
                 <div>
                   <h2 className="font-headline text-xl font-bold text-on-surface">
                     {role === 'admin' ? 'Staff Login' : 'Customer Login'}
                   </h2>
                   <p className="text-xs text-on-surface-variant">Sign in to your account</p>
+                </div>
+              </div>
+
+              <div className="mb-5 rounded-xl border border-stitch-primary/20 bg-stitch-primary-fixed/15 p-3">
+                <p className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-stitch-primary">
+                  <KeyRound className="h-3.5 w-3.5" />
+                  Demo Access
+                </p>
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => applyDemo(role)}
+                    className="rounded-lg border border-stitch-primary/30 bg-white px-3 py-1.5 text-xs font-bold text-stitch-primary transition hover:bg-stitch-primary-fixed/20"
+                  >
+                    Use {DEMO_CREDENTIALS[role].label}
+                  </button>
+                  <span className="text-[11px] text-on-surface-variant">
+                    {DEMO_CREDENTIALS[role].identifier} / {DEMO_CREDENTIALS[role].password}
+                  </span>
                 </div>
               </div>
 
@@ -168,14 +200,24 @@ export default function LoginPage() {
                       Create account
                     </Link>
                   </div>
-                  <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                    required
-                    className="w-full rounded-xl border border-outline-variant/40 bg-surface-container-low px-4 py-3 text-sm outline-none transition focus:border-stitch-primary focus:ring-2 focus:ring-stitch-primary/20"
-                  />
+                  <div className="relative">
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="••••••••"
+                      required
+                      className="w-full rounded-xl border border-outline-variant/40 bg-surface-container-low px-4 py-3 pr-12 text-sm outline-none transition focus:border-stitch-primary focus:ring-2 focus:ring-stitch-primary/20"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((v) => !v)}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-2 text-on-surface-variant transition hover:bg-surface-container"
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    >
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
                 </div>
                 <button
                   type="submit"
@@ -188,7 +230,7 @@ export default function LoginPage() {
               </form>
 
               <p className="mt-4 text-center text-[12px] text-on-surface-variant">
-                Use your registered account credentials to continue.
+                Demo autofill works in development and can be replaced with your own account.
               </p>
             </div>
           </div>
@@ -199,7 +241,7 @@ export default function LoginPage() {
       <footer className="pointer-events-none fixed bottom-0 w-full p-6 flex justify-between items-end">
         <div className="opacity-30">
           <p className="font-headline text-2xl font-black leading-none text-stitch-primary">PN</p>
-          <p className="text-[8px] uppercase tracking-tighter text-on-surface-variant">Pharma Operations v4.2</p>
+          <p className="text-[8px] uppercase tracking-tighter text-on-surface-variant">Licensed Pharmacy Operations</p>
         </div>
       </footer>
     </div>
