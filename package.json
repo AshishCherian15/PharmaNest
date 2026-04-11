@@ -21,6 +21,8 @@
     "db:push": "prisma db push --schema prisma/schema.prisma",
     "db:push:postgres": "prisma db push --schema prisma/schema.postgres.prisma",
     "db:studio": "prisma studio",
+    "verify:deploy": "node scripts/verify-deploy.mjs",
+    "verify:health": "node scripts/verify-deploy.mjs --health",
     "format": "prettier --write \"src/**/*.{ts,tsx,md}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,md}\"",
     "postinstall": "node scripts/prisma-generate.mjs"

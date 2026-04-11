@@ -67,6 +67,8 @@ Deployment details are documented in [docs/supabase-deployment.md](docs/supabase
 - `npm run db:push` - Push schema changes to the database.
 - `npm run db:push:postgres` - Push PostgreSQL schema changes to Supabase.
 - `npm run db:studio` - Open Prisma Studio.
+- `npm run verify:deploy` - Verify required deployment environment variables.
+- `npm run verify:health` - Verify environment variables and call the health endpoint.
 
 ## Project Structure
 
@@ -83,3 +85,4 @@ Deployment details are documented in [docs/supabase-deployment.md](docs/supabase
 - Some generated or machine-specific files are ignored through `.gitignore`.
 - `vercel.json` is included so the repository is deploy-ready on Vercel.
 - `apphosting.yaml` has been removed because the deployment target is now Vercel.
+- `GET /api/health` checks database connectivity and returns deployment health metadata.

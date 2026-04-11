@@ -40,3 +40,17 @@ If you already have data in the local SQLite database, migrate it into Supabase 
 - Sign in with the seeded admin/customer accounts.
 - Verify catalog browsing, checkout, prescriptions, and dashboard pages.
 - Confirm the database records are landing in Supabase and not in a local file database.
+
+## 6. Run Deployment Verification
+
+Run environment validation:
+
+```bash
+npm run verify:deploy
+```
+
+Run environment plus health validation:
+
+```bash
+HEALTHCHECK_URL=https://<your-domain>/api/health npm run verify:health
+```
