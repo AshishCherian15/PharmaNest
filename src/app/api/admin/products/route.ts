@@ -3,6 +3,15 @@ import { getMedicines, createMedicine, searchMedicines } from '@/lib/medicines';
 import { requestLogger } from '@/lib/api-logger';
 import { validateRequiredString } from '@/lib/api-validation';
 
+function getErrorCode(error: unknown): string | undefined {
+  if (typeof error === 'object' && error !== null && 'code' in error) {
+    const code = (error as { code?: unknown }).code;
+    return typeof code === 'string' ? code : undefined;
+  }
+
+  return undefined;
+}
+
 /**
  * GET /api/admin/products
  * List all medicines with optional filtering
@@ -107,8 +116,8 @@ export async function POST(req: Request) {
       userId: medicine.id,
     });
     return apiSuccess({ medicine }, 201);
-  } catch (error: any) {
-    if (error?.code === 'P2002') {
+  } catch (error: unknown) {
+    if (getErrorCode(error) === 'P2002') {
       // Unique constraint violation
       requestLogger.logResponse('POST', '/api/admin/products', 409, startTime);
       return apiError('Medicine name already exists', 409, 'DUPLICATE_NAME');

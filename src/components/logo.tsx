@@ -9,8 +9,6 @@ interface LogoProps {
   alwaysShowText?: boolean;
   /** If true, hide text and render image-only logo */
   hideText?: boolean;
-  /** If true, hide image and render text-only logo */
-  hideImage?: boolean;
   /** dark = white/mint text for dark backgrounds */
   variant?: 'light' | 'dark';
 }
@@ -21,7 +19,6 @@ export function Logo({
   imageSize = 40,
   alwaysShowText = false,
   hideText = false,
-  hideImage = false,
   variant = 'light',
 }: LogoProps) {
   const isDark = variant === 'dark';

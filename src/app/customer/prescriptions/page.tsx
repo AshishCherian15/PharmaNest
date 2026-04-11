@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import Image from 'next/image';
 import type { Prescription } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 
@@ -111,7 +112,7 @@ export default function CustomerPrescriptionsPage() {
         />
         <div className="mt-3 flex flex-wrap items-center gap-3">
           <input type="file" accept="image/*" onChange={handleImageUpload} className="text-sm" />
-          {imageDataUrl && <img src={imageDataUrl} alt="Prescription preview" className="h-16 w-16 rounded-lg object-cover" />}
+          {imageDataUrl && <Image src={imageDataUrl} alt="Prescription preview" width={64} height={64} unoptimized className="h-16 w-16 rounded-lg object-cover" />}
         </div>
         <button disabled={submitting} type="submit" className="mt-4 rounded-xl bg-stitch-primary px-4 py-2.5 text-sm font-bold text-white transition hover:bg-stitch-primary-container disabled:opacity-60">
           {submitting ? 'Submitting...' : 'Submit Prescription'}
@@ -166,7 +167,7 @@ export default function CustomerPrescriptionsPage() {
                 {rx.imageDataUrl && (
                   <div className="mb-4">
                     <p className="mb-2 text-xs font-bold uppercase tracking-wider text-on-surface-variant">Uploaded Prescription Image</p>
-                    <img src={rx.imageDataUrl} alt="Prescription" className="h-28 rounded-lg border border-outline-variant/20 object-cover" />
+                    <Image src={rx.imageDataUrl} alt="Prescription" width={320} height={160} unoptimized className="h-28 rounded-lg border border-outline-variant/20 object-cover" />
                   </div>
                 )}
 

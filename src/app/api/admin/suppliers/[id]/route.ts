@@ -79,7 +79,7 @@ export async function PUT(req: Request, { params }: RouteParams) {
 
     requestLogger.logResponse('PUT', `/api/admin/suppliers/${id}`, 200, startTime);
     return apiSuccess({ supplier }, 200);
-  } catch (error: any) {
+  } catch (error: unknown) {
     requestLogger.logError('PUT', `/api/admin/suppliers/${id}`, error, startTime);
     return apiError('Failed to update supplier', 500, 'UPDATE_ERROR');
   }

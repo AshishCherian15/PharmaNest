@@ -1,6 +1,5 @@
 import { cookies } from 'next/headers';
 import { AUTH_COOKIE, parseSessionToken } from '@/lib/auth';
-import Link from 'next/link';
 
 export default async function CustomerProfilePage() {
   const token = (await cookies()).get(AUTH_COOKIE)?.value;

@@ -88,7 +88,7 @@ export async function updateUser(id: string, input: UpdateUserInput): Promise<Us
   const existing = await getUserById(id);
   if (!existing) return null;
 
-  const updateData: any = {
+  const updateData: Partial<Pick<User, 'name' | 'phone' | 'role' | 'passwordHash'>> = {
     name: input.name ?? existing.name,
     phone: input.phone ?? existing.phone,
     role: input.role ?? existing.role,

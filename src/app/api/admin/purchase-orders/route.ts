@@ -3,6 +3,15 @@ import { requestLogger } from '@/lib/api-logger';
 import { validateRequiredString } from '@/lib/api-validation';
 import { createPurchaseOrder, getPurchaseOrders } from '@/lib/purchase-orders';
 
+function getErrorCode(error: unknown): string | undefined {
+  if (typeof error === 'object' && error !== null && 'code' in error) {
+    const code = (error as { code?: unknown }).code;
+    return typeof code === 'string' ? code : undefined;
+  }
+
+  return undefined;
+}
+
 /**
  * GET /api/admin/purchase-orders
  * Retrieves all purchase orders
@@ -49,8 +58,8 @@ export async function POST(req: Request) {
 
     requestLogger.logResponse('POST', '/api/admin/purchase-orders', 201, startTime);
     return apiSuccess({ order }, 201);
-  } catch (error: any) {
-    if (error?.code === 'P2003') {
+  } catch (error: unknown) {
+    if (getErrorCode(error) === 'P2003') {
       requestLogger.logResponse('POST', '/api/admin/purchase-orders', 400, startTime);
       return apiError('Invalid supplier selected', 400, 'INVALID_SUPPLIER');
     }

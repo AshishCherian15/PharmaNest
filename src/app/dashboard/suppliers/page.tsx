@@ -3,7 +3,6 @@
 import * as React from "react";
 import { useMemo } from 'react';
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import { columns } from "./_components/columns"
 import { DataTable } from "@/app/dashboard/_components/data-table"
 import type { Supplier } from "@/lib/types"
@@ -138,7 +137,7 @@ export default function SuppliersPage() {
       <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
         <PageHeader
           title="Suppliers"
-          description="Manage your supplier partnerships."
+          description={loading ? 'Loading suppliers...' : 'Manage your supplier partnerships.'}
           action={
             <>
               <Button variant="outline" onClick={handleExportSuppliers}>

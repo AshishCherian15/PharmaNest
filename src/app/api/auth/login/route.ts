@@ -4,6 +4,7 @@ import {
   authCookieOptions,
   createSessionToken,
 } from '@/lib/auth';
+import type { NextRequest } from 'next/server';
 import { validateCredentialsDb } from '@/lib/auth-db';
 import { apiSuccess, apiError } from '@/lib/api-response';
 import { validateEmail, validateRequiredString } from '@/lib/api-validation';
@@ -23,12 +24,11 @@ import { authLimiter } from '@/lib/rate-limit';
  * Response: { user: SessionUser }
  * Errors: 400, 401, 403, 429 (rate limited)
  */
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   const startTime = performance.now();
   
   // Check rate limit
-  const nextReq = req as any; // Type assertion for rate limiter
-  const limitResult = authLimiter(nextReq);
+  const limitResult = authLimiter(req);
   if (!limitResult.ok) {
     requestLogger.logResponse('POST', '/api/auth/login', 429, startTime);
     const res = apiError('Too many login attempts. Please try again later.', 429, 'RATE_LIMITED');

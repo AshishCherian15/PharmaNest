@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
-import { Search, ShoppingCart, Menu, X, User, ChevronDown } from 'lucide-react';
+import { Search, ShoppingCart, Menu, X, User } from 'lucide-react';
 import { useStoreCart } from '@/hooks/use-store-cart';
 import { Logo } from '@/components/logo';
 
@@ -32,7 +32,6 @@ export function LandingHeader() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { itemCount } = useStoreCart();
 
-  const activeCat = searchParams.get('category') ?? 'all';
   const onCatalog = pathname === '/catalog';
 
   const handleSearch = (e: React.FormEvent) => {
@@ -90,7 +89,7 @@ export function LandingHeader() {
             </button>
 
             {/* Logo */}
-            <Logo href="/catalog" hideImage alwaysShowText className="flex-shrink-0 mr-1" />
+            <Logo href="/catalog" alwaysShowText className="flex-shrink-0 mr-1" />
 
             {/* Desktop nav links */}
             <nav className="hidden items-center gap-5 md:flex">

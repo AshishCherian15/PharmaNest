@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import Image from 'next/image';
 import type { Prescription } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 
@@ -133,7 +134,7 @@ export default function PrescriptionsPage() {
                   {rx.imageDataUrl && (
                     <div className="mt-4">
                       <p className="mb-2 text-xs font-bold uppercase tracking-wider text-on-surface-variant">Prescription Image</p>
-                      <img src={rx.imageDataUrl} alt="Prescription upload" className="h-24 rounded-lg border border-outline-variant/20 object-cover" />
+                      <Image src={rx.imageDataUrl} alt="Prescription upload" width={320} height={160} unoptimized className="h-24 rounded-lg border border-outline-variant/20 object-cover" />
                     </div>
                   )}
 

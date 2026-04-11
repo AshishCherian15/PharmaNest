@@ -127,10 +127,6 @@ export default function InventoryPage() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleFilterChange = () => {
-    setPage(1);
-  };
-
   return (
     <>
       <div className="flex-1 space-y-6 p-4 md:p-8">

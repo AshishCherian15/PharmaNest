@@ -3,12 +3,6 @@
  * Centralized validation for common request patterns
  */
 
-interface ValidationResult<T> {
-  valid: boolean;
-  data?: T;
-  errors: Record<string, string>;
-}
-
 /**
  * Validate required string fields
  */
@@ -143,7 +137,7 @@ export function safeJsonParse<T = unknown>(
       return { ok: true, data: parsed as T };
     }
     return { ok: true, data: value as T };
-  } catch (_err) {
+  } catch {
     return { ok: false, error: 'Invalid JSON' };
   }
 }

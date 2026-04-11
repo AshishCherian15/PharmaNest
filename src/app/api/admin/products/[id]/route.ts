@@ -6,6 +6,15 @@ import {
 } from '@/lib/medicines';
 import { requestLogger } from '@/lib/api-logger';
 
+function getErrorCode(error: unknown): string | undefined {
+  if (typeof error === 'object' && error !== null && 'code' in error) {
+    const code = (error as { code?: unknown }).code;
+    return typeof code === 'string' ? code : undefined;
+  }
+
+  return undefined;
+}
+
 interface RouteParams {
   params: Promise<{
     id: string;
@@ -88,8 +97,8 @@ export async function PUT(req: Request, { params }: RouteParams) {
 
     requestLogger.logResponse('PUT', `/api/admin/products/${id}`, 200, startTime);
     return apiSuccess({ medicine }, 200);
-  } catch (error: any) {
-    if (error?.code === 'P2002') {
+  } catch (error: unknown) {
+    if (getErrorCode(error) === 'P2002') {
       requestLogger.logResponse('PUT', `/api/admin/products/${id}`, 409, startTime);
       return apiError('Medicine name already exists', 409, 'DUPLICATE_NAME');
     }

@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge";
 import { columns } from "./_components/columns"
 import { DataTable } from "@/app/dashboard/_components/data-table"
 import type { User } from "@/lib/types"
@@ -136,7 +135,7 @@ export default function UsersPage() {
       <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
         <PageHeader
           title="User Management"
-          description="Manage staff roles and access."
+          description={loading ? 'Loading users...' : 'Manage staff roles and access.'}
           action={
             <>
               <Button variant="outline" onClick={handleExportUsers}>
@@ -185,9 +184,9 @@ export default function UsersPage() {
               onClick={() => setRoleFilter(role)}
             >
               {role}
-              <Badge variant="secondary" className="ml-2">
+              <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-[10px] font-semibold">
                 {role === 'All' ? data.length : data.filter(user => user.role === role).length}
-              </Badge>
+              </span>
             </Button>
           ))}
         </div>

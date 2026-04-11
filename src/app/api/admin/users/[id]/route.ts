@@ -86,7 +86,7 @@ export async function PUT(req: Request, { params }: RouteParams) {
       phone: user.phone,
       role: user.role,
     }}, 200);
-  } catch (error: any) {
+  } catch (error: unknown) {
     requestLogger.logError('PUT', `/api/admin/users/${id}`, error, startTime);
     return apiError('Failed to update user', 500, 'UPDATE_ERROR');
   }

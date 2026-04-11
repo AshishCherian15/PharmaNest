@@ -40,8 +40,8 @@ export async function POST(req: Request) {
 
     requestLogger.logResponse('POST', '/api/admin/sales', 201, startTime);
     return apiSuccess({ transaction }, 201);
-  } catch (error: any) {
+  } catch (error: unknown) {
     requestLogger.logError('POST', '/api/admin/sales', error, startTime);
-    return apiError(error?.message || 'Failed to complete sale', 400, 'SALE_ERROR');
+    return apiError(error instanceof Error ? error.message : 'Failed to complete sale', 400, 'SALE_ERROR');
   }
 }

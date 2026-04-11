@@ -85,7 +85,7 @@ export const columns: ColumnDef<User>[] = [
     cell: ({ row }) => {
         const role = row.getValue("role") as string;
         const variant = role === 'Admin' ? 'destructive' : role === 'Pharmacist' ? 'default' : 'secondary';
-        return <Badge variant={variant as any}>{role}</Badge>
+        return <Badge variant={variant}>{role}</Badge>
     }
   },
   {

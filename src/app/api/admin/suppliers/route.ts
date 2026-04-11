@@ -3,6 +3,29 @@ import { getSuppliers, createSupplier, searchSuppliers } from '@/lib/suppliers';
 import { requestLogger } from '@/lib/api-logger';
 import { validateRequiredString, validateEmail, validatePhone } from '@/lib/api-validation';
 
+function getErrorCode(error: unknown): string | undefined {
+  if (typeof error === 'object' && error !== null && 'code' in error) {
+    const code = (error as { code?: unknown }).code;
+    return typeof code === 'string' ? code : undefined;
+  }
+
+  return undefined;
+}
+
+function getErrorTarget(error: unknown): string | undefined {
+  if (typeof error === 'object' && error !== null && 'meta' in error) {
+    const meta = (error as { meta?: unknown }).meta;
+    if (typeof meta === 'object' && meta !== null && 'target' in meta) {
+      const target = (meta as { target?: unknown }).target;
+      if (Array.isArray(target) && typeof target[0] === 'string') {
+        return target[0];
+      }
+    }
+  }
+
+  return undefined;
+}
+
 /**
  * GET /api/admin/suppliers
  * List all suppliers
@@ -98,9 +121,9 @@ export async function POST(req: Request) {
 
     requestLogger.logResponse('POST', '/api/admin/suppliers', 201, startTime);
     return apiSuccess({ supplier }, 201);
-  } catch (error: any) {
-    if (error?.code === 'P2002') {
-      const field = error?.meta?.target?.[0] === 'email' ? 'Email' : 'Name';
+  } catch (error: unknown) {
+    if (getErrorCode(error) === 'P2002') {
+      const field = getErrorTarget(error) === 'email' ? 'Email' : 'Name';
       requestLogger.logResponse('POST', '/api/admin/suppliers', 409, startTime);
       return apiError(`${field} already exists`, 409, 'DUPLICATE');
     }

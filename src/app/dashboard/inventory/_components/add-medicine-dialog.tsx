@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -134,7 +135,7 @@ export function MedicineFormDialog({ open, onOpenChange, onSave, medicine }: Med
                      <div className="relative">
                         <div className="w-20 h-20 border-dashed border-2 rounded-md flex items-center justify-center bg-muted/50">
                             {imagePreview ? (
-                                <img src={imagePreview} alt="Medicine preview" className="w-full h-full object-cover rounded-md" />
+                              <Image src={imagePreview} alt="Medicine preview" width={80} height={80} unoptimized className="w-full h-full object-cover rounded-md" />
                             ) : (
                                 <span className="text-xs text-muted-foreground">Preview</span>
                             )}
