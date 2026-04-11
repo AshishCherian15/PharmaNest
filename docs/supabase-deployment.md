@@ -14,6 +14,7 @@ Add these variables in the Vercel project settings:
 
 - `DATABASE_URL` - Supabase pooled PostgreSQL connection string.
 - `DIRECT_URL` - Supabase direct PostgreSQL connection string.
+- `PRISMA_SCHEMA_PATH` - `prisma/schema.postgres.prisma`
 - `AUTH_SECRET` - Strong random secret.
 - `AUTH_DEFAULT_PASSWORD` - Demo account password used by the bootstrap seed.
 
@@ -22,8 +23,8 @@ Add these variables in the Vercel project settings:
 From a local environment that can reach Supabase, run:
 
 ```bash
-npx prisma db push
-npx prisma generate
+npm run db:push:postgres
+npm run db:generate:postgres
 ```
 
 If you already have data in the local SQLite database, migrate it into Supabase separately before switching production traffic.

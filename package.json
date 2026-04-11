@@ -15,12 +15,15 @@
     "test:watch": "vitest",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "db:generate": "prisma generate",
-    "db:push": "prisma db push",
+    "db:generate": "node scripts/prisma-generate.mjs",
+    "db:generate:sqlite": "prisma generate --schema prisma/schema.prisma",
+    "db:generate:postgres": "prisma generate --schema prisma/schema.postgres.prisma",
+    "db:push": "prisma db push --schema prisma/schema.prisma",
+    "db:push:postgres": "prisma db push --schema prisma/schema.postgres.prisma",
     "db:studio": "prisma studio",
     "format": "prettier --write \"src/**/*.{ts,tsx,md}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,md}\"",
-    "postinstall": "prisma generate"
+    "postinstall": "node scripts/prisma-generate.mjs"
   },
   "dependencies": {
     "@genkit-ai/google-genai": "^1.28.0",

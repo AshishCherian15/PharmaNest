@@ -1,0 +1,204 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum UserRole {
+  admin
+  customer
+}
+
+enum OrderStatus {
+  Placed
+  Processing
+  Shipped
+  Delivered
+  Cancelled
+}
+
+enum PrescriptionStatus {
+  pending
+  verified
+  rejected
+}
+
+model User {
+  id           String   @id
+  name         String
+  email        String   @unique
+  phone        String
+  role         UserRole
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  orders       Order[]
+  prescriptions Prescription[]
+
+  @@index([role])
+}
+
+model Order {
+  id            String      @id
+  customerId    String
+  customerName  String
+  customerEmail String
+  address       String
+  subtotal      Int
+  deliveryFee   Int
+  total         Int
+  status        OrderStatus @default(Placed)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  customer      User        @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  items         OrderItem[]
+
+  @@index([customerId, createdAt])
+}
+
+model OrderItem {
+  id          Int    @id @default(autoincrement())
+  orderId     String
+  medicineId  String
+  name        String
+  genericName String
+  unitPrice   Int
+  quantity    Int
+
+  order       Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+}
+
+// Pharmacy Inventory & Products
+
+model Category {
+  id           String    @id @default(cuid())
+  name         String    @unique
+  description  String?
+  image        String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  medicines    Medicine[]
+
+  @@index([name])
+}
+
+model Medicine {
+  id            String   @id @default(cuid())
+  name          String   @unique
+  genericName   String
+  description   String?
+  dosage        String?
+  manufacturer  String?
+  categoryId    String
+  price         Int      // Price in paise (smallest unit for currency)
+  hsn           String?
+  quantity      Int      @default(0)
+  reorderLevel  Int      @default(10)
+  expiryDate    DateTime?
+  batchNo       String?
+  image         String?
+  requiresPrescription Boolean @default(false)
+  rating        Int?
+  reviews       Int?
+  isNew         Boolean  @default(false)
+  previousPrice Int?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  category      Category  @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  prescriptionItems PrescriptionItem[]
+
+  @@index([categoryId, name])
+  @@index([expiryDate])
+}
+
+model Supplier {
+  id           String    @id @default(cuid())
+  name         String    @unique
+  contactPerson String
+  email        String    @unique
+  phone        String
+  address      String?
+  city         String?
+  state        String?
+  pincode      String?
+  gstNo        String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  purchaseOrders PurchaseOrder[]
+
+  @@index([name, email])
+}
+
+model PurchaseOrder {
+  id           String    @id @default(cuid())
+  supplierId   String
+  orderNo      String    @unique
+  orderDate    DateTime  @default(now())
+  expectedDeliveryDate DateTime?
+  total        Int
+  status       String    @default("Pending") // Pending, Delivered, Cancelled
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  supplier     Supplier  @relation(fields: [supplierId], references: [id], onDelete: Restrict)
+
+  @@index([supplierId, status])
+}
+
+model Prescription {
+  id           String    @id @default(cuid())
+  customerId   String
+  patientName  String
+  doctorName   String
+  doctorPhone  String?
+  prescriptionDate DateTime @default(now())
+  status       PrescriptionStatus @default(pending)
+  documentUrl  String?
+  notes        String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  customer     User      @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  items        PrescriptionItem[]
+
+  @@index([customerId, status])
+}
+
+model PrescriptionItem {
+  id           Int       @id @default(autoincrement())
+  prescriptionId String
+  medicineId   String
+  dosage       String?
+  quantity     Int
+  instructions String?
+
+  prescription Prescription @relation(fields: [prescriptionId], references: [id], onDelete: Cascade)
+  medicine     Medicine     @relation(fields: [medicineId], references: [id], onDelete: Restrict)
+
+  @@index([prescriptionId])
+}
+
+model SalesTransaction {
+  id        String   @id
+  amount    Int
+  items     Int
+  timestamp DateTime @default(now())
+}
+
+model StockState {
+  id        String   @id @default("catalog")
+  version   Int      @default(1)
+  updatedAt DateTime @updatedAt
+}
+

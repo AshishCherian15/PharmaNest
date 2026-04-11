@@ -49,6 +49,8 @@ See `.env.example` for the current defaults used in development.
 
 For Vercel + Supabase deployment, set `DATABASE_URL` to the Supabase PostgreSQL connection string, set `DIRECT_URL` to the direct Postgres connection string, and keep `AUTH_SECRET` and `AUTH_DEFAULT_PASSWORD` in the Vercel environment variables.
 
+Also set `PRISMA_SCHEMA_PATH=prisma/schema.postgres.prisma` in Vercel so Prisma client generation uses the PostgreSQL schema variant.
+
 Deployment details are documented in [docs/supabase-deployment.md](docs/supabase-deployment.md).
 
 ## Available Scripts
@@ -61,7 +63,9 @@ Deployment details are documented in [docs/supabase-deployment.md](docs/supabase
 - `npm run lint` - Run linting.
 - `npm run typecheck` - Run TypeScript checks.
 - `npm run db:generate` - Generate Prisma client code.
+- `npm run db:generate:postgres` - Generate Prisma client using the Supabase/PostgreSQL schema.
 - `npm run db:push` - Push schema changes to the database.
+- `npm run db:push:postgres` - Push PostgreSQL schema changes to Supabase.
 - `npm run db:studio` - Open Prisma Studio.
 
 ## Project Structure
