@@ -47,7 +47,9 @@ The local setup expects:
 
 See `.env.example` for the current defaults used in development.
 
-For Vercel + Supabase deployment, set `DATABASE_URL` to the Supabase PostgreSQL connection string and keep `AUTH_SECRET` and `AUTH_DEFAULT_PASSWORD` in the Vercel environment variables.
+For Vercel + Supabase deployment, set `DATABASE_URL` to the Supabase PostgreSQL connection string, set `DIRECT_URL` to the direct Postgres connection string, and keep `AUTH_SECRET` and `AUTH_DEFAULT_PASSWORD` in the Vercel environment variables.
+
+Deployment details are documented in [docs/supabase-deployment.md](docs/supabase-deployment.md).
 
 ## Available Scripts
 
@@ -76,3 +78,4 @@ For Vercel + Supabase deployment, set `DATABASE_URL` to the Supabase PostgreSQL 
 - The repository includes local development artifacts such as the SQLite database path under `prisma/`.
 - Some generated or machine-specific files are ignored through `.gitignore`.
 - `vercel.json` is included so the repository is deploy-ready on Vercel.
+- `apphosting.yaml` has been removed because the deployment target is now Vercel.
