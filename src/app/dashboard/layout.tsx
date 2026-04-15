@@ -14,15 +14,22 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { AUTH_COOKIE, parseSessionToken } from '@/lib/auth';
 import { SiteFooter } from '@/components/site-footer';
+import { isDemoModeEnabled } from '@/lib/demo-mode';
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const token = (await cookies()).get(AUTH_COOKIE)?.value;
   const session = parseSessionToken(token);
-  if (!session || !['admin', 'pharmacist', 'staff'].includes(session.role)) {
+  const demoMode = isDemoModeEnabled();
+
+  if (!demoMode && (!session || !['admin', 'pharmacist', 'staff'].includes(session.role))) {
     redirect('/login');
   }
 
-  const currentUser = { name: session.name, email: session.email, avatarId: mockUser.avatarId };
+  const currentUser = {
+    name: session?.name ?? 'Demo Team Member',
+    email: session?.email ?? 'demo@pharmanest.com',
+    avatarId: mockUser.avatarId,
+  };
 
   return (
     <SidebarProvider>

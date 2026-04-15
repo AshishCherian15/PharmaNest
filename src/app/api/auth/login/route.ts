@@ -10,6 +10,7 @@ import { apiSuccess, apiError } from '@/lib/api-response';
 import { validateEmail, validateRequiredString } from '@/lib/api-validation';
 import { requestLogger } from '@/lib/api-logger';
 import { authLimiter } from '@/lib/rate-limit';
+import { isDemoModeEnabled } from '@/lib/demo-mode';
 
 /**
  * POST /api/auth/login
@@ -58,6 +59,21 @@ export async function POST(req: NextRequest) {
     if (!role || !['admin', 'customer', 'pharmacist', 'staff'].includes(role)) {
       requestLogger.logResponse('POST', '/api/auth/login', 400, startTime);
       return apiError('Role must be one of: admin, customer, pharmacist, staff', 400, 'INVALID_ROLE');
+    }
+
+    if (isDemoModeEnabled()) {
+      const demoUser = {
+        id: role === 'admin' ? 'ADM-DEMO' : role === 'customer' ? 'CUS-DEMO' : role === 'pharmacist' ? 'PHM-DEMO' : 'STF-DEMO',
+        name: role === 'customer' ? 'Demo Customer' : 'Demo Team Member',
+        email: email.toLowerCase(),
+        role,
+      };
+
+      const token = createSessionToken(demoUser);
+      const res = apiSuccess({ user: demoUser }, 200);
+      res.cookies.set(AUTH_COOKIE, token, authCookieOptions);
+      requestLogger.logResponse('POST', '/api/auth/login', 200, startTime, { userId: demoUser.id, mode: 'demo' });
+      return res;
     }
 
     // Authenticate user

@@ -8,6 +8,7 @@ import { Logo } from '@/components/logo';
 import { UserNav } from '@/components/user-nav';
 import { mockUser } from '@/lib/data';
 import { SiteFooter } from '@/components/site-footer';
+import { isDemoModeEnabled } from '@/lib/demo-mode';
 
 const navItems = [
   { href: '/customer',               label: 'Overview'       },
@@ -29,11 +30,17 @@ const mobileNav = [
 export default async function CustomerLayout({ children }: { children: React.ReactNode }) {
   const token = (await cookies()).get(AUTH_COOKIE)?.value;
   const session = parseSessionToken(token);
-  if (!session || session.role !== 'customer') {
+  const demoMode = isDemoModeEnabled();
+
+  if (!demoMode && (!session || session.role !== 'customer')) {
     redirect('/login');
   }
 
-  const profile = { name: session.name, email: session.email, avatarId: mockUser.avatarId };
+  const profile = {
+    name: session?.name ?? 'Demo Customer',
+    email: session?.email ?? 'demo.customer@pharmanest.com',
+    avatarId: mockUser.avatarId,
+  };
 
   return (
     <div className="min-h-screen bg-surface">

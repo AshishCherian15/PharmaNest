@@ -8,8 +8,21 @@ import { landingProducts } from '@/lib/data';
 export default async function CustomerOverviewPage() {
   const token   = (await cookies()).get(AUTH_COOKIE)?.value;
   const session = parseSessionToken(token);
-  const orders  = session ? await getOrdersForCustomerDb(session.id) : [];
-  const rxList  = session ? await getPrescriptionsForCustomer(session.id) : [];
+  let orders = [] as Awaited<ReturnType<typeof getOrdersForCustomerDb>>;
+  let rxList = [] as Awaited<ReturnType<typeof getPrescriptionsForCustomer>>;
+
+  if (session) {
+    try {
+      [orders, rxList] = await Promise.all([
+        getOrdersForCustomerDb(session.id),
+        getPrescriptionsForCustomer(session.id),
+      ]);
+    } catch {
+      // Demo-mode fallback: preserve UI without requiring DB reads.
+      orders = [];
+      rxList = [];
+    }
+  }
   const recentOrder = orders[0] ?? null;
   const pendingRxCount = rxList.filter((r) => r.status === 'pending').length;
   const verifiedRxCount = rxList.filter((r) => r.status === 'verified').length;

@@ -181,6 +181,20 @@ Release checklist:
 7. Visit `/api/health` to confirm database connectivity.
 8. Sign in with the seeded demo accounts to verify dashboard and customer routes.
 
+### 🧪 Frontend-Only Demo Deploy (No Database Yet)
+
+If you want the same UI flow for presentation but do not have a production database ready:
+
+1. In Vercel Environment Variables, set `NEXT_PUBLIC_DEMO_MODE=true`.
+2. Deploy normally.
+3. Keep all app files unchanged in the repository.
+
+In demo mode:
+
+- Login and registration use demo session behavior.
+- Customer and dashboard UI can open without hard DB dependency.
+- You can switch to full backend mode later by setting `NEXT_PUBLIC_DEMO_MODE=false` and configuring PostgreSQL variables.
+
 ---
 
 ## 📜 Scripts

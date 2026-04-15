@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server';
+import { isDemoModeEnabled } from '@/lib/demo-mode';
 
 const AUTH_COOKIE = 'pharmanest_session';
 
@@ -72,6 +73,10 @@ async function parseSessionFromToken(token?: string): Promise<LightweightSession
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
+
+  if (isDemoModeEnabled()) {
+    return NextResponse.next();
+  }
 
   // Allow static files from /public and any extension-based asset paths.
   if (/\.[^/]+$/.test(pathname)) {
