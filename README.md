@@ -1,91 +1,183 @@
-# PharmaNest
+# 💊 PharmaNest — Modern Pharmacy Platform
 
-PharmaNest is a Next.js pharmacy platform for customers, pharmacists, and internal staff. It includes a storefront, prescription workflows, order tracking, inventory and supplier management, and an admin dashboard backed by Prisma.
+### ✨ Shop · Prescribe · Track · Operate
 
-## What It Includes
+PharmaNest is a full-stack pharmacy web platform built with Next.js, designed for both customers and pharmacy operations teams.
+It combines a customer storefront, prescription-aware flows, secure authentication, and a role-based admin console in one connected system.
 
-- Customer storefront with catalog browsing, product detail pages, cart, checkout, and order history.
-- Authentication flows for login and registration.
-- Prescription request and eligibility flows for customers.
-- Staff dashboard for inventory, orders, prescriptions, reports, sales, suppliers, and users.
-- Admin API routes for managing catalog, orders, users, suppliers, purchase orders, and reports.
-- Shared UI components, themed landing pages, and product image handling.
+---
 
-## Tech Stack
+## 🎯 What PharmaNest Delivers
 
-- Next.js 15 with React 19
-- TypeScript
-- Tailwind CSS
-- Prisma with SQLite for local development and PostgreSQL for deployment targets like Supabase
-- Vitest for tests
-- Genkit tooling for AI-related development workflows
+- Customer storefront with real medicine categories and product detail pages.
+- Prescription-aware ordering flow with status lifecycle (pending, verified, rejected).
+- Secure login/register with role-based route protection.
+- Dedicated modules for customer, staff/pharmacist, and admin workflows.
+- Operations dashboard for inventory, orders, suppliers, sales, reports, users, and settings.
+- API-first architecture with server routes for auth, customer flows, admin operations, and health checks.
 
-## Getting Started
+---
 
-1. Install dependencies.
-2. Set up environment variables in `.env`.
-3. Initialize the database if needed.
-4. Run the development server.
+## 🌟 Feature Summary
 
-Example:
+| Feature | Description |
+| --- | --- |
+| 🛍️ Customer Catalog | Browse medicines, product forms, and stock-aware listings |
+| 🧾 Checkout Flow | Cart, order placement, and order history tracking |
+| 📄 Prescription Flow | Upload/track prescription lifecycle with pharmacist/admin visibility |
+| 🔐 Auth & Session | Secure cookie-based sessions with role-aware middleware guards |
+| 🧑‍⚕️ Staff Console | Dashboard modules for inventory, sales, suppliers, prescriptions, and users |
+| 📊 Reports | Aggregated operational insights for pharmacy management |
+| 🩺 Health Endpoint | Deployment/runtime health check via API |
+| 🚀 Deploy Ready | Vercel-friendly config + Supabase/PostgreSQL support |
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer | Technology |
+| --- | --- |
+| Frontend | Next.js 15, React 19, Tailwind CSS |
+| Language | TypeScript |
+| Backend | Next.js App Router + Route Handlers |
+| Database ORM | Prisma |
+| Local DB | SQLite |
+| Production DB | PostgreSQL (Supabase-ready) |
+| Testing | Vitest |
+| Tooling | ESLint, TypeScript, Prisma CLI, CI via GitHub Actions |
+
+---
+
+## 🏗️ Architecture Snapshot
+
+```text
+┌────────────────────────────────────┐
+│ Next.js App Router UI              │
+│ Landing · Catalog · Customer ·     │
+│ Dashboard · Auth pages             │
+└───────────────┬────────────────────┘
+								↓
+┌────────────────────────────────────┐
+│ Route Handlers (API Layer)         │
+│ /api/auth · /api/customer · /api/admin
+└───────────────┬────────────────────┘
+								↓
+┌────────────────────────────────────┐
+│ Domain / Service Layer (src/lib)   │
+│ Validation · Auth · Orders · Rx ·  │
+│ Catalog · Suppliers · Reports      │
+└───────────────┬────────────────────┘
+								↓
+┌────────────────────────────────────┐
+│ Prisma Client + Database           │
+│ SQLite (local) / PostgreSQL (prod) │
+└────────────────────────────────────┘
+```
+
+---
+
+## ⚙️ Local Setup
+
+### Prerequisites
+
+- Node.js 20+
+- npm
+
+### Run Locally
 
 ```bash
+git clone https://github.com/AshishCherian15/PharmaNest.git
+cd PharmaNest
 npm install
 npm run db:push
 npm run dev
 ```
 
-The app runs on port `9002` by default.
+Local app URL:
 
-## Environment Variables
+- http://localhost:9002
 
-The local setup expects:
+---
 
-- `DATABASE_URL` for the Prisma database connection.
-- `AUTH_SECRET` for session and auth signing.
-- `AUTH_DEFAULT_PASSWORD` for demo or seeded accounts.
+## 🔐 Environment Variables
 
-See `.env.example` for the current defaults used in development.
+Create a `.env` file (or use existing local one) with:
 
-For Vercel + Supabase deployment, set `DATABASE_URL` to the Supabase PostgreSQL connection string, set `DIRECT_URL` to the direct Postgres connection string, and keep `AUTH_SECRET` and `AUTH_DEFAULT_PASSWORD` in the Vercel environment variables.
+```env
+DATABASE_URL="file:./prisma/dev.db"
+AUTH_SECRET="your-secret"
+AUTH_DEFAULT_PASSWORD="admin"
+```
 
-Also set `PRISMA_SCHEMA_PATH=prisma/schema.postgres.prisma` in Vercel so Prisma client generation uses the PostgreSQL schema variant.
+### Production (Vercel + Supabase)
 
-Deployment details are documented in [docs/supabase-deployment.md](docs/supabase-deployment.md).
-Release gates are documented in [docs/release-checklist.md](docs/release-checklist.md).
+- Set `DATABASE_URL` to the pooled PostgreSQL URL.
+- Set `DIRECT_URL` to the direct connection URL.
+- Set `AUTH_SECRET` and `AUTH_DEFAULT_PASSWORD`.
+- Set `PRISMA_SCHEMA_PATH=prisma/schema.postgres.prisma`.
 
-## Available Scripts
+Deployment guide:
 
-- `npm run dev` - Start the development server.
-- `npm run dev:clean` - Clear the Next.js build cache and start dev.
-- `npm run build` - Build the production app.
-- `npm run start` - Start the production server.
-- `npm run test` - Run Vitest once.
-- `npm run lint` - Run linting.
-- `npm run typecheck` - Run TypeScript checks.
-- `npm run db:generate` - Generate Prisma client code.
-- `npm run db:generate:postgres` - Generate Prisma client using the Supabase/PostgreSQL schema.
-- `npm run db:push` - Push schema changes to the database.
-- `npm run db:push:postgres` - Push PostgreSQL schema changes to Supabase.
-- `npm run db:studio` - Open Prisma Studio.
-- `npm run verify:deploy` - Verify required deployment environment variables.
-- `npm run verify:health` - Verify environment variables and call the health endpoint.
+- [docs/supabase-deployment.md](docs/supabase-deployment.md)
 
-## Project Structure
+Release checklist:
 
-- `src/app` - Pages, layouts, routes, and API endpoints.
-- `src/components` - Shared UI and feature components.
-- `src/lib` - Server utilities, data access, validation, and domain logic.
-- `prisma` - Prisma schema and local development database.
-- `docs` - Planning, audit, and roadmap documentation.
+- [docs/release-checklist.md](docs/release-checklist.md)
 
-## Notes
+---
 
-- The root landing page introduces the platform and links into login and registration.
-- The repository includes local development artifacts such as the SQLite database path under `prisma/`.
-- Some generated or machine-specific files are ignored through `.gitignore`.
-- `vercel.json` is included so the repository is deploy-ready on Vercel.
-- `apphosting.yaml` has been removed because the deployment target is now Vercel.
-- `GET /api/health` checks database connectivity and returns deployment health metadata.
-- GitHub Actions CI runs typecheck and build for pushes and pull requests on `main`.
-- A manual GitHub Action (`Post Deploy Health Check`) can validate a live deployment URL.
+## 📜 Scripts
+
+| Command | Purpose |
+| --- | --- |
+| `npm run dev` | Start development server |
+| `npm run dev:clean` | Clear Next cache and start dev |
+| `npm run build` | Build production bundle |
+| `npm run start` | Run production server |
+| `npm run lint` | Run ESLint |
+| `npm run typecheck` | Run TypeScript checks |
+| `npm run test` | Run Vitest once |
+| `npm run db:generate` | Generate Prisma client |
+| `npm run db:push` | Push local Prisma schema |
+| `npm run db:generate:postgres` | Generate Prisma client from PostgreSQL schema |
+| `npm run db:push:postgres` | Push PostgreSQL schema |
+| `npm run db:studio` | Open Prisma Studio |
+| `npm run verify:deploy` | Validate deployment env vars |
+| `npm run verify:health` | Validate env + call health endpoint |
+
+---
+
+## 📁 Project Structure
+
+```text
+src/
+	app/          # Pages, layouts, API routes
+	components/   # Reusable UI and feature components
+	hooks/        # Client hooks
+	lib/          # Business logic, auth, db access, validation
+prisma/         # Prisma schema files
+docs/           # Audits, roadmap, deployment docs
+scripts/        # Utility scripts
+```
+
+---
+
+## ✅ Quality and CI
+
+- GitHub Actions CI runs on pushes/PRs to `main`.
+- CI verifies install, Prisma generation, DB sync, typecheck, and build.
+- Optional post-deploy health check workflow validates live environment.
+
+---
+
+## 👨‍💻 Developer
+
+Built and maintained by Ashish Cherian.
+
+- GitHub: [AshishCherian15](https://github.com/AshishCherian15)
+
+---
+
+## 📄 License
+
+This project is open source. Add a `LICENSE` file to define reuse terms.
