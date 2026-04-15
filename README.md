@@ -180,4 +180,4 @@ Built and maintained by Ashish Cherian.
 
 ## 📄 License
 
-This project is open source. Add a `LICENSE` file to define reuse terms.
+This project is licensed under the MIT License. See [LICENSE](LICENSE).
