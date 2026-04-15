@@ -65,7 +65,7 @@ export default function LoginPage() {
         const data = (await res.json().catch(() => null)) as { message?: string } | null;
         throw new Error(data?.message ?? 'Unable to sign in');
       }
-      router.push(role === 'admin' ? '/dashboard' : '/customer');
+      router.push(role === 'customer' ? '/customer' : '/dashboard');
       router.refresh();
     } catch (error) {
       setLoading(false);
@@ -137,6 +137,23 @@ export default function LoginPage() {
                   <span>Staff Console</span>
                   <span>→</span>
                 </div>
+              </button>
+            </div>
+
+            <div className="mt-4 flex w-full max-w-3xl flex-wrap items-center justify-center gap-2">
+              <button
+                type="button"
+                onClick={() => selectRole('staff')}
+                className="rounded-lg border border-stitch-primary/30 bg-white px-3 py-2 text-xs font-bold text-stitch-primary transition hover:bg-stitch-primary-fixed/20"
+              >
+                Staff Demo Login
+              </button>
+              <button
+                type="button"
+                onClick={() => selectRole('pharmacist')}
+                className="rounded-lg border border-stitch-primary/30 bg-white px-3 py-2 text-xs font-bold text-stitch-primary transition hover:bg-stitch-primary-fixed/20"
+              >
+                Pharmacist Demo Login
               </button>
             </div>
 

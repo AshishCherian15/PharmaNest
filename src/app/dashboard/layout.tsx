@@ -17,7 +17,7 @@ import { AUTH_COOKIE, parseSessionToken } from '@/lib/auth';
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const token = (await cookies()).get(AUTH_COOKIE)?.value;
   const session = parseSessionToken(token);
-  if (!session || session.role !== 'admin') {
+  if (!session || !['admin', 'pharmacist', 'staff'].includes(session.role)) {
     redirect('/login');
   }
 

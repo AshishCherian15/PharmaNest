@@ -5,7 +5,7 @@ const AUTH_COOKIE = 'pharmanest_session';
 const AUTH_SECRET_FALLBACK = 'pharmanest-dev-secret-change-in-production';
 
 type LightweightSession = {
-  role: 'admin' | 'customer';
+  role: 'admin' | 'customer' | 'pharmacist' | 'staff';
   exp: number;
 };
 
@@ -95,7 +95,7 @@ export async function middleware(req: NextRequest) {
     if (!session) {
       return NextResponse.redirect(new URL('/login', req.url));
     }
-    if (session.role !== 'admin') {
+    if (!['admin', 'pharmacist', 'staff'].includes(session.role)) {
       return NextResponse.redirect(new URL('/customer', req.url));
     }
   }
@@ -110,7 +110,7 @@ export async function middleware(req: NextRequest) {
   }
 
   if (isPublicAuthRoute && session) {
-    const destination = session.role === 'admin' ? '/dashboard' : '/customer';
+    const destination = session.role === 'customer' ? '/customer' : '/dashboard';
     return NextResponse.redirect(new URL(destination, req.url));
   }
 
