@@ -1,7 +1,20 @@
 import { apiError, apiSuccess } from '@/lib/api-response';
 import { prisma } from '@/lib/prisma';
+import { isDemoModeEnabled } from '@/lib/demo-mode';
 
 export async function GET() {
+  if (isDemoModeEnabled()) {
+    return apiSuccess(
+      {
+        status: 'ok',
+        db: 'demo-bypass',
+        env: 'demo-mode',
+        timestamp: new Date().toISOString(),
+      },
+      200
+    );
+  }
+
   try {
     await prisma.$queryRaw`SELECT 1`;
 

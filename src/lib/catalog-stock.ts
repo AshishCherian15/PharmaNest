@@ -1,5 +1,7 @@
 import { prisma } from '@/lib/prisma';
 import { ensureCatalogSeeded } from '@/lib/pharmanest-seed';
+import { isDemoModeEnabled } from '@/lib/demo-mode';
+import { bumpDemoStockVersion, getDemoStore } from '@/lib/demo/demo-store';
 
 async function bumpVersion(tx?: Parameters<Parameters<typeof prisma.$transaction>[0]>[0]): Promise<void> {
   const db = tx ?? prisma;
@@ -11,6 +13,10 @@ async function bumpVersion(tx?: Parameters<Parameters<typeof prisma.$transaction
 }
 
 export async function getAvailableStock(medicineId: string): Promise<number> {
+  if (isDemoModeEnabled()) {
+    return getDemoStore().products.find((medicine) => medicine.id === medicineId)?.quantity ?? 0;
+  }
+
   await ensureCatalogSeeded();
   const medicine = await prisma.medicine.findUnique({
     where: { id: medicineId },
@@ -21,6 +27,10 @@ export async function getAvailableStock(medicineId: string): Promise<number> {
 }
 
 export async function getStockVersion(): Promise<number> {
+  if (isDemoModeEnabled()) {
+    return getDemoStore().stockVersion;
+  }
+
   await ensureCatalogSeeded();
   const state = await prisma.stockState.findUnique({ where: { id: 'catalog' } });
   return state?.version ?? 1;
@@ -30,6 +40,19 @@ export async function getStockSnapshot(ids: string[]): Promise<{
   stock: Record<string, number>;
   version: number;
 }> {
+  if (isDemoModeEnabled()) {
+    const store = getDemoStore();
+    const stock = ids.reduce<Record<string, number>>((acc, id) => {
+      acc[id] = store.products.find((medicine) => medicine.id === id)?.quantity ?? 0;
+      return acc;
+    }, {});
+
+    return {
+      stock,
+      version: store.stockVersion,
+    };
+  }
+
   await ensureCatalogSeeded();
   const medicines = await prisma.medicine.findMany({
     where: { id: { in: ids } },
@@ -50,6 +73,25 @@ export async function getStockSnapshot(ids: string[]): Promise<{
 export async function reserveStock(
   items: Array<{ medicineId: string; quantity: number }>
 ): Promise<{ ok: true } | { ok: false; message: string }> {
+  if (isDemoModeEnabled()) {
+    const store = getDemoStore();
+    for (const item of items) {
+      const medicine = store.products.find((product) => product.id === item.medicineId);
+      if (!medicine || item.quantity > medicine.quantity) {
+        return { ok: false, message: `Insufficient stock for ${item.medicineId}` };
+      }
+    }
+
+    for (const item of items) {
+      const medicine = store.products.find((product) => product.id === item.medicineId);
+      if (!medicine) continue;
+      medicine.quantity -= item.quantity;
+    }
+
+    bumpDemoStockVersion();
+    return { ok: true };
+  }
+
   await ensureCatalogSeeded();
 
   if (!items.length) {
@@ -98,6 +140,17 @@ export async function reserveStock(
 }
 
 export async function releaseStock(items: Array<{ medicineId: string; quantity: number }>): Promise<void> {
+  if (isDemoModeEnabled()) {
+    const store = getDemoStore();
+    for (const item of items) {
+      const medicine = store.products.find((product) => product.id === item.medicineId);
+      if (!medicine) continue;
+      medicine.quantity += item.quantity;
+    }
+    bumpDemoStockVersion();
+    return;
+  }
+
   await ensureCatalogSeeded();
 
   if (!items.length) {
@@ -124,6 +177,16 @@ export async function releaseStock(items: Array<{ medicineId: string; quantity: 
 }
 
 export async function upsertStockForProduct(medicineId: string, quantity: number): Promise<void> {
+  if (isDemoModeEnabled()) {
+    const store = getDemoStore();
+    const medicine = store.products.find((product) => product.id === medicineId);
+    if (medicine) {
+      medicine.quantity = Math.max(0, Number(quantity) || 0);
+      bumpDemoStockVersion();
+    }
+    return;
+  }
+
   await ensureCatalogSeeded();
   await prisma.medicine.update({
     where: { id: medicineId },
@@ -133,6 +196,16 @@ export async function upsertStockForProduct(medicineId: string, quantity: number
 }
 
 export async function removeStockForProduct(medicineId: string): Promise<void> {
+  if (isDemoModeEnabled()) {
+    const store = getDemoStore();
+    const medicine = store.products.find((product) => product.id === medicineId);
+    if (medicine) {
+      medicine.quantity = 0;
+      bumpDemoStockVersion();
+    }
+    return;
+  }
+
   await ensureCatalogSeeded();
   await prisma.stockState.upsert({
     where: { id: 'catalog' },

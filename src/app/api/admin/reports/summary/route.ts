@@ -1,6 +1,7 @@
 import { apiSuccess, apiError } from '@/lib/api-response';
 import { requestLogger } from '@/lib/api-logger';
-import { prisma } from '@/lib/prisma';
+import { getAllCustomerOrdersDb } from '@/lib/customer-orders-db';
+import { getMedicines } from '@/lib/medicines';
 
 /**
  * GET /api/admin/reports/summary
@@ -11,13 +12,8 @@ export async function GET() {
 
   try {
     const [orders, medicines] = await Promise.all([
-      prisma.order.findMany({
-        include: { items: true },
-        orderBy: { createdAt: 'desc' },
-      }),
-      prisma.medicine.findMany({
-        orderBy: { name: 'asc' },
-      }),
+      getAllCustomerOrdersDb(),
+      getMedicines(),
     ]);
 
     const totalRevenue = orders

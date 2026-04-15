@@ -1,6 +1,8 @@
 import type { Prescription } from '@/lib/types';
 import { prisma } from '@/lib/prisma';
 import { ensurePrescriptionsSeeded } from '@/lib/pharmanest-seed';
+import { isDemoModeEnabled } from '@/lib/demo-mode';
+import { getDemoStore, nextDemoId } from '@/lib/demo/demo-store';
 
 type DbPrescription = {
   id: string;
@@ -37,6 +39,12 @@ function mapPrescription(record: DbPrescription): Prescription {
 }
 
 export async function getPrescriptionsForCustomer(customerId: string): Promise<Prescription[]> {
+  if (isDemoModeEnabled()) {
+    return getDemoStore().prescriptions
+      .filter((prescription) => prescription.patientId === customerId)
+      .sort((a, b) => (a.date < b.date ? 1 : -1));
+  }
+
   await ensurePrescriptionsSeeded();
   const prescriptions = await prisma.prescription.findMany({
     where: { customerId },
@@ -52,6 +60,10 @@ export async function getPrescriptionsForCustomer(customerId: string): Promise<P
 }
 
 export async function getAllPrescriptions(): Promise<Prescription[]> {
+  if (isDemoModeEnabled()) {
+    return [...getDemoStore().prescriptions].sort((a, b) => (a.date < b.date ? 1 : -1));
+  }
+
   await ensurePrescriptionsSeeded();
   const prescriptions = await prisma.prescription.findMany({
     include: {
@@ -74,6 +86,23 @@ export async function createPrescription(input: {
   imageDataUrl?: string;
   medicines: Array<{ name: string; dosage: string; quantity: number }>;
 }): Promise<Prescription> {
+  if (isDemoModeEnabled()) {
+    const created: Prescription = {
+      id: nextDemoId('PRES-DEMO'),
+      patientId: input.patientId,
+      patientName: input.patientName,
+      doctorName: input.doctorName,
+      date: input.date,
+      status: 'pending',
+      notes: input.notes,
+      imageDataUrl: input.imageDataUrl,
+      medicines: input.medicines,
+    };
+    const store = getDemoStore();
+    store.prescriptions.unshift(created);
+    return created;
+  }
+
   await ensurePrescriptionsSeeded();
 
   const medicineRecords = await prisma.medicine.findMany({
@@ -120,6 +149,15 @@ export async function createPrescription(input: {
 }
 
 export async function updatePrescriptionStatus(id: string, status: Prescription['status']): Promise<Prescription | null> {
+  if (isDemoModeEnabled()) {
+    const store = getDemoStore();
+    const index = store.prescriptions.findIndex((prescription) => prescription.id === id);
+    if (index < 0) return null;
+    const updated = { ...store.prescriptions[index], status };
+    store.prescriptions[index] = updated;
+    return updated;
+  }
+
   await ensurePrescriptionsSeeded();
   const prescription = await prisma.prescription.findUnique({
     where: { id },

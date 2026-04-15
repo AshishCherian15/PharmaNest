@@ -1,6 +1,8 @@
 import { prisma } from '@/lib/prisma';
 import { ensureCatalogSeeded } from '@/lib/pharmanest-seed';
 import type { CartItem } from '@/lib/types';
+import { isDemoModeEnabled } from '@/lib/demo-mode';
+import { getDemoStore, nextDemoId } from '@/lib/demo/demo-store';
 
 export type SalesTransaction = {
   id: string;
@@ -14,6 +16,12 @@ function buildTransactionId(): string {
 }
 
 export async function getSalesTransactions(): Promise<SalesTransaction[]> {
+  if (isDemoModeEnabled()) {
+    return [...getDemoStore().salesTransactions].sort((a, b) =>
+      a.timestamp < b.timestamp ? 1 : -1
+    );
+  }
+
   await ensureCatalogSeeded();
   const sales = await prisma.salesTransaction.findMany({
     orderBy: { timestamp: 'desc' },
@@ -28,6 +36,37 @@ export async function getSalesTransactions(): Promise<SalesTransaction[]> {
 }
 
 export async function completeSale(items: CartItem[]): Promise<SalesTransaction> {
+  if (isDemoModeEnabled()) {
+    const store = getDemoStore();
+    const amount = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+    for (const item of items) {
+      const medicine = store.products.find((product) => product.id === item.medicineId);
+      if (!medicine) {
+        throw new Error(`Medicine not found: ${item.name}`);
+      }
+      if (medicine.quantity < item.quantity) {
+        throw new Error(`Insufficient stock for ${item.name}`);
+      }
+    }
+
+    for (const item of items) {
+      const medicine = store.products.find((product) => product.id === item.medicineId);
+      if (!medicine) continue;
+      medicine.quantity -= item.quantity;
+    }
+
+    const transaction: SalesTransaction = {
+      id: nextDemoId('TXN-DEMO'),
+      amount,
+      items: items.length,
+      timestamp: new Date().toISOString(),
+    };
+
+    store.salesTransactions.unshift(transaction);
+    return transaction;
+  }
+
   await ensureCatalogSeeded();
 
   const txResult = await prisma.$transaction(async (tx) => {

@@ -195,6 +195,12 @@ In demo mode:
 - Customer and dashboard UI can open without hard DB dependency.
 - You can switch to full backend mode later by setting `NEXT_PUBLIC_DEMO_MODE=false` and configuring PostgreSQL variables.
 
+Repository separation:
+
+- Real app data path remains in `src/lib/*` Prisma-backed services.
+- Demo-only state/data is isolated in `src/lib/demo/demo-store.ts`.
+- Runtime switch is controlled by `src/lib/demo-mode.ts`.
+
 ---
 
 ## 📜 Scripts

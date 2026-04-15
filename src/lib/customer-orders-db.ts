@@ -3,6 +3,8 @@ import { OrderStatus } from '@prisma/client';
 import type { SessionUser } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { releaseStock, reserveStock } from '@/lib/catalog-stock';
+import { isDemoModeEnabled } from '@/lib/demo-mode';
+import { getDemoStore, nextDemoId } from '@/lib/demo/demo-store';
 import type {
   CustomerOrder,
   CustomerOrderItem,
@@ -67,6 +69,38 @@ function buildOrderId(): string {
 export async function createCustomerOrderDb(
   input: OrderInput
 ): Promise<{ ok: true; order: CustomerOrder } | { ok: false; message: string }> {
+  if (isDemoModeEnabled()) {
+    const reservation = await reserveStock(
+      input.items.map((item) => ({
+        medicineId: item.medicineId,
+        quantity: item.quantity,
+      }))
+    );
+
+    if (!reservation.ok) {
+      return reservation;
+    }
+
+    const order: CustomerOrder = {
+      id: nextDemoId('ORD-DEMO'),
+      customerId: input.user.id,
+      customerName: input.user.name,
+      customerEmail: input.user.email,
+      address: input.address,
+      items: input.items,
+      subtotal: input.subtotal,
+      deliveryFee: 0,
+      total: input.subtotal,
+      status: 'Placed',
+      createdAt: new Date().toISOString(),
+    };
+
+    const store = getDemoStore();
+    store.customerOrders.unshift(order);
+
+    return { ok: true, order };
+  }
+
   const reservation = await reserveStock(
     input.items.map((item) => ({
       medicineId: item.medicineId,
@@ -121,6 +155,12 @@ export async function createCustomerOrderDb(
 }
 
 export async function getOrdersForCustomerDb(customerId: string): Promise<CustomerOrder[]> {
+  if (isDemoModeEnabled()) {
+    return getDemoStore().customerOrders
+      .filter((order) => order.customerId === customerId)
+      .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
+  }
+
   const orders = await prisma.order.findMany({
     where: { customerId },
     include: { items: true },
@@ -131,6 +171,12 @@ export async function getOrdersForCustomerDb(customerId: string): Promise<Custom
 }
 
 export async function getAllCustomerOrdersDb(): Promise<CustomerOrder[]> {
+  if (isDemoModeEnabled()) {
+    return [...getDemoStore().customerOrders].sort((a, b) =>
+      a.createdAt < b.createdAt ? 1 : -1
+    );
+  }
+
   const orders = await prisma.order.findMany({
     include: { items: true },
     orderBy: { createdAt: 'desc' },
@@ -151,6 +197,39 @@ export async function updateCustomerOrderStatusDb(
   id: string,
   nextStatus: CustomerOrderStatus
 ): Promise<{ ok: true; order: CustomerOrder } | { ok: false; message: string }> {
+  if (isDemoModeEnabled()) {
+    const store = getDemoStore();
+    const index = store.customerOrders.findIndex((order) => order.id === id);
+    if (index < 0) {
+      return { ok: false, message: 'Order not found' };
+    }
+
+    const current = store.customerOrders[index];
+    if (current.status === nextStatus) {
+      return { ok: true, order: current };
+    }
+
+    if (!allowedTransitions[current.status].includes(nextStatus)) {
+      return {
+        ok: false,
+        message: `Cannot change status from ${current.status} to ${nextStatus}`,
+      };
+    }
+
+    if (nextStatus === 'Cancelled') {
+      await releaseStock(
+        current.items.map((item) => ({
+          medicineId: item.medicineId,
+          quantity: item.quantity,
+        }))
+      );
+    }
+
+    const updated = { ...current, status: nextStatus };
+    store.customerOrders[index] = updated;
+    return { ok: true, order: updated };
+  }
+
   const current = await prisma.order.findUnique({
     where: { id },
     include: { items: true },

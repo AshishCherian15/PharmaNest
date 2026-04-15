@@ -2,6 +2,8 @@ import { prisma } from '@/lib/prisma';
 import type { Medicine } from '@/lib/types';
 import { ensureCatalogSeeded } from '@/lib/pharmanest-seed';
 import { removeStockForProduct, upsertStockForProduct } from '@/lib/catalog-stock';
+import { isDemoModeEnabled } from '@/lib/demo-mode';
+import { getDemoStore, nextDemoId } from '@/lib/demo/demo-store';
 
 type DbMedicine = {
   id: string;
@@ -40,6 +42,10 @@ function mapMedicine(medicine: DbMedicine): Medicine {
 }
 
 export async function getAllProducts(): Promise<Medicine[]> {
+  if (isDemoModeEnabled()) {
+    return [...getDemoStore().products];
+  }
+
   await ensureCatalogSeeded();
   const medicines = await prisma.medicine.findMany({
     include: { category: { select: { name: true } } },
@@ -50,6 +56,10 @@ export async function getAllProducts(): Promise<Medicine[]> {
 }
 
 export async function getProductById(id: string): Promise<Medicine | undefined> {
+  if (isDemoModeEnabled()) {
+    return getDemoStore().products.find((product) => product.id === id);
+  }
+
   await ensureCatalogSeeded();
   const medicine = await prisma.medicine.findUnique({
     where: { id },
@@ -60,6 +70,16 @@ export async function getProductById(id: string): Promise<Medicine | undefined> 
 }
 
 export async function createProduct(input: Medicine): Promise<Medicine> {
+  if (isDemoModeEnabled()) {
+    const store = getDemoStore();
+    const created: Medicine = {
+      ...input,
+      id: input.id?.trim() ? input.id : nextDemoId('MED-DEMO'),
+    };
+    store.products.unshift(created);
+    return created;
+  }
+
   await ensureCatalogSeeded();
   const category = await prisma.category.upsert({
     where: { name: input.category },
@@ -92,6 +112,18 @@ export async function createProduct(input: Medicine): Promise<Medicine> {
 }
 
 export async function updateProduct(id: string, input: Medicine): Promise<Medicine | null> {
+  if (isDemoModeEnabled()) {
+    const store = getDemoStore();
+    const index = store.products.findIndex((product) => product.id === id);
+    if (index < 0) return null;
+    const updated: Medicine = {
+      ...input,
+      id,
+    };
+    store.products[index] = updated;
+    return updated;
+  }
+
   await ensureCatalogSeeded();
   const existing = await getProductById(id);
   if (!existing) return null;
@@ -127,6 +159,14 @@ export async function updateProduct(id: string, input: Medicine): Promise<Medici
 }
 
 export async function deleteProduct(id: string): Promise<boolean> {
+  if (isDemoModeEnabled()) {
+    const store = getDemoStore();
+    const index = store.products.findIndex((product) => product.id === id);
+    if (index < 0) return false;
+    store.products.splice(index, 1);
+    return true;
+  }
+
   await ensureCatalogSeeded();
   try {
     await prisma.medicine.delete({ where: { id } });
