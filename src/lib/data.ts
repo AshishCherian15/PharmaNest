@@ -55,6 +55,10 @@ export const mockMedicines: Medicine[] = [
     { id: 'MED008', name: 'Salbutamol Inhaler', genericName: 'Salbutamol', description: 'For asthma and COPD.', category: 'Respiratory', requiresPrescription: true, price: 2075, quantity: 40, expiryDate: '2024-10-10', imageId: 'med-image-8' },
     { id: 'MED009', name: 'Cetirizine 10mg', genericName: 'Cetirizine', description: 'Antihistamine for allergies.', category: 'Antihistamine', price: 560, quantity: 90, expiryDate: '2026-01-15', imageId: 'med-image-9' },
     { id: 'MED010', name: 'Vitamin D3 1000 IU', genericName: 'Cholecalciferol', description: 'Dietary supplement.', category: 'Vitamins', price: 829, quantity: 300, expiryDate: '2026-08-01', imageId: 'med-image-10' },
+    { id: 'MED011', name: 'Dextromethorphan Cough Syrup 100ml', genericName: 'Dextromethorphan', description: 'Relief from dry cough and throat irritation.', category: 'Respiratory', price: 285, quantity: 110, expiryDate: '2026-03-20', imageId: 'lprod-image-6' },
+    { id: 'MED012', name: 'Paracetamol Pediatric Syrup 60ml', genericName: 'Paracetamol', description: 'Fever and pain relief syrup for children.', category: 'Painkiller', price: 165, quantity: 140, expiryDate: '2026-04-18', imageId: 'lprod-image-11' },
+    { id: 'MED013', name: 'Iron and Folic Acid Syrup 200ml', genericName: 'Ferrous Ascorbate', description: 'Supports hemoglobin and nutrition in deficiency states.', category: 'Vitamins', price: 349, quantity: 85, expiryDate: '2026-01-31', imageId: 'lprod-image-10' },
+    { id: 'MED014', name: 'Zinc Sulphate Oral Drops 15ml', genericName: 'Zinc Sulphate', description: 'Pediatric zinc drops for dietary supplementation.', category: 'Vitamins', price: 149, quantity: 95, expiryDate: '2026-02-11', imageId: 'lprod-image-9' },
 ];
 
 export const weeklySalesData = [
@@ -189,4 +193,7 @@ export const landingProducts: Medicine[] = [
     { id: 'LPROD013', name: 'Amoxicillin 500mg Capsules', genericName: 'Amoxicillin', description: 'Prescription antibiotic for bacterial infections.', category: 'Antibiotic', requiresPrescription: true, price: 1199, quantity: 70, expiryDate: '2026-01-01', imageId: 'med-image-2', rating: 4, reviews: 54, isNew: true },
     { id: 'LPROD011', name: 'Knee Pain Relief Patch', genericName: 'Herbal Patch', description: 'Herbal patch for effective knee pain relief.', category: 'Pain Relief', price: 450, quantity: 180, expiryDate: '2025-07-01', imageId: 'lprod-image-11', rating: 4, reviews: 65, previousPrice: 550 },
     { id: 'LPROD012', name: 'Blood Pressure Monitor', genericName: 'BP Monitor', description: 'Automatic digital blood pressure monitor.', category: 'Medical Devices', price: 2500, quantity: 60, expiryDate: '2032-01-01', imageId: 'lprod-image-12', rating: 5, reviews: 132 },
+    { id: 'LPROD014', name: 'Cough Syrup Honey-Base 100ml', genericName: 'Dextromethorphan', description: 'Non-drowsy syrup support for dry cough episodes.', category: 'Respiratory', price: 315, quantity: 95, expiryDate: '2026-07-12', imageId: 'lprod-image-6', rating: 4, reviews: 71, isNew: true },
+    { id: 'LPROD015', name: 'Children Fever Syrup 60ml', genericName: 'Paracetamol', description: 'Fast acting fever syrup formulated for pediatric use.', category: 'Baby Care', price: 179, quantity: 130, expiryDate: '2026-06-01', imageId: 'lprod-image-3', rating: 5, reviews: 102, previousPrice: 219 },
+    { id: 'LPROD016', name: 'Vitamin D Oral Drops 30ml', genericName: 'Cholecalciferol', description: 'Daily vitamin D drops to support immunity and bones.', category: 'Vitamins', price: 229, quantity: 125, expiryDate: '2026-09-05', imageId: 'lprod-image-9', rating: 4, reviews: 86, isNew: true },
 ];

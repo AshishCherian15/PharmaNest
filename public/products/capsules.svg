@@ -1,0 +1,27 @@
+<svg width="800" height="800" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Capsules">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fff7e8"/>
+      <stop offset="100%" stop-color="#f1ecff"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="800" fill="url(#bg)"/>
+  <g transform="translate(120 190)">
+    <rect x="0" y="0" rx="34" ry="34" width="560" height="360" fill="#ffffff" fill-opacity="0.82"/>
+    <g transform="translate(60 72)">
+      <g transform="rotate(-12 80 80)">
+        <rect x="0" y="40" width="160" height="80" rx="40" fill="#e57c2f"/>
+        <rect x="80" y="40" width="80" height="80" rx="40" fill="#ffffff"/>
+      </g>
+      <g transform="translate(190 0) rotate(8 80 80)">
+        <rect x="0" y="40" width="160" height="80" rx="40" fill="#4f8ed5"/>
+        <rect x="80" y="40" width="80" height="80" rx="40" fill="#ffffff"/>
+      </g>
+      <g transform="translate(95 130) rotate(-6 80 80)">
+        <rect x="0" y="40" width="160" height="80" rx="40" fill="#63a047"/>
+        <rect x="80" y="40" width="80" height="80" rx="40" fill="#ffffff"/>
+      </g>
+    </g>
+  </g>
+  <text x="400" y="680" text-anchor="middle" font-family="Manrope, Arial, sans-serif" font-size="42" font-weight="800" fill="#6b4b17">CAPSULES</text>
+</svg>
