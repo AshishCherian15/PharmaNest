@@ -195,6 +195,21 @@ In demo mode:
 - Customer and dashboard UI can open without hard DB dependency.
 - You can switch to full backend mode later by setting `NEXT_PUBLIC_DEMO_MODE=false` and configuring PostgreSQL variables.
 
+Demo credentials (frontend-only demo mode):
+
+- Admin: `admin@pharmanest.com` / `admin`
+- Customer: `customer@pharmanest.com` / `admin`
+- Staff: `staff@pharmanest.com` / `admin`
+- Pharmacist: `pharmacist@pharmanest.com` / `admin`
+
+Quick demo verification checklist:
+
+1. Open `/login` and sign in with one of the demo accounts.
+2. Verify customer flow pages: `/customer`, `/customer/cart`, `/customer/checkout`, `/customer/orders`, `/customer/prescriptions`.
+3. Verify admin/staff flow pages: `/dashboard`, `/dashboard/inventory`, `/dashboard/orders`, `/dashboard/reports`, `/dashboard/users`.
+4. Verify catalog and product pages: `/catalog` and `/products/<id>`.
+5. Verify health endpoint returns demo-safe status: `/api/health`.
+
 Repository separation:
 
 - Real app data path remains in `src/lib/*` Prisma-backed services.
