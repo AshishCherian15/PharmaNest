@@ -1,6 +1,6 @@
 import type { Prescription } from '@/lib/types';
 import { prisma } from '@/lib/prisma';
-import { ensurePrescriptionSeeded } from '@/lib/pharmanest-seed';
+import { ensurePrescriptionsSeeded } from '@/lib/pharmanest-seed';
 
 type DbPrescription = {
   id: string;
@@ -37,7 +37,7 @@ function mapPrescription(record: DbPrescription): Prescription {
 }
 
 export async function getPrescriptionsForCustomer(customerId: string): Promise<Prescription[]> {
-  await ensurePrescriptionSeeded();
+  await ensurePrescriptionsSeeded();
   const prescriptions = await prisma.prescription.findMany({
     where: { customerId },
     include: {
@@ -52,7 +52,7 @@ export async function getPrescriptionsForCustomer(customerId: string): Promise<P
 }
 
 export async function getAllPrescriptions(): Promise<Prescription[]> {
-  await ensurePrescriptionSeeded();
+  await ensurePrescriptionsSeeded();
   const prescriptions = await prisma.prescription.findMany({
     include: {
       items: {
@@ -74,7 +74,7 @@ export async function createPrescription(input: {
   imageDataUrl?: string;
   medicines: Array<{ name: string; dosage: string; quantity: number }>;
 }): Promise<Prescription> {
-  await ensurePrescriptionSeeded();
+  await ensurePrescriptionsSeeded();
 
   const medicineRecords = await prisma.medicine.findMany({
     where: {
@@ -120,7 +120,7 @@ export async function createPrescription(input: {
 }
 
 export async function updatePrescriptionStatus(id: string, status: Prescription['status']): Promise<Prescription | null> {
-  await ensurePrescriptionSeeded();
+  await ensurePrescriptionsSeeded();
   const prescription = await prisma.prescription.findUnique({
     where: { id },
     include: {

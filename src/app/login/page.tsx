@@ -19,6 +19,16 @@ const DEMO_CREDENTIALS: Record<AuthRole, { identifier: string; password: string;
     password: 'admin',
     label: 'Customer Demo',
   },
+  staff: {
+    identifier: 'staff@pharmanest.com',
+    password: 'admin',
+    label: 'Staff Demo',
+  },
+  pharmacist: {
+    identifier: 'pharmacist@pharmanest.com',
+    password: 'admin',
+    label: 'Pharmacist Demo',
+  },
 };
 
 export default function LoginPage() {
@@ -119,7 +129,7 @@ export default function LoginPage() {
                 <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-xl bg-surface-container-lowest shadow-sm transition-transform group-hover:scale-110">
                   <ShieldCheck className="h-8 w-8 text-stitch-primary" />
                 </div>
-                <h2 className="font-headline text-2xl font-bold text-white">Pharmacist / Admin</h2>
+                <h2 className="font-headline text-2xl font-bold text-white">Admin / Staff / Pharmacist</h2>
                 <p className="mt-2 max-w-[240px] leading-relaxed text-white/80">
                   Manage stock, process prescriptions, and monitor store operations.
                 </p>
@@ -135,7 +145,7 @@ export default function LoginPage() {
                 ← Back to Splash
               </Link>
               <p className="text-sm text-on-surface-variant">
-                New to Pharma Nest?{' '}
+                New to Pharma Nest? {' '}
                 <Link href="/register" className="font-bold text-stitch-secondary hover:underline">Create Account</Link>
               </p>
             </div>
@@ -151,12 +161,12 @@ export default function LoginPage() {
             </button>
             <div className="rounded-2xl border border-outline-variant/20 bg-surface-container-lowest p-8 shadow-lg">
               <div className="mb-6 flex items-center gap-3">
-                <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${role === 'admin' ? 'bg-stitch-primary-container text-white' : 'bg-stitch-secondary-container text-stitch-primary'}`}>
-                  {role === 'admin' ? <ShieldCheck className="h-6 w-6" /> : <UserRound className="h-6 w-6" />}
+                <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${role === 'admin' || role === 'staff' || role === 'pharmacist' ? 'bg-stitch-primary-container text-white' : 'bg-stitch-secondary-container text-stitch-primary'}`}>
+                  {role === 'admin' || role === 'staff' || role === 'pharmacist' ? <ShieldCheck className="h-6 w-6" /> : <UserRound className="h-6 w-6" />}
                 </div>
                 <div>
                   <h2 className="font-headline text-xl font-bold text-on-surface">
-                    {role === 'admin' ? 'Staff Login' : 'Customer Login'}
+                    {role === 'admin' || role === 'staff' || role === 'pharmacist' ? 'Staff Login' : 'Customer Login'}
                   </h2>
                   <p className="text-xs text-on-surface-variant">Sign in to your account</p>
                 </div>

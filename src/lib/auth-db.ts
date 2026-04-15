@@ -113,7 +113,7 @@ export async function validateCredentialsDb(
 }
 
 function buildUserId(role: AuthRole, count: number): string {
-  const prefix = role === 'admin' ? 'ADM' : 'CUS';
+  const prefix = role === 'admin' ? 'ADM' : role === 'pharmacist' ? 'PHM' : role === 'staff' ? 'STF' : 'CUS';
   return `${prefix}-${String(count + 1).padStart(3, '0')}`;
 }
 
@@ -165,3 +165,4 @@ export async function registerUserDb(input: {
 
   return { ok: true, user: toSessionUser(created) };
 }
+

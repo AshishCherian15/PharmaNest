@@ -3,7 +3,7 @@ import bcryptjs from 'bcryptjs';
 
 export const AUTH_COOKIE = 'pharmanest_session';
 
-export type AuthRole = 'admin' | 'customer';
+export type AuthRole = 'admin' | 'customer' | 'pharmacist' | 'staff';
 
 export type SessionUser = {
   id: string;

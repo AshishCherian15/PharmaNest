@@ -32,6 +32,7 @@ function normalizePrescriptionPatientId(patientId: string): string {
 async function seedDemoUsers(): Promise<void> {
   const passwordHash = await hashPassword(getDefaultPassword());
 
+  // Admin User
   await prisma.user.upsert({
     where: { email: 'admin@pharmanest.com' },
     update: {},
@@ -45,6 +46,35 @@ async function seedDemoUsers(): Promise<void> {
     },
   });
 
+  // Staff User
+  await prisma.user.upsert({
+    where: { email: 'staff@pharmanest.com' },
+    update: {},
+    create: {
+      id: 'STF-001',
+      name: 'Staff User',
+      email: 'staff@pharmanest.com',
+      phone: '+91-90000-00003',
+      role: 'staff',
+      passwordHash,
+    },
+  });
+
+  // Pharmacist User
+  await prisma.user.upsert({
+    where: { email: 'pharmacist@pharmanest.com' },
+    update: {},
+    create: {
+      id: 'PHM-001',
+      name: 'Pharmacist User',
+      email: 'pharmacist@pharmanest.com',
+      phone: '+91-90000-00004',
+      role: 'pharmacist',
+      passwordHash,
+    },
+  });
+
+  // Customer User
   await prisma.user.upsert({
     where: { email: 'customer@pharmanest.com' },
     update: {},
@@ -58,7 +88,17 @@ async function seedDemoUsers(): Promise<void> {
     },
   });
 
+  // Seed mock users with appropriate roles
   for (const [index, user] of mockUsers.slice(1, 5).entries()) {
+    const roleMap: Record<string, 'staff' | 'pharmacist' | 'admin' | 'customer'> = {
+      'Olivia Martin': 'pharmacist',
+      'Jackson Lee': 'staff',
+      'Isabella Nguyen': 'staff',
+      'William Kim': 'admin',
+      'Sofia Davis': 'pharmacist',
+    };
+    const role = roleMap[user.name] || 'customer';
+
     await prisma.user.upsert({
       where: { email: user.email },
       update: {},
@@ -67,7 +107,7 @@ async function seedDemoUsers(): Promise<void> {
         name: user.name,
         email: user.email,
         phone: user.phone,
-        role: 'customer',
+        role: role as 'admin' | 'customer' | 'pharmacist' | 'staff',
         passwordHash,
       },
     });
@@ -163,17 +203,52 @@ export async function ensureReferenceDataSeeded(): Promise<void> {
           const supplierId = supplierMap.get(order.supplierName);
           if (!supplierId) continue;
 
-          await prisma.purchaseOrder.create({
+            await prisma.purchaseOrder.create({
+              data: {
+                id: order.id,
+                supplierId,
+                orderNo: order.id,
+                total: order.total,
+                status: order.status,
+              },
+            });
+        }
+      }
+
+      const prescriptionCount = await prisma.prescription.count();
+      if (prescriptionCount === 0) {
+        for (const prescription of mockPrescriptions) {
+          const normalizedPatientId = normalizePrescriptionPatientId(prescription.patientId);
+
+          const prescriptionDoc = await prisma.prescription.create({
             data: {
-              id: order.id,
-              supplierId,
-              orderNo: order.id,
-              orderDate: new Date(order.orderDate),
-              expectedDeliveryDate: order.expectedDate ? new Date(order.expectedDate) : null,
-              total: order.total,
-              status: order.status,
+              id: prescription.id,
+              customerId: normalizedPatientId,
+              patientName: prescription.patientName,
+              doctorName: prescription.doctorName,
+              prescriptionDate: new Date(prescription.date),
+              status: prescription.status as 'pending' | 'verified' | 'rejected',
+              notes: prescription.notes,
             },
           });
+
+          for (const medicine of prescription.medicines) {
+            const med = await prisma.medicine.findFirst({
+              where: { name: medicine.name },
+              select: { id: true },
+            });
+
+            if (med) {
+              await prisma.prescriptionItem.create({
+                data: {
+                  prescriptionId: prescriptionDoc.id,
+                  medicineId: med.id,
+                  dosage: medicine.dosage,
+                  quantity: medicine.quantity,
+                },
+              });
+            }
+          }
         }
       }
     })();
@@ -182,48 +257,13 @@ export async function ensureReferenceDataSeeded(): Promise<void> {
   await globalStore.reference;
 }
 
-export async function ensurePrescriptionSeeded(): Promise<void> {
+export async function ensurePrescriptionsSeeded(): Promise<void> {
   if (!globalStore.prescriptions) {
     globalStore.prescriptions = (async () => {
-      await seedDemoUsers();
-      await ensureCatalogSeeded();
-
-      const prescriptionCount = await prisma.prescription.count();
-      if (prescriptionCount > 0) return;
-
-      const medicines = await prisma.medicine.findMany({ select: { id: true, name: true } });
-      const medicineMap = new Map(medicines.map((medicine) => [medicine.name, medicine.id]));
-
-      for (const record of mockPrescriptions) {
-        const customerId = normalizePrescriptionPatientId(record.patientId);
-        const customer = await prisma.user.findUnique({ where: { id: customerId }, select: { id: true } });
-        if (!customer) continue;
-
-        await prisma.prescription.create({
-          data: {
-            id: record.id,
-            customerId: customer.id,
-            patientName: record.patientName,
-            doctorName: record.doctorName,
-            prescriptionDate: new Date(record.date),
-            status: record.status === 'verified' ? 'verified' : record.status === 'rejected' ? 'rejected' : 'pending',
-            notes: record.notes,
-            documentUrl: record.imageDataUrl,
-            items: {
-              create: record.medicines
-                .map((item) => ({
-                  medicineId: medicineMap.get(item.name),
-                  dosage: item.dosage,
-                  quantity: item.quantity,
-                  instructions: item.dosage,
-                }))
-                .filter((item): item is { medicineId: string; dosage: string; quantity: number; instructions: string } => Boolean(item.medicineId)),
-            },
-          },
-        });
-      }
+      await ensureReferenceDataSeeded();
     })();
   }
 
   await globalStore.prescriptions;
 }
+
