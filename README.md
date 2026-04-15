@@ -1,20 +1,35 @@
-# 💊 PharmaNest — Modern Pharmacy Platform
+<div align="center">
 
-### ✨ Shop · Prescribe · Track · Operate
+# 💊 PharmaNest
 
-PharmaNest is a full-stack pharmacy web platform built with Next.js, designed for both customers and pharmacy operations teams.
-It combines a customer storefront, prescription-aware flows, secure authentication, and a role-based admin console in one connected system.
+### ✨ Modern Pharmacy Platform · Shop · Prescribe · Track · Operate
+
+**A full-stack pharmacy web app for customers, pharmacists, staff, and admins.**
+
+PharmaNest combines a polished storefront, prescription-aware workflows, secure authentication, and an operations dashboard in one connected system.
+
+<img src="public/modern-pharmacy-nest.png" alt="PharmaNest preview" width="920" />
+
+</div>
+
+---
+
+## 🌈 Why PharmaNest Exists
+
+PharmaNest was created after the mini project [Pharmacy Supply Management System](https://github.com/AshishCherian15/Pharmacy-Supply-Management-System).
+That earlier work inspired the bigger idea here: a cleaner experience, stronger role separation, richer product browsing, and a more complete deployment-ready pharmacy platform.
 
 ---
 
 ## 🎯 What PharmaNest Delivers
 
-- Customer storefront with real medicine categories and product detail pages.
-- Prescription-aware ordering flow with status lifecycle (pending, verified, rejected).
-- Secure login/register with role-based route protection.
+- Customer storefront with real medicine categories, product cards, and detail pages.
+- Prescription-aware ordering flow with a clear status lifecycle.
+- Secure login and registration with role-based protection.
 - Dedicated modules for customer, staff/pharmacist, and admin workflows.
 - Operations dashboard for inventory, orders, suppliers, sales, reports, users, and settings.
 - API-first architecture with server routes for auth, customer flows, admin operations, and health checks.
+- Deployment-ready structure for Vercel and PostgreSQL/Supabase.
 
 ---
 
@@ -30,6 +45,21 @@ It combines a customer storefront, prescription-aware flows, secure authenticati
 | 📊 Reports | Aggregated operational insights for pharmacy management |
 | 🩺 Health Endpoint | Deployment/runtime health check via API |
 | 🚀 Deploy Ready | Vercel-friendly config + Supabase/PostgreSQL support |
+
+---
+
+## 🖼️ Visual Preview
+
+<table>
+	<tr>
+		<td align="center"><img src="public/PharmaNest.png" alt="PharmaNest home" width="420" /></td>
+		<td align="center"><img src="public/modern-pharmacy-nest.png" alt="Modern pharmacy nest" width="420" /></td>
+	</tr>
+	<tr>
+		<td align="center"><strong>Home Preview</strong></td>
+		<td align="center"><strong>UI Preview</strong></td>
+	</tr>
+</table>
 
 ---
 
@@ -73,6 +103,15 @@ It combines a customer storefront, prescription-aware flows, secure authenticati
 │ SQLite (local) / PostgreSQL (prod) │
 └────────────────────────────────────┘
 ```
+
+---
+
+## ✨ UI Experience Notes
+
+- Clean spacing and aligned layouts across landing, dashboard, and customer pages.
+- Soft depth, cards, gradients, and motion-friendly sections for a more premium feel.
+- Responsive interaction patterns for both desktop and mobile.
+- Product visuals tailored to feel closer to a real pharmacy catalog.
 
 ---
 
@@ -124,6 +163,24 @@ Release checklist:
 
 - [docs/release-checklist.md](docs/release-checklist.md)
 
+### 🚀 Vercel Live Deployment
+
+1. Push the repository to GitHub.
+2. Open Vercel and import the PharmaNest repository.
+3. Keep the framework preset as Next.js.
+4. Set these environment variables in Vercel:
+	- `DATABASE_URL`
+	- `DIRECT_URL`
+	- `AUTH_SECRET`
+	- `AUTH_DEFAULT_PASSWORD`
+	- `PRISMA_SCHEMA_PATH=prisma/schema.postgres.prisma`
+5. Run PostgreSQL schema push from a machine that can reach Supabase:
+	- `npm run db:push:postgres`
+	- `npm run db:generate:postgres`
+6. Deploy.
+7. Visit `/api/health` to confirm database connectivity.
+8. Sign in with the seeded demo accounts to verify dashboard and customer routes.
+
 ---
 
 ## 📜 Scripts
@@ -167,6 +224,7 @@ scripts/        # Utility scripts
 - GitHub Actions CI runs on pushes/PRs to `main`.
 - CI verifies install, Prisma generation, DB sync, typecheck, and build.
 - Optional post-deploy health check workflow validates live environment.
+- The repository is set up for smooth Vercel promotion once the PostgreSQL environment variables are configured.
 
 ---
 
