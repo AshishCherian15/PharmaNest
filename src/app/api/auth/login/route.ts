@@ -72,7 +72,7 @@ export async function POST(req: NextRequest) {
       const token = createSessionToken(demoUser);
       const res = apiSuccess({ user: demoUser }, 200);
       res.cookies.set(AUTH_COOKIE, token, authCookieOptions);
-      requestLogger.logResponse('POST', '/api/auth/login', 200, startTime, { userId: demoUser.id, mode: 'demo' });
+      requestLogger.logResponse('POST', '/api/auth/login', 200, startTime, { userId: demoUser.id });
       return res;
     }
 

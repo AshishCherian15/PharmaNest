@@ -92,10 +92,7 @@ export async function POST(req: NextRequest) {
       const token = createSessionToken(demoUser);
       const res = apiSuccess({ user: demoUser }, 201);
       res.cookies.set(AUTH_COOKIE, token, authCookieOptions);
-      requestLogger.logResponse('POST', '/api/auth/register', 201, startTime, {
-        userId: demoUser.id,
-        mode: 'demo',
-      });
+      requestLogger.logResponse('POST', '/api/auth/register', 201, startTime, { userId: demoUser.id });
       return res;
     }
 
