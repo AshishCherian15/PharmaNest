@@ -19,7 +19,7 @@ import { authLimiter } from '@/lib/rate-limit';
  * Request body:
  *   - email: string (required, must be valid email)
  *   - password: string (required, minimum 1 character)
- *   - role: 'admin' | 'customer' (required)
+ *   - role: 'admin' | 'customer' | 'pharmacist' | 'staff' (required)
  * 
  * Response: { user: SessionUser }
  * Errors: 400, 401, 403, 429 (rate limited)
@@ -55,9 +55,9 @@ export async function POST(req: NextRequest) {
       return apiError(passwordCheck.error!, 400, 'INVALID_PASSWORD');
     }
 
-    if (!role || !['admin', 'customer'].includes(role)) {
+    if (!role || !['admin', 'customer', 'pharmacist', 'staff'].includes(role)) {
       requestLogger.logResponse('POST', '/api/auth/login', 400, startTime);
-      return apiError('Role must be "admin" or "customer"', 400, 'INVALID_ROLE');
+      return apiError('Role must be one of: admin, customer, pharmacist, staff', 400, 'INVALID_ROLE');
     }
 
     // Authenticate user

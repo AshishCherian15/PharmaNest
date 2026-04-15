@@ -39,7 +39,12 @@ export async function ensureDefaultUsers(): Promise<void> {
 
   await prisma.user.upsert({
     where: { email: 'admin@pharmanest.com' },
-    update: {},
+    update: {
+      name: 'Admin User',
+      phone: '+91-90000-00001',
+      role: 'admin',
+      passwordHash,
+    },
     create: {
       id: 'ADM-001',
       name: 'Admin User',
@@ -52,13 +57,54 @@ export async function ensureDefaultUsers(): Promise<void> {
 
   await prisma.user.upsert({
     where: { email: 'customer@pharmanest.com' },
-    update: {},
+    update: {
+      name: 'Customer User',
+      phone: '+91-90000-00002',
+      role: 'customer',
+      passwordHash,
+    },
     create: {
       id: 'CUS-001',
       name: 'Customer User',
       email: 'customer@pharmanest.com',
       phone: '+91-90000-00002',
       role: 'customer',
+      passwordHash,
+    },
+  });
+
+  await prisma.user.upsert({
+    where: { email: 'staff@pharmanest.com' },
+    update: {
+      name: 'Staff User',
+      phone: '+91-90000-00003',
+      role: 'staff',
+      passwordHash,
+    },
+    create: {
+      id: 'STF-001',
+      name: 'Staff User',
+      email: 'staff@pharmanest.com',
+      phone: '+91-90000-00003',
+      role: 'staff',
+      passwordHash,
+    },
+  });
+
+  await prisma.user.upsert({
+    where: { email: 'pharmacist@pharmanest.com' },
+    update: {
+      name: 'Pharmacist User',
+      phone: '+91-90000-00004',
+      role: 'pharmacist',
+      passwordHash,
+    },
+    create: {
+      id: 'PHM-001',
+      name: 'Pharmacist User',
+      email: 'pharmacist@pharmanest.com',
+      phone: '+91-90000-00004',
+      role: 'pharmacist',
       passwordHash,
     },
   });

@@ -7,6 +7,7 @@ import { BackButton } from '@/components/navigation/back-button';
 import { Logo } from '@/components/logo';
 import { UserNav } from '@/components/user-nav';
 import { mockUser } from '@/lib/data';
+import { SiteFooter } from '@/components/site-footer';
 
 const navItems = [
   { href: '/customer',               label: 'Overview'       },
@@ -57,8 +58,23 @@ export default async function CustomerLayout({ children }: { children: React.Rea
 
       {/* ── Page content ── */}
       <main className="mx-auto w-full max-w-7xl px-4 py-6 pb-24 sm:px-6 lg:px-8 md:pb-6">
+        <section className="mb-6 rounded-2xl border border-outline-variant/20 bg-surface-container-low p-4">
+          <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-stitch-primary">Customer Care Center</p>
+              <p className="mt-1 text-sm text-on-surface-variant">
+                Manage prescriptions, order updates, and medicine continuity from one secure customer workspace.
+              </p>
+            </div>
+            <Link href="/knowledge-hub" className="inline-flex rounded-xl border border-stitch-primary/30 px-4 py-2 text-xs font-bold text-stitch-primary transition hover:bg-stitch-primary-fixed/15">
+              Read Care Guides
+            </Link>
+          </div>
+        </section>
         {children}
       </main>
+
+      <SiteFooter />
 
       {/* ── Mobile bottom nav ── */}
       <nav className="fixed bottom-0 left-0 z-50 w-full border-t border-outline-variant/20 bg-surface-container-lowest/95 backdrop-blur-lg md:hidden">

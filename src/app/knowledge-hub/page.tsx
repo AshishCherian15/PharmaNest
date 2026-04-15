@@ -8,6 +8,21 @@ const articles = [
   { tag: 'Health Tips', title: 'Managing Long-Term Conditions at Home', desc: 'Practical advice for staying healthy while managing chronic conditions. Managing diabetes, blood pressure, and more.', author: 'PharmaNest Team', emoji: '🏠', bg: 'bg-amber-100' },
 ];
 
+const resourceTracks = [
+  {
+    title: 'Prescription Literacy',
+    detail: 'Understand dosage instructions, refill timing, and when to consult your pharmacist.',
+  },
+  {
+    title: 'Condition Management',
+    detail: 'Guides for long-term care routines including diabetes, BP, and respiratory support.',
+  },
+  {
+    title: 'Home Medication Safety',
+    detail: 'Storage, expiry awareness, and household medicine organization best practices.',
+  },
+];
+
 const bentoItems = [
   { title: 'Find Your Medicine', desc: 'Search by symptom, condition, or brand. Get instant information on uses, precautions, and cost.', icon: '🔍', bg: 'bg-stitch-primary-container', textColor: 'text-white', span: 'md:col-span-2 md:row-span-2', minH: 'min-h-[280px]' },
   { title: 'Medicine FAQs',    desc: 'Common questions about taking medicines safely, side effects, and what to expect.',                          icon: '❓', bg: 'bg-surface-container-lowest border border-outline-variant/20', textColor: 'text-on-surface', span: 'md:col-span-2', minH: 'min-h-[130px]' },
@@ -31,10 +46,10 @@ export default function KnowledgeHubPage() {
               <div className="space-y-6">
                 <span className="text-xs font-bold uppercase tracking-widest text-stitch-secondary">Help & Resources</span>
                 <h1 className="font-headline text-5xl font-extrabold leading-tight tracking-tight text-stitch-primary lg:text-6xl">
-                  Take Control<br />of Your Health.
+                  Evidence-informed pharmacy guidance for everyday care.
                 </h1>
                 <p className="max-w-xl text-lg font-light leading-relaxed text-on-surface-variant">
-                  Find medication information, get pharmacy advice, and learn how to manage your health at home. We're here to help with clear, simple answers.
+                  Find medication information, pharmacist-backed safety guidance, and practical home-care resources in one trusted knowledge center.
                 </p>
                 <div className="flex flex-wrap gap-4">
                   <button className="btn-primary-gradient px-8 py-3 shadow-lg">Browse Health Topics</button>
@@ -46,6 +61,24 @@ export default function KnowledgeHubPage() {
               <div className="flex h-72 items-center justify-center rounded-2xl bg-stitch-primary-fixed/20 text-8xl lg:h-96">
                 📖
               </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-7xl px-4 pb-12 sm:px-6 lg:px-8">
+          <div className="rounded-3xl border border-outline-variant/20 bg-surface-container-lowest p-6 sm:p-8">
+            <div className="mb-5">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-stitch-primary">Resource Tracks</p>
+              <h2 className="mt-2 font-headline text-2xl font-extrabold text-on-surface">Start with the topic that matters now</h2>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+              {resourceTracks.map((track) => (
+                <article key={track.title} className="rounded-2xl border border-outline-variant/20 bg-surface p-5">
+                  <h3 className="text-base font-extrabold text-on-surface">{track.title}</h3>
+                  <p className="mt-2 text-sm text-on-surface-variant">{track.detail}</p>
+                </article>
+              ))}
             </div>
           </div>
         </section>

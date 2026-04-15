@@ -97,6 +97,19 @@ export default async function CatalogPage({ searchParams }: { searchParams?: Pro
       </Suspense>
 
       <main className="mx-auto w-full max-w-[1600px] px-4 py-8 sm:px-6 lg:px-8">
+        <section className="mb-6 rounded-2xl border border-outline-variant/20 bg-surface-container-lowest p-5">
+          <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-stitch-primary">PharmaNest Storefront</p>
+              <h1 className="mt-1 font-headline text-2xl font-extrabold text-on-surface">Pharmacy catalog with clinical safety context</h1>
+              <p className="mt-2 text-sm text-on-surface-variant">
+                Browse medicines, wellness products, and devices with stock-aware listings and prescription-ready checkout flows.
+              </p>
+            </div>
+            <Link href="/knowledge-hub" className="text-sm font-bold text-stitch-primary hover:underline">Read medication guides →</Link>
+          </div>
+        </section>
+
         <div className="flex flex-col gap-8 md:flex-row">
 
           {/* ══ SIDEBAR ══ */}

@@ -239,6 +239,65 @@ export default async function CustomerOverviewPage() {
           Explore Knowledge Hub
         </Link>
       </section>
+
+      <section className="grid grid-cols-1 gap-5 lg:grid-cols-3">
+        {[
+          {
+            title: 'Medication Safety Program',
+            badge: 'Safety Layer',
+            points: [
+              'Automatic prescription checks for restricted medicines.',
+              'Pharmacist review workflow with verification notes.',
+              'Clear status updates: pending, verified, or rejected.',
+            ],
+          },
+          {
+            title: 'Delivery & Refill Planning',
+            badge: 'Care Continuity',
+            points: [
+              'Track order progress from placed to delivered.',
+              'Quick reorder essentials from your history.',
+              'Reduce missed doses with proactive refill visibility.',
+            ],
+          },
+          {
+            title: 'Account & Data Protection',
+            badge: 'Trust',
+            points: [
+              'Signed sessions and role-based access controls.',
+              'Protected customer modules and order history.',
+              'Secure profile management and consent-aware workflows.',
+            ],
+          },
+        ].map((card) => (
+          <article key={card.title} className="rounded-2xl border border-outline-variant/20 bg-surface-container-lowest p-6 shadow-sm">
+            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-stitch-primary">{card.badge}</p>
+            <h3 className="mt-2 font-headline text-lg font-extrabold text-on-surface">{card.title}</h3>
+            <ul className="mt-4 space-y-2 text-sm text-on-surface-variant">
+              {card.points.map((point) => (
+                <li key={point}>• {point}</li>
+              ))}
+            </ul>
+          </article>
+        ))}
+      </section>
+
+      <section className="rounded-2xl border border-outline-variant/20 bg-surface-container-low p-6">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+          <div className="max-w-2xl">
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-stitch-secondary">How PharmaNest Works</p>
+            <h3 className="mt-2 font-headline text-2xl font-extrabold text-on-surface">From prescription to delivery in one connected journey</h3>
+            <p className="mt-2 text-sm text-on-surface-variant">
+              Browse medicines, upload prescriptions when required, receive pharmacist review, and place orders with transparent status updates at every step.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 gap-2 text-sm text-on-surface-variant sm:grid-cols-3 lg:w-[420px]">
+            <div className="rounded-xl bg-surface-container-lowest p-3"><span className="font-bold text-on-surface">1.</span> Select products</div>
+            <div className="rounded-xl bg-surface-container-lowest p-3"><span className="font-bold text-on-surface">2.</span> Verify prescription</div>
+            <div className="rounded-xl bg-surface-container-lowest p-3"><span className="font-bold text-on-surface">3.</span> Track delivery</div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

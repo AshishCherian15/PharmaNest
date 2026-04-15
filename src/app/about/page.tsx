@@ -17,6 +17,13 @@ const pillars = [
   },
 ];
 
+const assurance = [
+  { value: 'Licensed', label: 'Regulatory-first operations' },
+  { value: 'Secure', label: 'Session and access control model' },
+  { value: 'Transparent', label: 'Stock and order visibility' },
+  { value: 'Care-driven', label: 'Pharmacist-guided workflows' },
+];
+
 export default function AboutPage() {
   return (
     <div className="flex min-h-screen flex-col bg-surface">
@@ -56,6 +63,25 @@ export default function AboutPage() {
                 </article>
               ))}
             </div>
+          </div>
+        </section>
+
+        <section className="mt-8 rounded-3xl border border-outline-variant/20 bg-surface-container-lowest p-6 sm:p-8">
+          <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-stitch-primary">Platform Assurance</p>
+              <h2 className="mt-2 font-headline text-2xl font-extrabold text-on-surface">Professional standards across every workflow</h2>
+            </div>
+            <Link href="/catalog" className="text-sm font-bold text-stitch-primary hover:underline">See live catalog →</Link>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+            {assurance.map((item) => (
+              <article key={item.label} className="rounded-2xl border border-outline-variant/20 bg-surface p-4">
+                <p className="font-headline text-lg font-extrabold text-stitch-primary">{item.value}</p>
+                <p className="mt-1 text-xs font-semibold text-on-surface-variant">{item.label}</p>
+              </article>
+            ))}
           </div>
         </section>
       </main>
