@@ -52,8 +52,8 @@ That earlier work inspired the bigger idea here: a cleaner experience, stronger 
 
 <table>
 	<tr>
-		<td align="center"><img src="Screenshots/chrome-capture-2026-04-20.png" alt="PharmaNest landing page" width="420" /></td>
-		<td align="center"><img src="Screenshots/chrome-capture-2026-04-20%20%283%29.png" alt="PharmaNest customer dashboard" width="420" /></td>
+		<td align="center"><img src="Screenshots/ui-shot-40.png" alt="PharmaNest landing page" width="420" /></td>
+		<td align="center"><img src="Screenshots/ui-shot-33.png" alt="PharmaNest customer dashboard" width="420" /></td>
 	</tr>
 	<tr>
 		<td align="center"><strong>Landing Preview</strong></td>
@@ -71,27 +71,27 @@ The `Screenshots/` folder contains the latest UI captures for the major customer
 
 | Screenshot | What it shows |
 | --- | --- |
-| ![Landing page](Screenshots/chrome-capture-2026-04-20.png) | The public landing page with the main value proposition, trust cards, and footer navigation. |
-| ![Role chooser](Screenshots/chrome-capture-2026-04-15.png) | The split login entry screen for customers versus admin, staff, and pharmacists. |
-| ![Customer login](Screenshots/chrome-capture-2026-04-20%20%282%29.png) | The customer sign-in form with demo access and secure account entry. |
+| ![Landing page](Screenshots/ui-shot-40.png) | The public landing page with the main value proposition, trust cards, and footer navigation. |
+| ![Role chooser](Screenshots/ui-shot-24.png) | The split login entry screen for customers versus admin, staff, and pharmacists. |
+| ![Customer login](Screenshots/ui-shot-32.png) | The customer sign-in form with demo access and secure account entry. |
 
 ### Customer experience
 
 | Screenshot | What it shows |
 | --- | --- |
-| ![Customer overview](Screenshots/chrome-capture-2026-04-20%20%283%29.png) | The customer dashboard with order status, prescription tracking, quick actions, and care guidance. |
-| ![Catalog](Screenshots/chrome-capture-2026-04-20%20%284%29.png) | The shopping catalog with filters, stock-aware cards, prescription flags, and pagination. |
-| ![Cart](Screenshots/chrome-capture-2026-04-20%20%285%29.png) | The cart and order summary experience with quantity controls and checkout call-to-action. |
-| ![Prescriptions](Screenshots/chrome-capture-2026-04-20%20%286%29.png) | The prescriptions page showing upload controls, verification status, and medicine lines. |
+| ![Customer overview](Screenshots/ui-shot-33.png) | The customer dashboard with order status, prescription tracking, quick actions, and care guidance. |
+| ![Catalog](Screenshots/ui-shot-34.png) | The shopping catalog with filters, stock-aware cards, prescription flags, and pagination. |
+| ![Cart](Screenshots/ui-shot-35.png) | The cart and order summary experience with quantity controls and checkout call-to-action. |
+| ![Prescriptions](Screenshots/ui-shot-36.png) | The prescriptions page showing upload controls, verification status, and medicine lines. |
 
 ### Operations and management
 
 | Screenshot | What it shows |
 | --- | --- |
-| ![Pharmacy insights](Screenshots/chrome-capture-2026-04-20%20%287%29.png) | The main admin dashboard with KPIs, sales charts, alerts, inventory snapshot, and supplier overview. |
-| ![Inventory management](Screenshots/chrome-capture-2026-04-20%20%288%29.png) | The inventory workspace with stock health cards, search and filters, medicine table, and edit/delete actions. |
-| ![Add medicine dialog](Screenshots/chrome-capture-2026-04-20%20%289%29.png) | The add-medicine modal used to create or edit catalog items with image and expiry inputs. |
-| ![Point of sale](Screenshots/chrome-capture-2026-04-20%20%2810%29.png) | The POS screen for staff to search products, build a sale, and complete checkout. |
+| ![Pharmacy insights](Screenshots/ui-shot-37.png) | The main admin dashboard with KPIs, sales charts, alerts, inventory snapshot, and supplier overview. |
+| ![Inventory management](Screenshots/ui-shot-38.png) | The inventory workspace with stock health cards, search and filters, medicine table, and edit/delete actions. |
+| ![Add medicine dialog](Screenshots/ui-shot-39.png) | The add-medicine modal used to create or edit catalog items with image and expiry inputs. |
+| ![Point of sale](Screenshots/ui-shot-26.png) | The POS screen for staff to search products, build a sale, and complete checkout. |
 
 ### Extra captures in the folder
 
@@ -310,3 +310,5 @@ Built and maintained by Ashish Cherian.
 ## 📄 License
 
 This project is licensed under the MIT License. See [LICENSE](LICENSE).
+
+
