@@ -8,7 +8,7 @@
 
 PharmaNest combines a polished storefront, prescription-aware workflows, secure authentication, and an operations dashboard in one connected system.
 
-<img src="public/modern-pharmacy-nest.png" alt="PharmaNest preview" width="920" />
+This README uses real product screenshots instead of a dedicated logo asset so the visuals match the current project files.
 
 </div>
 
@@ -52,12 +52,12 @@ That earlier work inspired the bigger idea here: a cleaner experience, stronger 
 
 <table>
 	<tr>
-		<td align="center"><img src="public/PharmaNest.png" alt="PharmaNest home" width="420" /></td>
-		<td align="center"><img src="public/modern-pharmacy-nest.png" alt="Modern pharmacy nest" width="420" /></td>
+		<td align="center"><img src="Screenshots/chrome-capture-2026-04-20.png" alt="PharmaNest landing page" width="420" /></td>
+		<td align="center"><img src="Screenshots/chrome-capture-2026-04-20%20%283%29.png" alt="PharmaNest customer dashboard" width="420" /></td>
 	</tr>
 	<tr>
-		<td align="center"><strong>Home Preview</strong></td>
-		<td align="center"><strong>UI Preview</strong></td>
+		<td align="center"><strong>Landing Preview</strong></td>
+		<td align="center"><strong>Customer Preview</strong></td>
 	</tr>
 </table>
 
